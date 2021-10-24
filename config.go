@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	gotk4Module   = "github.com/diamondburned/gotk4/pkg"
-	adwaitaModule = "github.com/diamondburned/gotk4-handy/pkg"
+	gotk4Module = "github.com/diamondburned/gotk4/pkg"
+	thisModule  = "github.com/diamondburned/gotk4-handy/pkg"
 )
 
 var packages = []gendata.Package{

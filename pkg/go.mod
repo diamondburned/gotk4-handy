@@ -1,4 +1,4 @@
-module github.com/diamondburned/gotk4-layer-shell/pkg
+module github.com/diamondburned/gotk4-handy/pkg
 
 go 1.17
 

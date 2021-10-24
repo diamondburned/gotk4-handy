@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	gen := girgen.NewGenerator(repos, genutil.ModulePath(adwaitaModule, overrides))
+	gen := girgen.NewGenerator(repos, genutil.ModulePath(thisModule, overrides))
 	gen.Logger = log.New(os.Stderr, "girgen: ", log.Lmsgprefix)
 	gen.AddFilters(gendata.Filters)
 	gen.AddFilters(filters)
