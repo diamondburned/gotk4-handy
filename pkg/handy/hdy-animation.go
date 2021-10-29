@@ -11,6 +11,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <handy.h>
 import "C"
 

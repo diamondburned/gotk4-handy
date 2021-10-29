@@ -18,6 +18,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 // GdkPixbuf* _gotk4_handy1_AvatarImageLoadFunc(gint, gpointer);
@@ -63,6 +64,10 @@ func _gotk4_handy1_AvatarImageLoadFunc(arg0 C.gint, arg1 C.gpointer) (cret *C.Gd
 type Avatar struct {
 	gtk.DrawingArea
 }
+
+var (
+	_ gtk.Widgetter = (*Avatar)(nil)
+)
 
 func wrapAvatar(obj *externglib.Object) *Avatar {
 	return &Avatar{

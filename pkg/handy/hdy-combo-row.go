@@ -16,6 +16,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 // GtkWidget* _gotk4_gtk3_ListBoxCreateWidgetFunc(gpointer, gpointer);
@@ -110,6 +111,11 @@ func EnumValueRowName(value *EnumValueObject, userData cgo.Handle) string {
 type ComboRow struct {
 	ActionRow
 }
+
+var (
+	_ gtk.Binner          = (*ComboRow)(nil)
+	_ externglib.Objector = (*ComboRow)(nil)
+)
 
 func wrapComboRow(obj *externglib.Object) *ComboRow {
 	return &ComboRow{

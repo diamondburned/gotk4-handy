@@ -14,6 +14,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -28,7 +29,7 @@ func init() {
 
 // FlapFoldPolicy: these enumeration values describe the possible folding
 // behavior in a Flap widget.
-type FlapFoldPolicy int
+type FlapFoldPolicy C.gint
 
 const (
 	// FlapFoldPolicyNever: disable folding, the flap cannot reach narrow sizes.
@@ -62,7 +63,7 @@ func (f FlapFoldPolicy) String() string {
 // swiped via Flap:swipe-to-open and Flap:swipe-to-close.
 //
 // New values may be added to this enum over time.
-type FlapTransitionType int
+type FlapTransitionType C.gint
 
 const (
 	// FlapTransitionTypeOver: flap slides over the content, which is dimmed.
@@ -99,8 +100,18 @@ type Flap struct {
 
 	gtk.Orientable
 	Swipeable
+	gtk.Widget
+	externglib.InitiallyUnowned
 	*externglib.Object
+	atk.ImplementorIface
+	gtk.Buildable
 }
+
+var (
+	_ gtk.Containerer     = (*Flap)(nil)
+	_ gtk.Widgetter       = (*Flap)(nil)
+	_ externglib.Objector = (*Flap)(nil)
+)
 
 func wrapFlap(obj *externglib.Object) *Flap {
 	return &Flap{
@@ -135,7 +146,28 @@ func wrapFlap(obj *externglib.Object) *Flap {
 				Object: obj,
 			},
 		},
+		Widget: gtk.Widget{
+			InitiallyUnowned: externglib.InitiallyUnowned{
+				Object: obj,
+			},
+			ImplementorIface: atk.ImplementorIface{
+				Object: obj,
+			},
+			Buildable: gtk.Buildable{
+				Object: obj,
+			},
+			Object: obj,
+		},
+		InitiallyUnowned: externglib.InitiallyUnowned{
+			Object: obj,
+		},
 		Object: obj,
+		ImplementorIface: atk.ImplementorIface{
+			Object: obj,
+		},
+		Buildable: gtk.Buildable{
+			Object: obj,
+		},
 	}
 }
 

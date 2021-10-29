@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +27,11 @@ func init() {
 type ExpanderRow struct {
 	PreferencesRow
 }
+
+var (
+	_ gtk.Binner          = (*ExpanderRow)(nil)
+	_ externglib.Objector = (*ExpanderRow)(nil)
+)
 
 func wrapExpanderRow(obj *externglib.Object) *ExpanderRow {
 	return &ExpanderRow{

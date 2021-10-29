@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -34,6 +35,11 @@ type ActionRowOverrider interface {
 type ActionRow struct {
 	PreferencesRow
 }
+
+var (
+	_ gtk.Binner          = (*ActionRow)(nil)
+	_ externglib.Objector = (*ActionRow)(nil)
+)
 
 func wrapActionRow(obj *externglib.Object) *ActionRow {
 	return &ActionRow{

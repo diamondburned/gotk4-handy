@@ -11,6 +11,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -23,7 +24,7 @@ func init() {
 
 // NavigationDirection represents direction of a swipe navigation gesture in
 // Deck and Leaflet.
-type NavigationDirection int
+type NavigationDirection C.gint
 
 const (
 	// NavigationDirectionBack corresponds to start or top, depending on

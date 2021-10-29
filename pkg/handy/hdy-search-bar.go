@@ -7,12 +7,15 @@ import (
 	"unsafe"
 
 	"github.com/diamondburned/gotk4/pkg/atk"
+	"github.com/diamondburned/gotk4/pkg/core/gextras"
 	externglib "github.com/diamondburned/gotk4/pkg/core/glib"
+	"github.com/diamondburned/gotk4/pkg/gdk/v3"
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +29,10 @@ func init() {
 type SearchBar struct {
 	gtk.Bin
 }
+
+var (
+	_ gtk.Binner = (*SearchBar)(nil)
+)
 
 func wrapSearchBar(obj *externglib.Object) *SearchBar {
 	return &SearchBar{
@@ -115,6 +122,67 @@ func (self *SearchBar) ShowCloseButton() bool {
 
 	_cret = C.hdy_search_bar_get_show_close_button(_arg0)
 	runtime.KeepAlive(self)
+
+	var _ok bool // out
+
+	if _cret != 0 {
+		_ok = true
+	}
+
+	return _ok
+}
+
+// HandleEvent: this function should be called when the top-level window which
+// contains the search bar received a key event.
+//
+// If the key event is handled by the search bar, the bar will be shown, the
+// entry populated with the entered text and GDK_EVENT_STOP will be returned.
+// The caller should ensure that events are not propagated further.
+//
+// If no entry has been connected to the search bar, using
+// hdy_search_bar_connect_entry(), this function will return immediately with a
+// warning.
+//
+// Showing the search bar on key presses
+//
+//    static gboolean
+//    on_key_press_event (GtkWidget *widget,
+//                        GdkEvent  *event,
+//                        gpointer   user_data)
+//    {
+//      HdySearchBar *bar = HDY_SEARCH_BAR (user_data);
+//      return hdy_search_bar_handle_event (self, event);
+//    }
+//
+//    static void
+//    create_toplevel (void)
+//    {
+//      GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+//      GtkWindow *search_bar = hdy_search_bar_new ();
+//
+//     // Add more widgets to the window...
+//
+//      g_signal_connect (window,
+//                       "key-press-event",
+//                        G_CALLBACK (on_key_press_event),
+//                        search_bar);
+//    }.
+//
+// The function takes the following parameters:
+//
+//    - event containing key press events.
+//
+func (self *SearchBar) HandleEvent(event *gdk.Event) bool {
+	var _arg0 *C.HdySearchBar // out
+	var _arg1 *C.GdkEvent     // out
+	var _cret C.gboolean      // in
+
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg1 = (*C.GdkEvent)(gextras.StructNative(unsafe.Pointer(event)))
+
+	_cret = C.hdy_search_bar_handle_event(_arg0, _arg1)
+	runtime.KeepAlive(self)
+	runtime.KeepAlive(event)
 
 	var _ok bool // out
 

@@ -15,6 +15,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -51,7 +52,7 @@ type SwipeableOverrider interface {
 	//
 	// If not implemented, the default implementation returns the allocation of
 	// self, allowing swipes from anywhere.
-	SwipeArea(navigationDirection NavigationDirection, isDrag bool) gdk.Rectangle
+	SwipeArea(navigationDirection NavigationDirection, isDrag bool) *gdk.Rectangle
 	// SwipeTracker gets the SwipeTracker used by this swipeable widget.
 	SwipeTracker() *SwipeTracker
 	// SwitchChild: see HdySwipeable::child-switched.
@@ -61,6 +62,10 @@ type SwipeableOverrider interface {
 type Swipeable struct {
 	gtk.Widget
 }
+
+var (
+	_ gtk.Widgetter = (*Swipeable)(nil)
+)
 
 // Swipeabler describes Swipeable's interface methods.
 type Swipeabler interface {
@@ -79,7 +84,7 @@ type Swipeabler interface {
 	SnapPoints() []float64
 	// SwipeArea gets the area self can start a swipe from for the given
 	// direction and gesture type.
-	SwipeArea(navigationDirection NavigationDirection, isDrag bool) gdk.Rectangle
+	SwipeArea(navigationDirection NavigationDirection, isDrag bool) *gdk.Rectangle
 	// SwipeTracker gets the SwipeTracker used by this swipeable widget.
 	SwipeTracker() *SwipeTracker
 	// SwitchChild: see HdySwipeable::child-switched.
@@ -224,7 +229,7 @@ func (self *Swipeable) SnapPoints() []float64 {
 //    - navigationDirection: direction of the swipe.
 //    - isDrag: whether the swipe is caused by a dragging gesture.
 //
-func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag bool) gdk.Rectangle {
+func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag bool) *gdk.Rectangle {
 	var _arg0 *C.HdySwipeable          // out
 	var _arg1 C.HdyNavigationDirection // out
 	var _arg2 C.gboolean               // out
@@ -241,9 +246,9 @@ func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag
 	runtime.KeepAlive(navigationDirection)
 	runtime.KeepAlive(isDrag)
 
-	var _rect gdk.Rectangle // out
+	var _rect *gdk.Rectangle // out
 
-	_rect = *(*gdk.Rectangle)(gextras.NewStructNative(unsafe.Pointer((&_arg3))))
+	_rect = (*gdk.Rectangle)(gextras.NewStructNative(unsafe.Pointer((&_arg3))))
 
 	return _rect
 }

@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -28,6 +29,10 @@ type SwipeGroup struct {
 
 	gtk.Buildable
 }
+
+var (
+	_ externglib.Objector = (*SwipeGroup)(nil)
+)
 
 func wrapSwipeGroup(obj *externglib.Object) *SwipeGroup {
 	return &SwipeGroup{

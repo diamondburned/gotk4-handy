@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +27,10 @@ func init() {
 type HeaderBar struct {
 	gtk.Container
 }
+
+var (
+	_ gtk.Containerer = (*HeaderBar)(nil)
+)
 
 func wrapHeaderBar(obj *externglib.Object) *HeaderBar {
 	return &HeaderBar{

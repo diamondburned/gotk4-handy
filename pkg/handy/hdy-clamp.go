@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -29,6 +30,11 @@ type Clamp struct {
 	gtk.Orientable
 	*externglib.Object
 }
+
+var (
+	_ gtk.Binner          = (*Clamp)(nil)
+	_ externglib.Objector = (*Clamp)(nil)
+)
 
 func wrapClamp(obj *externglib.Object) *Clamp {
 	return &Clamp{

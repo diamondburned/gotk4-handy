@@ -11,6 +11,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -24,6 +25,10 @@ func init() {
 type EnumValueObject struct {
 	*externglib.Object
 }
+
+var (
+	_ externglib.Objector = (*EnumValueObject)(nil)
+)
 
 func wrapEnumValueObject(obj *externglib.Object) *EnumValueObject {
 	return &EnumValueObject{

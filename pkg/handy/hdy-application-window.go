@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +27,11 @@ func init() {
 type ApplicationWindow struct {
 	gtk.ApplicationWindow
 }
+
+var (
+	_ externglib.Objector = (*ApplicationWindow)(nil)
+	_ gtk.Binner          = (*ApplicationWindow)(nil)
+)
 
 func wrapApplicationWindow(obj *externglib.Object) *ApplicationWindow {
 	return &ApplicationWindow{

@@ -14,6 +14,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -27,7 +28,7 @@ func init() {
 
 // SqueezerTransitionType: these enumeration values describe the possible
 // transitions between children in a Squeezer widget.
-type SqueezerTransitionType int
+type SqueezerTransitionType C.gint
 
 const (
 	// SqueezerTransitionTypeNone: no transition.
@@ -58,6 +59,11 @@ type Squeezer struct {
 	gtk.Orientable
 	*externglib.Object
 }
+
+var (
+	_ gtk.Containerer     = (*Squeezer)(nil)
+	_ externglib.Objector = (*Squeezer)(nil)
+)
 
 func wrapSqueezer(obj *externglib.Object) *Squeezer {
 	return &Squeezer{

@@ -12,6 +12,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -25,6 +26,10 @@ func init() {
 type WindowHandle struct {
 	gtk.EventBox
 }
+
+var (
+	_ gtk.Binner = (*WindowHandle)(nil)
+)
 
 func wrapWindowHandle(obj *externglib.Object) *WindowHandle {
 	return &WindowHandle{

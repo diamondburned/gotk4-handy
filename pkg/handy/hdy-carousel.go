@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -30,6 +31,11 @@ type Carousel struct {
 	Swipeable
 	*externglib.Object
 }
+
+var (
+	_ externglib.Objector = (*Carousel)(nil)
+	_ gtk.Binner          = (*Carousel)(nil)
+)
 
 func wrapCarousel(obj *externglib.Object) *Carousel {
 	return &Carousel{

@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -29,6 +30,11 @@ type CarouselIndicatorDots struct {
 	gtk.Orientable
 	*externglib.Object
 }
+
+var (
+	_ externglib.Objector = (*CarouselIndicatorDots)(nil)
+	_ gtk.Widgetter       = (*CarouselIndicatorDots)(nil)
+)
 
 func wrapCarouselIndicatorDots(obj *externglib.Object) *CarouselIndicatorDots {
 	return &CarouselIndicatorDots{

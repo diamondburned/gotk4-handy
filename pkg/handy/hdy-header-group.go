@@ -15,6 +15,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -31,7 +32,7 @@ func init() {
 // handled by HeaderGroup.
 //
 // New values may be added to this enumeration over time.
-type HeaderGroupChildType int
+type HeaderGroupChildType C.gint
 
 const (
 	// HeaderGroupChildTypeHeaderBar: child is a HeaderBar.
@@ -65,6 +66,10 @@ type HeaderGroup struct {
 
 	gtk.Buildable
 }
+
+var (
+	_ externglib.Objector = (*HeaderGroup)(nil)
+)
 
 func wrapHeaderGroup(obj *externglib.Object) *HeaderGroup {
 	return &HeaderGroup{
@@ -294,6 +299,10 @@ func (self *HeaderGroup) ConnectUpdateDecorationLayouts(f func()) externglib.Sig
 type HeaderGroupChild struct {
 	*externglib.Object
 }
+
+var (
+	_ externglib.Objector = (*HeaderGroupChild)(nil)
+)
 
 func wrapHeaderGroupChild(obj *externglib.Object) *HeaderGroupChild {
 	return &HeaderGroupChild{

@@ -14,6 +14,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -29,7 +30,7 @@ func init() {
 // transitions between modes and children in a Leaflet widget.
 //
 // New values may be added to this enumeration over time.
-type LeafletTransitionType int
+type LeafletTransitionType C.gint
 
 const (
 	// LeafletTransitionTypeOver: cover the old page or uncover the new page,
@@ -69,7 +70,17 @@ type Leaflet struct {
 	gtk.Orientable
 	Swipeable
 	*externglib.Object
+	atk.ImplementorIface
+	gtk.Buildable
+	gtk.Widget
+	externglib.InitiallyUnowned
 }
+
+var (
+	_ gtk.Containerer     = (*Leaflet)(nil)
+	_ externglib.Objector = (*Leaflet)(nil)
+	_ gtk.Widgetter       = (*Leaflet)(nil)
+)
 
 func wrapLeaflet(obj *externglib.Object) *Leaflet {
 	return &Leaflet{
@@ -105,6 +116,27 @@ func wrapLeaflet(obj *externglib.Object) *Leaflet {
 			},
 		},
 		Object: obj,
+		ImplementorIface: atk.ImplementorIface{
+			Object: obj,
+		},
+		Buildable: gtk.Buildable{
+			Object: obj,
+		},
+		Widget: gtk.Widget{
+			InitiallyUnowned: externglib.InitiallyUnowned{
+				Object: obj,
+			},
+			ImplementorIface: atk.ImplementorIface{
+				Object: obj,
+			},
+			Buildable: gtk.Buildable{
+				Object: obj,
+			},
+			Object: obj,
+		},
+		InitiallyUnowned: externglib.InitiallyUnowned{
+			Object: obj,
+		},
 	}
 }
 

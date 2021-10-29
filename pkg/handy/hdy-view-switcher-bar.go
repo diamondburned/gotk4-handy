@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +27,10 @@ func init() {
 type ViewSwitcherBar struct {
 	gtk.Bin
 }
+
+var (
+	_ gtk.Binner = (*ViewSwitcherBar)(nil)
+)
 
 func wrapViewSwitcherBar(obj *externglib.Object) *ViewSwitcherBar {
 	return &ViewSwitcherBar{

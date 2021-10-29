@@ -11,6 +11,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -24,6 +25,10 @@ func init() {
 type ValueObject struct {
 	*externglib.Object
 }
+
+var (
+	_ externglib.Objector = (*ValueObject)(nil)
+)
 
 func wrapValueObject(obj *externglib.Object) *ValueObject {
 	return &ValueObject{

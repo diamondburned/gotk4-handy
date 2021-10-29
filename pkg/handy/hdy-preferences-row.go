@@ -13,6 +13,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -26,6 +27,11 @@ func init() {
 type PreferencesRow struct {
 	gtk.ListBoxRow
 }
+
+var (
+	_ gtk.Binner          = (*PreferencesRow)(nil)
+	_ externglib.Objector = (*PreferencesRow)(nil)
+)
 
 func wrapPreferencesRow(obj *externglib.Object) *PreferencesRow {
 	return &PreferencesRow{

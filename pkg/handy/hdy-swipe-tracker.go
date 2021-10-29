@@ -12,6 +12,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -27,6 +28,10 @@ type SwipeTracker struct {
 
 	gtk.Orientable
 }
+
+var (
+	_ externglib.Objector = (*SwipeTracker)(nil)
+)
 
 func wrapSwipeTracker(obj *externglib.Object) *SwipeTracker {
 	return &SwipeTracker{

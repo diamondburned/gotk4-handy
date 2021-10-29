@@ -15,6 +15,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -28,6 +29,10 @@ func init() {
 type TabBar struct {
 	gtk.Bin
 }
+
+var (
+	_ gtk.Binner = (*TabBar)(nil)
+)
 
 func wrapTabBar(obj *externglib.Object) *TabBar {
 	return &TabBar{

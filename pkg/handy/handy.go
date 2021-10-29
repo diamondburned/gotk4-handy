@@ -11,6 +11,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -22,7 +23,7 @@ func init() {
 	})
 }
 
-type CenteringPolicy int
+type CenteringPolicy C.gint
 
 const (
 	// CenteringPolicyLoose: keep the title centered when possible.
@@ -47,7 +48,7 @@ func (c CenteringPolicy) String() string {
 	}
 }
 
-type ViewSwitcherPolicy int
+type ViewSwitcherPolicy C.gint
 
 const (
 	// ViewSwitcherPolicyAuto: automatically adapt to the best fitting mode.

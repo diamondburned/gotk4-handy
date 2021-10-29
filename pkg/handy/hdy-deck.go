@@ -14,6 +14,7 @@ import (
 
 // #cgo pkg-config: libhandy-1
 // #cgo CFLAGS: -Wno-deprecated-declarations
+// #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
 import "C"
@@ -29,7 +30,7 @@ func init() {
 // between children in a Deck widget.
 //
 // New values may be added to this enumeration over time.
-type DeckTransitionType int
+type DeckTransitionType C.gint
 
 const (
 	// DeckTransitionTypeOver: cover the old page or uncover the new page,
@@ -68,8 +69,18 @@ type Deck struct {
 
 	gtk.Orientable
 	Swipeable
+	gtk.Widget
+	externglib.InitiallyUnowned
 	*externglib.Object
+	atk.ImplementorIface
+	gtk.Buildable
 }
+
+var (
+	_ gtk.Containerer     = (*Deck)(nil)
+	_ gtk.Widgetter       = (*Deck)(nil)
+	_ externglib.Objector = (*Deck)(nil)
+)
 
 func wrapDeck(obj *externglib.Object) *Deck {
 	return &Deck{
@@ -104,7 +115,28 @@ func wrapDeck(obj *externglib.Object) *Deck {
 				Object: obj,
 			},
 		},
+		Widget: gtk.Widget{
+			InitiallyUnowned: externglib.InitiallyUnowned{
+				Object: obj,
+			},
+			ImplementorIface: atk.ImplementorIface{
+				Object: obj,
+			},
+			Buildable: gtk.Buildable{
+				Object: obj,
+			},
+			Object: obj,
+		},
+		InitiallyUnowned: externglib.InitiallyUnowned{
+			Object: obj,
+		},
 		Object: obj,
+		ImplementorIface: atk.ImplementorIface{
+			Object: obj,
+		},
+		Buildable: gtk.Buildable{
+			Object: obj,
+		},
 	}
 }
 
