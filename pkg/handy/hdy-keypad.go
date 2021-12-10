@@ -40,13 +40,13 @@ func wrapKeypad(obj *externglib.Object) *Keypad {
 					InitiallyUnowned: externglib.InitiallyUnowned{
 						Object: obj,
 					},
+					Object: obj,
 					ImplementorIface: atk.ImplementorIface{
 						Object: obj,
 					},
 					Buildable: gtk.Buildable{
 						Object: obj,
 					},
-					Object: obj,
 				},
 			},
 		},
@@ -153,32 +153,32 @@ func (self *Keypad) Entry() *gtk.Entry {
 				InitiallyUnowned: externglib.InitiallyUnowned{
 					Object: obj,
 				},
+				Object: obj,
 				ImplementorIface: atk.ImplementorIface{
 					Object: obj,
 				},
 				Buildable: gtk.Buildable{
 					Object: obj,
 				},
-				Object: obj,
 			},
+			Object: obj,
 			CellEditable: gtk.CellEditable{
 				Widget: gtk.Widget{
 					InitiallyUnowned: externglib.InitiallyUnowned{
 						Object: obj,
 					},
+					Object: obj,
 					ImplementorIface: atk.ImplementorIface{
 						Object: obj,
 					},
 					Buildable: gtk.Buildable{
 						Object: obj,
 					},
-					Object: obj,
 				},
 			},
 			Editable: gtk.Editable{
 				Object: obj,
 			},
-			Object: obj,
 		}
 	}
 

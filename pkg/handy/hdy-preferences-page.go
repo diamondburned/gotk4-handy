@@ -40,13 +40,13 @@ func wrapPreferencesPage(obj *externglib.Object) *PreferencesPage {
 					InitiallyUnowned: externglib.InitiallyUnowned{
 						Object: obj,
 					},
+					Object: obj,
 					ImplementorIface: atk.ImplementorIface{
 						Object: obj,
 					},
 					Buildable: gtk.Buildable{
 						Object: obj,
 					},
-					Object: obj,
 				},
 			},
 		},

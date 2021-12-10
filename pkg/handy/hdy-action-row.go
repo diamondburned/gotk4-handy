@@ -51,31 +51,31 @@ func wrapActionRow(obj *externglib.Object) *ActionRow {
 							InitiallyUnowned: externglib.InitiallyUnowned{
 								Object: obj,
 							},
+							Object: obj,
 							ImplementorIface: atk.ImplementorIface{
 								Object: obj,
 							},
 							Buildable: gtk.Buildable{
 								Object: obj,
 							},
-							Object: obj,
 						},
 					},
 				},
+				Object: obj,
 				Actionable: gtk.Actionable{
 					Widget: gtk.Widget{
 						InitiallyUnowned: externglib.InitiallyUnowned{
 							Object: obj,
 						},
+						Object: obj,
 						ImplementorIface: atk.ImplementorIface{
 							Object: obj,
 						},
 						Buildable: gtk.Buildable{
 							Object: obj,
 						},
-						Object: obj,
 					},
 				},
-				Object: obj,
 			},
 		},
 	}

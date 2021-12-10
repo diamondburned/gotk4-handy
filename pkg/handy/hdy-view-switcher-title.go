@@ -40,13 +40,13 @@ func wrapViewSwitcherTitle(obj *externglib.Object) *ViewSwitcherTitle {
 					InitiallyUnowned: externglib.InitiallyUnowned{
 						Object: obj,
 					},
+					Object: obj,
 					ImplementorIface: atk.ImplementorIface{
 						Object: obj,
 					},
 					Buildable: gtk.Buildable{
 						Object: obj,
 					},
-					Object: obj,
 				},
 			},
 		},
@@ -108,13 +108,13 @@ func (self *ViewSwitcherTitle) Stack() *gtk.Stack {
 						InitiallyUnowned: externglib.InitiallyUnowned{
 							Object: obj,
 						},
+						Object: obj,
 						ImplementorIface: atk.ImplementorIface{
 							Object: obj,
 						},
 						Buildable: gtk.Buildable{
 							Object: obj,
 						},
-						Object: obj,
 					},
 				},
 			}

@@ -42,13 +42,13 @@ func wrapPreferencesWindow(obj *externglib.Object) *PreferencesWindow {
 							InitiallyUnowned: externglib.InitiallyUnowned{
 								Object: obj,
 							},
+							Object: obj,
 							ImplementorIface: atk.ImplementorIface{
 								Object: obj,
 							},
 							Buildable: gtk.Buildable{
 								Object: obj,
 							},
-							Object: obj,
 						},
 					},
 				},

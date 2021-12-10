@@ -40,13 +40,13 @@ func wrapViewSwitcherBar(obj *externglib.Object) *ViewSwitcherBar {
 					InitiallyUnowned: externglib.InitiallyUnowned{
 						Object: obj,
 					},
+					Object: obj,
 					ImplementorIface: atk.ImplementorIface{
 						Object: obj,
 					},
 					Buildable: gtk.Buildable{
 						Object: obj,
 					},
-					Object: obj,
 				},
 			},
 		},
@@ -127,13 +127,13 @@ func (self *ViewSwitcherBar) Stack() *gtk.Stack {
 						InitiallyUnowned: externglib.InitiallyUnowned{
 							Object: obj,
 						},
+						Object: obj,
 						ImplementorIface: atk.ImplementorIface{
 							Object: obj,
 						},
 						Buildable: gtk.Buildable{
 							Object: obj,
 						},
-						Object: obj,
 					},
 				},
 			}

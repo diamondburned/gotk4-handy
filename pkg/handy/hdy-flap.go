@@ -98,19 +98,19 @@ func (f FlapTransitionType) String() string {
 type Flap struct {
 	gtk.Container
 
-	gtk.Orientable
-	Swipeable
-	gtk.Widget
-	externglib.InitiallyUnowned
 	*externglib.Object
 	atk.ImplementorIface
+	externglib.InitiallyUnowned
 	gtk.Buildable
+	gtk.Orientable
+	gtk.Widget
+	Swipeable
 }
 
 var (
 	_ gtk.Containerer     = (*Flap)(nil)
-	_ gtk.Widgetter       = (*Flap)(nil)
 	_ externglib.Objector = (*Flap)(nil)
+	_ gtk.Widgetter       = (*Flap)(nil)
 )
 
 func wrapFlap(obj *externglib.Object) *Flap {
@@ -120,53 +120,53 @@ func wrapFlap(obj *externglib.Object) *Flap {
 				InitiallyUnowned: externglib.InitiallyUnowned{
 					Object: obj,
 				},
+				Object: obj,
 				ImplementorIface: atk.ImplementorIface{
 					Object: obj,
 				},
 				Buildable: gtk.Buildable{
 					Object: obj,
 				},
-				Object: obj,
 			},
+		},
+		Object: obj,
+		ImplementorIface: atk.ImplementorIface{
+			Object: obj,
+		},
+		InitiallyUnowned: externglib.InitiallyUnowned{
+			Object: obj,
+		},
+		Buildable: gtk.Buildable{
+			Object: obj,
 		},
 		Orientable: gtk.Orientable{
 			Object: obj,
-		},
-		Swipeable: Swipeable{
-			Widget: gtk.Widget{
-				InitiallyUnowned: externglib.InitiallyUnowned{
-					Object: obj,
-				},
-				ImplementorIface: atk.ImplementorIface{
-					Object: obj,
-				},
-				Buildable: gtk.Buildable{
-					Object: obj,
-				},
-				Object: obj,
-			},
 		},
 		Widget: gtk.Widget{
 			InitiallyUnowned: externglib.InitiallyUnowned{
 				Object: obj,
 			},
+			Object: obj,
 			ImplementorIface: atk.ImplementorIface{
 				Object: obj,
 			},
 			Buildable: gtk.Buildable{
 				Object: obj,
 			},
-			Object: obj,
 		},
-		InitiallyUnowned: externglib.InitiallyUnowned{
-			Object: obj,
-		},
-		Object: obj,
-		ImplementorIface: atk.ImplementorIface{
-			Object: obj,
-		},
-		Buildable: gtk.Buildable{
-			Object: obj,
+		Swipeable: Swipeable{
+			Widget: gtk.Widget{
+				InitiallyUnowned: externglib.InitiallyUnowned{
+					Object: obj,
+				},
+				Object: obj,
+				ImplementorIface: atk.ImplementorIface{
+					Object: obj,
+				},
+				Buildable: gtk.Buildable{
+					Object: obj,
+				},
+			},
 		},
 	}
 }

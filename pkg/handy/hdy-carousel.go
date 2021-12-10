@@ -27,9 +27,9 @@ func init() {
 type Carousel struct {
 	gtk.EventBox
 
+	*externglib.Object
 	gtk.Orientable
 	Swipeable
-	*externglib.Object
 }
 
 var (
@@ -46,17 +46,18 @@ func wrapCarousel(obj *externglib.Object) *Carousel {
 						InitiallyUnowned: externglib.InitiallyUnowned{
 							Object: obj,
 						},
+						Object: obj,
 						ImplementorIface: atk.ImplementorIface{
 							Object: obj,
 						},
 						Buildable: gtk.Buildable{
 							Object: obj,
 						},
-						Object: obj,
 					},
 				},
 			},
 		},
+		Object: obj,
 		Orientable: gtk.Orientable{
 			Object: obj,
 		},
@@ -65,16 +66,15 @@ func wrapCarousel(obj *externglib.Object) *Carousel {
 				InitiallyUnowned: externglib.InitiallyUnowned{
 					Object: obj,
 				},
+				Object: obj,
 				ImplementorIface: atk.ImplementorIface{
 					Object: obj,
 				},
 				Buildable: gtk.Buildable{
 					Object: obj,
 				},
-				Object: obj,
 			},
 		},
-		Object: obj,
 	}
 }
 

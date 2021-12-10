@@ -67,13 +67,13 @@ func (l LeafletTransitionType) String() string {
 type Leaflet struct {
 	gtk.Container
 
-	gtk.Orientable
-	Swipeable
 	*externglib.Object
 	atk.ImplementorIface
-	gtk.Buildable
-	gtk.Widget
 	externglib.InitiallyUnowned
+	gtk.Buildable
+	gtk.Orientable
+	gtk.Widget
+	Swipeable
 }
 
 var (
@@ -89,53 +89,53 @@ func wrapLeaflet(obj *externglib.Object) *Leaflet {
 				InitiallyUnowned: externglib.InitiallyUnowned{
 					Object: obj,
 				},
+				Object: obj,
 				ImplementorIface: atk.ImplementorIface{
 					Object: obj,
 				},
 				Buildable: gtk.Buildable{
 					Object: obj,
 				},
-				Object: obj,
-			},
-		},
-		Orientable: gtk.Orientable{
-			Object: obj,
-		},
-		Swipeable: Swipeable{
-			Widget: gtk.Widget{
-				InitiallyUnowned: externglib.InitiallyUnowned{
-					Object: obj,
-				},
-				ImplementorIface: atk.ImplementorIface{
-					Object: obj,
-				},
-				Buildable: gtk.Buildable{
-					Object: obj,
-				},
-				Object: obj,
 			},
 		},
 		Object: obj,
 		ImplementorIface: atk.ImplementorIface{
 			Object: obj,
 		},
+		InitiallyUnowned: externglib.InitiallyUnowned{
+			Object: obj,
+		},
 		Buildable: gtk.Buildable{
+			Object: obj,
+		},
+		Orientable: gtk.Orientable{
 			Object: obj,
 		},
 		Widget: gtk.Widget{
 			InitiallyUnowned: externglib.InitiallyUnowned{
 				Object: obj,
 			},
+			Object: obj,
 			ImplementorIface: atk.ImplementorIface{
 				Object: obj,
 			},
 			Buildable: gtk.Buildable{
 				Object: obj,
 			},
-			Object: obj,
 		},
-		InitiallyUnowned: externglib.InitiallyUnowned{
-			Object: obj,
+		Swipeable: Swipeable{
+			Widget: gtk.Widget{
+				InitiallyUnowned: externglib.InitiallyUnowned{
+					Object: obj,
+				},
+				Object: obj,
+				ImplementorIface: atk.ImplementorIface{
+					Object: obj,
+				},
+				Buildable: gtk.Buildable{
+					Object: obj,
+				},
+			},
 		},
 	}
 }
