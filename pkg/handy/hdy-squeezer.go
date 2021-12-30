@@ -12,8 +12,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -54,6 +52,7 @@ func (s SqueezerTransitionType) String() string {
 }
 
 type Squeezer struct {
+	_ [0]func() // equal guard
 	gtk.Container
 
 	*externglib.Object
@@ -93,6 +92,11 @@ func marshalSqueezerer(p uintptr) (interface{}, error) {
 }
 
 // NewSqueezer creates a new Squeezer container.
+//
+// The function returns the following values:
+//
+//    - squeezer: new Squeezer.
+//
 func NewSqueezer() *Squeezer {
 	var _cret *C.GtkWidget // in
 
@@ -112,6 +116,10 @@ func NewSqueezer() *Squeezer {
 // The function takes the following parameters:
 //
 //    - child of self.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if child is enabled, FALSE otherwise.
 //
 func (self *Squeezer) ChildEnabled(child gtk.Widgetter) bool {
 	var _arg0 *C.HdySqueezer // out
@@ -137,6 +145,11 @@ func (self *Squeezer) ChildEnabled(child gtk.Widgetter) bool {
 // Homogeneous gets whether self is homogeneous.
 //
 // See hdy_squeezer_set_homogeneous().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self is homogeneous, FALSE is not.
+//
 func (self *Squeezer) Homogeneous() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
@@ -159,6 +172,12 @@ func (self *Squeezer) Homogeneous() bool {
 // child change.
 //
 // See hdy_squeezer_set_interpolate_size().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self interpolates its size on visible child change, FALSE if
+//      not.
+//
 func (self *Squeezer) InterpolateSize() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
@@ -179,6 +198,11 @@ func (self *Squeezer) InterpolateSize() bool {
 
 // TransitionDuration gets the amount of time (in milliseconds) that transitions
 // between children in self will take.
+//
+// The function returns the following values:
+//
+//    - guint: transition duration.
+//
 func (self *Squeezer) TransitionDuration() uint {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.guint        // in
@@ -197,6 +221,11 @@ func (self *Squeezer) TransitionDuration() uint {
 
 // TransitionRunning gets whether self is currently in a transition from one
 // child to another.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the transition is currently running, FALSE otherwise.
+//
 func (self *Squeezer) TransitionRunning() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
@@ -217,6 +246,11 @@ func (self *Squeezer) TransitionRunning() bool {
 
 // TransitionType gets the type of animation that will be used for transitions
 // between children in self.
+//
+// The function returns the following values:
+//
+//    - squeezerTransitionType: current transition type of self.
+//
 func (self *Squeezer) TransitionType() SqueezerTransitionType {
 	var _arg0 *C.HdySqueezer              // out
 	var _cret C.HdySqueezerTransitionType // in
@@ -235,6 +269,11 @@ func (self *Squeezer) TransitionType() SqueezerTransitionType {
 
 // VisibleChild gets the currently visible child of self, or NULL if there are
 // no visible children.
+//
+// The function returns the following values:
+//
+//    - widget (optional): visible child of the Squeezer.
+//
 func (self *Squeezer) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdySqueezer // out
 	var _cret *C.GtkWidget   // in
@@ -251,9 +290,13 @@ func (self *Squeezer) VisibleChild() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -263,6 +306,11 @@ func (self *Squeezer) VisibleChild() gtk.Widgetter {
 }
 
 // XAlign gets the Squeezer:xalign property for self.
+//
+// The function returns the following values:
+//
+//    - gfloat: xalign property.
+//
 func (self *Squeezer) XAlign() float32 {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gfloat       // in
@@ -280,6 +328,11 @@ func (self *Squeezer) XAlign() float32 {
 }
 
 // YAlign gets the Squeezer:yalign property for self.
+//
+// The function returns the following values:
+//
+//    - gfloat: yalign property.
+//
 func (self *Squeezer) YAlign() float32 {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gfloat       // in

@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type ViewSwitcherBar struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalViewSwitcherBarrer(p uintptr) (interface{}, error) {
 }
 
 // NewViewSwitcherBar creates a new ViewSwitcherBar widget.
+//
+// The function returns the following values:
+//
+//    - viewSwitcherBar: new ViewSwitcherBar.
+//
 func NewViewSwitcherBar() *ViewSwitcherBar {
 	var _cret *C.GtkWidget // in
 
@@ -71,6 +75,11 @@ func NewViewSwitcherBar() *ViewSwitcherBar {
 }
 
 // Policy gets the policy of self.
+//
+// The function returns the following values:
+//
+//    - viewSwitcherPolicy: policy of self.
+//
 func (self *ViewSwitcherBar) Policy() ViewSwitcherPolicy {
 	var _arg0 *C.HdyViewSwitcherBar   // out
 	var _cret C.HdyViewSwitcherPolicy // in
@@ -88,6 +97,11 @@ func (self *ViewSwitcherBar) Policy() ViewSwitcherPolicy {
 }
 
 // Reveal gets whether self should be revealed or not.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self is revealed, FALSE if not.
+//
 func (self *ViewSwitcherBar) Reveal() bool {
 	var _arg0 *C.HdyViewSwitcherBar // out
 	var _cret C.gboolean            // in
@@ -107,6 +121,11 @@ func (self *ViewSwitcherBar) Reveal() bool {
 }
 
 // Stack: get the Stack being controlled by the ViewSwitcher.
+//
+// The function returns the following values:
+//
+//    - stack (optional) or NULL if none has been set.
+//
 func (self *ViewSwitcherBar) Stack() *gtk.Stack {
 	var _arg0 *C.HdyViewSwitcherBar // out
 	var _cret *C.GtkStack           // in
@@ -185,7 +204,7 @@ func (self *ViewSwitcherBar) SetReveal(reveal bool) {
 //
 // The function takes the following parameters:
 //
-//    - stack: Stack.
+//    - stack (optional): Stack.
 //
 func (self *ViewSwitcherBar) SetStack(stack *gtk.Stack) {
 	var _arg0 *C.HdyViewSwitcherBar // out

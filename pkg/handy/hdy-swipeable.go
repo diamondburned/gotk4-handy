@@ -13,8 +13,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -33,14 +31,34 @@ func init() {
 type SwipeableOverrider interface {
 	// CancelProgress gets the progress self will snap back to after the gesture
 	// is canceled.
+	//
+	// The function returns the following values:
+	//
+	//    - gdouble: cancel progress, unitless.
+	//
 	CancelProgress() float64
 	// Distance gets the swipe distance of self. This corresponds to how many
 	// pixels 1 unit represents.
+	//
+	// The function returns the following values:
+	//
+	//    - gdouble: swipe distance in pixels.
+	//
 	Distance() float64
 	// Progress gets the current progress of self.
+	//
+	// The function returns the following values:
+	//
+	//    - gdouble: current progress, unitless.
+	//
 	Progress() float64
 	// SnapPoints gets the snap points of self. Each snap point represents a
 	// progress value that is considered acceptable to end the swipe on.
+	//
+	// The function returns the following values:
+	//
+	//    - gdoubles: snap points of self. The array must be freed with g_free().
+	//
 	SnapPoints() []float64
 	// SwipeArea gets the area self can start a swipe from for the given
 	// direction and gesture type. This can be used to restrict swipes to only
@@ -52,14 +70,36 @@ type SwipeableOverrider interface {
 	//
 	// If not implemented, the default implementation returns the allocation of
 	// self, allowing swipes from anywhere.
+	//
+	// The function takes the following parameters:
+	//
+	//    - navigationDirection: direction of the swipe.
+	//    - isDrag: whether the swipe is caused by a dragging gesture.
+	//
+	// The function returns the following values:
+	//
+	//    - rect: pointer to a Rectangle to store the swipe area.
+	//
 	SwipeArea(navigationDirection NavigationDirection, isDrag bool) *gdk.Rectangle
 	// SwipeTracker gets the SwipeTracker used by this swipeable widget.
+	//
+	// The function returns the following values:
+	//
+	//    - swipeTracker: swipe tracker.
+	//
 	SwipeTracker() *SwipeTracker
 	// SwitchChild: see HdySwipeable::child-switched.
+	//
+	// The function takes the following parameters:
+	//
+	//    - index of the child to switch to.
+	//    - duration: animation duration in milliseconds.
+	//
 	SwitchChild(index uint, duration int64)
 }
 
 type Swipeable struct {
+	_ [0]func() // equal guard
 	gtk.Widget
 }
 
@@ -114,6 +154,16 @@ func marshalSwipeabler(p uintptr) (interface{}, error) {
 	return wrapSwipeable(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectChildSwitched: this signal should be emitted when the widget's visible
+// child is changed.
+//
+// duration can be 0 if the child is switched without animation.
+//
+// This is used by SwipeGroup, applications should not connect to it.
+func (self *Swipeable) ConnectChildSwitched(f func(index uint, duration int64)) externglib.SignalHandle {
+	return self.Connect("child-switched", f)
+}
+
 // EmitChildSwitched emits HdySwipeable::child-switched signal. This should be
 // called when the widget switches visible child widget.
 //
@@ -141,6 +191,11 @@ func (self *Swipeable) EmitChildSwitched(index uint, duration int64) {
 
 // CancelProgress gets the progress self will snap back to after the gesture is
 // canceled.
+//
+// The function returns the following values:
+//
+//    - gdouble: cancel progress, unitless.
+//
 func (self *Swipeable) CancelProgress() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
@@ -159,6 +214,11 @@ func (self *Swipeable) CancelProgress() float64 {
 
 // Distance gets the swipe distance of self. This corresponds to how many pixels
 // 1 unit represents.
+//
+// The function returns the following values:
+//
+//    - gdouble: swipe distance in pixels.
+//
 func (self *Swipeable) Distance() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
@@ -176,6 +236,11 @@ func (self *Swipeable) Distance() float64 {
 }
 
 // Progress gets the current progress of self.
+//
+// The function returns the following values:
+//
+//    - gdouble: current progress, unitless.
+//
 func (self *Swipeable) Progress() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
@@ -194,6 +259,11 @@ func (self *Swipeable) Progress() float64 {
 
 // SnapPoints gets the snap points of self. Each snap point represents a
 // progress value that is considered acceptable to end the swipe on.
+//
+// The function returns the following values:
+//
+//    - gdoubles: snap points of self. The array must be freed with g_free().
+//
 func (self *Swipeable) SnapPoints() []float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret *C.gdouble      // in
@@ -229,6 +299,10 @@ func (self *Swipeable) SnapPoints() []float64 {
 //    - navigationDirection: direction of the swipe.
 //    - isDrag: whether the swipe is caused by a dragging gesture.
 //
+// The function returns the following values:
+//
+//    - rect: pointer to a Rectangle to store the swipe area.
+//
 func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag bool) *gdk.Rectangle {
 	var _arg0 *C.HdySwipeable          // out
 	var _arg1 C.HdyNavigationDirection // out
@@ -254,6 +328,11 @@ func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag
 }
 
 // SwipeTracker gets the SwipeTracker used by this swipeable widget.
+//
+// The function returns the following values:
+//
+//    - swipeTracker: swipe tracker.
+//
 func (self *Swipeable) SwipeTracker() *SwipeTracker {
 	var _arg0 *C.HdySwipeable    // out
 	var _cret *C.HdySwipeTracker // in
@@ -290,14 +369,4 @@ func (self *Swipeable) SwitchChild(index uint, duration int64) {
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(index)
 	runtime.KeepAlive(duration)
-}
-
-// ConnectChildSwitched: this signal should be emitted when the widget's visible
-// child is changed.
-//
-// duration can be 0 if the child is switched without animation.
-//
-// This is used by SwipeGroup, applications should not connect to it.
-func (self *Swipeable) ConnectChildSwitched(f func(index uint, duration int64)) externglib.SignalHandle {
-	return self.Connect("child-switched", f)
 }

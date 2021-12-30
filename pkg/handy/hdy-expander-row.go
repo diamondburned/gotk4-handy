@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type ExpanderRow struct {
+	_ [0]func() // equal guard
 	PreferencesRow
 }
 
@@ -78,6 +77,11 @@ func marshalExpanderRower(p uintptr) (interface{}, error) {
 }
 
 // NewExpanderRow creates a new ExpanderRow.
+//
+// The function returns the following values:
+//
+//    - expanderRow: new ExpanderRow.
+//
 func NewExpanderRow() *ExpanderRow {
 	var _cret *C.GtkWidget // in
 
@@ -127,6 +131,11 @@ func (self *ExpanderRow) AddPrefix(widget gtk.Widgetter) {
 }
 
 // EnableExpansion gets whether the expansion of self is enabled.
+//
+// The function returns the following values:
+//
+//    - ok: whether the expansion of self is enabled.
+//
 func (self *ExpanderRow) EnableExpansion() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
@@ -145,6 +154,8 @@ func (self *ExpanderRow) EnableExpansion() bool {
 	return _ok
 }
 
+// The function returns the following values:
+//
 func (self *ExpanderRow) Expanded() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
@@ -164,6 +175,11 @@ func (self *ExpanderRow) Expanded() bool {
 }
 
 // IconName gets the icon name for self.
+//
+// The function returns the following values:
+//
+//    - utf8: icon name for self.
+//
 func (self *ExpanderRow) IconName() string {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret *C.gchar          // in
@@ -182,6 +198,11 @@ func (self *ExpanderRow) IconName() string {
 
 // ShowEnableSwitch gets whether the switch enabling the expansion of self is
 // visible.
+//
+// The function returns the following values:
+//
+//    - ok: whether the switch enabling the expansion of self is visible.
+//
 func (self *ExpanderRow) ShowEnableSwitch() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
@@ -201,6 +222,11 @@ func (self *ExpanderRow) ShowEnableSwitch() bool {
 }
 
 // Subtitle gets the subtitle for self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): subtitle for self, or NULL.
+//
 func (self *ExpanderRow) Subtitle() string {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret *C.gchar          // in
@@ -222,6 +248,12 @@ func (self *ExpanderRow) Subtitle() string {
 // UseUnderline gets whether an embedded underline in the text of the title and
 // subtitle labels indicates a mnemonic. See
 // hdy_expander_row_set_use_underline().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if an embedded underline in the title and subtitle labels
+//      indicates the mnemonic accelerator keys.
+//
 func (self *ExpanderRow) UseUnderline() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
@@ -260,10 +292,7 @@ func (self *ExpanderRow) SetEnableExpansion(enableExpansion bool) {
 	runtime.KeepAlive(enableExpansion)
 }
 
-//
 // The function takes the following parameters:
-//
-
 //
 func (self *ExpanderRow) SetExpanded(expanded bool) {
 	var _arg0 *C.HdyExpanderRow // out
@@ -323,7 +352,7 @@ func (self *ExpanderRow) SetShowEnableSwitch(showEnableSwitch bool) {
 //
 // The function takes the following parameters:
 //
-//    - subtitle: subtitle.
+//    - subtitle (optional): subtitle.
 //
 func (self *ExpanderRow) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyExpanderRow // out

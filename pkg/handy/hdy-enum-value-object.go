@@ -9,8 +9,6 @@ import (
 	externglib "github.com/diamondburned/gotk4/pkg/core/glib"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -23,6 +21,7 @@ func init() {
 }
 
 type EnumValueObject struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 }
 
@@ -40,6 +39,8 @@ func marshalEnumValueObjector(p uintptr) (interface{}, error) {
 	return wrapEnumValueObject(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// The function returns the following values:
+//
 func (self *EnumValueObject) Name() string {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret *C.gchar              // in
@@ -56,6 +57,8 @@ func (self *EnumValueObject) Name() string {
 	return _utf8
 }
 
+// The function returns the following values:
+//
 func (self *EnumValueObject) Nick() string {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret *C.gchar              // in
@@ -72,6 +75,8 @@ func (self *EnumValueObject) Nick() string {
 	return _utf8
 }
 
+// The function returns the following values:
+//
 func (self *EnumValueObject) Value() int {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret C.gint                // in

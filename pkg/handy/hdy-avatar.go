@@ -16,8 +16,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -62,6 +60,7 @@ func _gotk4_handy1_AvatarImageLoadFunc(arg0 C.gint, arg1 C.gpointer) (cret *C.Gd
 }
 
 type Avatar struct {
+	_ [0]func() // equal guard
 	gtk.DrawingArea
 }
 
@@ -97,10 +96,14 @@ func marshalAvatarrer(p uintptr) (interface{}, error) {
 // The function takes the following parameters:
 //
 //    - size of the avatar.
-//    - text used to generate the color and initials if show_initials is TRUE.
-//    The color is selected at random if text is empty.
-//    - showInitials: whether to show the initials or the fallback icon on top
-//    of the color generated based on text.
+//    - text (optional) used to generate the color and initials if show_initials
+//      is TRUE. The color is selected at random if text is empty.
+//    - showInitials: whether to show the initials or the fallback icon on top of
+//      the color generated based on text.
+//
+// The function returns the following values:
+//
+//    - avatar: newly created Avatar.
 //
 func NewAvatar(size int, text string, showInitials bool) *Avatar {
 	var _arg1 C.gint       // out
@@ -136,6 +139,10 @@ func NewAvatar(size int, text string, showInitials bool) *Avatar {
 //
 //    - size of the pixbuf.
 //    - scaleFactor: scale factor.
+//
+// The function returns the following values:
+//
+//    - pixbuf: pixbuf.
 //
 func (self *Avatar) DrawToPixbuf(size, scaleFactor int) *gdkpixbuf.Pixbuf {
 	var _arg0 *C.HdyAvatar // out
@@ -174,10 +181,10 @@ func (self *Avatar) DrawToPixbuf(size, scaleFactor int) *gdkpixbuf.Pixbuf {
 //
 // The function takes the following parameters:
 //
-//    - ctx: optional #GCancellable object, NULL to ignore.
+//    - ctx (optional): optional #GCancellable object, NULL to ignore.
 //    - size of the pixbuf.
 //    - scaleFactor: scale factor.
-//    - callback to call when the avatar is generated.
+//    - callback (optional) to call when the avatar is generated.
 //
 func (self *Avatar) DrawToPixbufAsync(ctx context.Context, size, scaleFactor int, callback gio.AsyncReadyCallback) {
 	var _arg0 *C.HdyAvatar          // out
@@ -214,6 +221,10 @@ func (self *Avatar) DrawToPixbufAsync(ctx context.Context, size, scaleFactor int
 //
 //    - asyncResult: Result.
 //
+// The function returns the following values:
+//
+//    - pixbuf: Pixbuf.
+//
 func (self *Avatar) DrawToPixbufFinish(asyncResult gio.AsyncResulter) *gdkpixbuf.Pixbuf {
 	var _arg0 *C.HdyAvatar    // out
 	var _arg1 *C.GAsyncResult // out
@@ -245,6 +256,11 @@ func (self *Avatar) DrawToPixbufFinish(asyncResult gio.AsyncResulter) *gdkpixbuf
 
 // IconName gets the name of the icon in the icon theme to use when the icon
 // should be displayed.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): name of the icon from the icon theme.
+//
 func (self *Avatar) IconName() string {
 	var _arg0 *C.HdyAvatar // out
 	var _cret *C.gchar     // in
@@ -264,6 +280,11 @@ func (self *Avatar) IconName() string {
 }
 
 // LoadableIcon gets the Icon set via hdy_avatar_set_loadable_icon().
+//
+// The function returns the following values:
+//
+//    - loadableIcon (optional): Icon.
+//
 func (self *Avatar) LoadableIcon() gio.LoadableIconner {
 	var _arg0 *C.HdyAvatar     // out
 	var _cret *C.GLoadableIcon // in
@@ -280,9 +301,13 @@ func (self *Avatar) LoadableIcon() gio.LoadableIconner {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gio.LoadableIconner)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gio.LoadableIconner)
+				return ok
+			})
+			rv, ok := casted.(gio.LoadableIconner)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gio.LoadableIconner")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.LoadableIconner")
 			}
 			_loadableIcon = rv
 		}
@@ -292,6 +317,11 @@ func (self *Avatar) LoadableIcon() gio.LoadableIconner {
 }
 
 // ShowInitials returns whether initials are used for the fallback or the icon.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the initials are used for the fallback.
+//
 func (self *Avatar) ShowInitials() bool {
 	var _arg0 *C.HdyAvatar // out
 	var _cret C.gboolean   // in
@@ -311,6 +341,11 @@ func (self *Avatar) ShowInitials() bool {
 }
 
 // Size returns the size of the avatar.
+//
+// The function returns the following values:
+//
+//    - gint: size of the avatar.
+//
 func (self *Avatar) Size() int {
 	var _arg0 *C.HdyAvatar // out
 	var _cret C.gint       // in
@@ -328,6 +363,12 @@ func (self *Avatar) Size() int {
 }
 
 // Text: get the text used to generate the fallback initials and color.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional) returns the text used to generate the fallback initials.
+//      This is the internal string used by the Avatar, and must not be modified.
+//
 func (self *Avatar) Text() string {
 	var _arg0 *C.HdyAvatar // out
 	var _cret *C.gchar     // in
@@ -354,7 +395,7 @@ func (self *Avatar) Text() string {
 //
 // The function takes the following parameters:
 //
-//    - iconName: name of the icon from the icon theme.
+//    - iconName (optional): name of the icon from the icon theme.
 //
 func (self *Avatar) SetIconName(iconName string) {
 	var _arg0 *C.HdyAvatar // out
@@ -378,7 +419,7 @@ func (self *Avatar) SetIconName(iconName string) {
 //
 // The function takes the following parameters:
 //
-//    - loadImage: callback to set a custom image.
+//    - loadImage (optional): callback to set a custom image.
 //
 func (self *Avatar) SetImageLoadFunc(loadImage AvatarImageLoadFunc) {
 	var _arg0 *C.HdyAvatar             // out
@@ -406,7 +447,7 @@ func (self *Avatar) SetImageLoadFunc(loadImage AvatarImageLoadFunc) {
 //
 // The function takes the following parameters:
 //
-//    - icon: Icon.
+//    - icon (optional): Icon.
 //
 func (self *Avatar) SetLoadableIcon(icon gio.LoadableIconner) {
 	var _arg0 *C.HdyAvatar     // out
@@ -427,8 +468,8 @@ func (self *Avatar) SetLoadableIcon(icon gio.LoadableIconner) {
 //
 // The function takes the following parameters:
 //
-//    - showInitials: whether the initials should be shown on the fallback
-//    avatar or the icon.
+//    - showInitials: whether the initials should be shown on the fallback avatar
+//      or the icon.
 //
 func (self *Avatar) SetShowInitials(showInitials bool) {
 	var _arg0 *C.HdyAvatar // out
@@ -466,7 +507,7 @@ func (self *Avatar) SetSize(size int) {
 //
 // The function takes the following parameters:
 //
-//    - text used to get the initials and color.
+//    - text (optional) used to get the initials and color.
 //
 func (self *Avatar) SetText(text string) {
 	var _arg0 *C.HdyAvatar // out

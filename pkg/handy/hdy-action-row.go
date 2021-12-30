@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -33,6 +31,7 @@ type ActionRowOverrider interface {
 }
 
 type ActionRow struct {
+	_ [0]func() // equal guard
 	PreferencesRow
 }
 
@@ -85,7 +84,17 @@ func marshalActionRower(p uintptr) (interface{}, error) {
 	return wrapActionRow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectActivated: this signal is emitted after the row has been activated.
+func (self *ActionRow) ConnectActivated(f func()) externglib.SignalHandle {
+	return self.Connect("activated", f)
+}
+
 // NewActionRow creates a new ActionRow.
+//
+// The function returns the following values:
+//
+//    - actionRow: new ActionRow.
+//
 func NewActionRow() *ActionRow {
 	var _cret *C.GtkWidget // in
 
@@ -126,6 +135,12 @@ func (self *ActionRow) AddPrefix(widget gtk.Widgetter) {
 }
 
 // ActivatableWidget gets the widget activated when self is activated.
+//
+// The function returns the following values:
+//
+//    - widget (optional) activated when self is activated, or NULL if none has
+//      been set.
+//
 func (self *ActionRow) ActivatableWidget() gtk.Widgetter {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.GtkWidget    // in
@@ -142,9 +157,13 @@ func (self *ActionRow) ActivatableWidget() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -154,6 +173,12 @@ func (self *ActionRow) ActivatableWidget() gtk.Widgetter {
 }
 
 // IconName gets the icon name for self.
+//
+// The function returns the following values:
+//
+//    - utf8: icon name for self. The returned string is owned by the ActionRow
+//      and should not be freed.
+//
 func (self *ActionRow) IconName() string {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.gchar        // in
@@ -171,6 +196,11 @@ func (self *ActionRow) IconName() string {
 }
 
 // Subtitle gets the subtitle for self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): subtitle for self, or NULL.
+//
 func (self *ActionRow) Subtitle() string {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.gchar        // in
@@ -191,6 +221,12 @@ func (self *ActionRow) Subtitle() string {
 
 // SubtitleLines gets the number of lines at the end of which the subtitle label
 // will be ellipsized. If the value is 0, the number of lines won't be limited.
+//
+// The function returns the following values:
+//
+//    - gint: number of lines at the end of which the subtitle label will be
+//      ellipsized.
+//
 func (self *ActionRow) SubtitleLines() int {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gint          // in
@@ -209,6 +245,12 @@ func (self *ActionRow) SubtitleLines() int {
 
 // TitleLines gets the number of lines at the end of which the title label will
 // be ellipsized. If the value is 0, the number of lines won't be limited.
+//
+// The function returns the following values:
+//
+//    - gint: number of lines at the end of which the title label will be
+//      ellipsized.
+//
 func (self *ActionRow) TitleLines() int {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gint          // in
@@ -227,6 +269,12 @@ func (self *ActionRow) TitleLines() int {
 
 // UseUnderline gets whether an embedded underline in the text of the title and
 // subtitle labels indicates a mnemonic. See hdy_action_row_set_use_underline().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if an embedded underline in the title and subtitle labels
+//      indicates the mnemonic accelerator keys.
+//
 func (self *ActionRow) UseUnderline() bool {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gboolean      // in
@@ -255,7 +303,7 @@ func (self *ActionRow) UseUnderline() bool {
 //
 // The function takes the following parameters:
 //
-//    - widget: target Widget, or NULL to unset.
+//    - widget (optional): target Widget, or NULL to unset.
 //
 func (self *ActionRow) SetActivatableWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyActionRow // out
@@ -294,7 +342,7 @@ func (self *ActionRow) SetIconName(iconName string) {
 //
 // The function takes the following parameters:
 //
-//    - subtitle: subtitle.
+//    - subtitle (optional): subtitle.
 //
 func (self *ActionRow) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyActionRow // out
@@ -318,7 +366,7 @@ func (self *ActionRow) SetSubtitle(subtitle string) {
 // The function takes the following parameters:
 //
 //    - subtitleLines: number of lines at the end of which the subtitle label
-//    will be ellipsized.
+//      will be ellipsized.
 //
 func (self *ActionRow) SetSubtitleLines(subtitleLines int) {
 	var _arg0 *C.HdyActionRow // out
@@ -338,7 +386,7 @@ func (self *ActionRow) SetSubtitleLines(subtitleLines int) {
 // The function takes the following parameters:
 //
 //    - titleLines: number of lines at the end of which the title label will be
-//    ellipsized.
+//      ellipsized.
 //
 func (self *ActionRow) SetTitleLines(titleLines int) {
 	var _arg0 *C.HdyActionRow // out
@@ -372,9 +420,4 @@ func (self *ActionRow) SetUseUnderline(useUnderline bool) {
 	C.hdy_action_row_set_use_underline(_arg0, _arg1)
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(useUnderline)
-}
-
-// ConnectActivated: this signal is emitted after the row has been activated.
-func (self *ActionRow) ConnectActivated(f func()) externglib.SignalHandle {
-	return self.Connect("activated", f)
 }

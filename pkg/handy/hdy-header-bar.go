@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type HeaderBar struct {
+	_ [0]func() // equal guard
 	gtk.Container
 }
 
@@ -56,6 +55,11 @@ func marshalHeaderBarrer(p uintptr) (interface{}, error) {
 }
 
 // NewHeaderBar creates a new HeaderBar widget.
+//
+// The function returns the following values:
+//
+//    - headerBar: new HeaderBar.
+//
 func NewHeaderBar() *HeaderBar {
 	var _cret *C.GtkWidget // in
 
@@ -70,6 +74,11 @@ func NewHeaderBar() *HeaderBar {
 
 // CenteringPolicy gets the policy self follows to horizontally align its center
 // widget.
+//
+// The function returns the following values:
+//
+//    - centeringPolicy: centering policy.
+//
 func (self *HeaderBar) CenteringPolicy() CenteringPolicy {
 	var _arg0 *C.HdyHeaderBar      // out
 	var _cret C.HdyCenteringPolicy // in
@@ -88,6 +97,12 @@ func (self *HeaderBar) CenteringPolicy() CenteringPolicy {
 
 // CustomTitle retrieves the custom title widget of the header. See
 // hdy_header_bar_set_custom_title().
+//
+// The function returns the following values:
+//
+//    - widget (optional): custom title widget of the header, or NULL if none has
+//      been set explicitly.
+//
 func (self *HeaderBar) CustomTitle() gtk.Widgetter {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.GtkWidget    // in
@@ -104,9 +119,13 @@ func (self *HeaderBar) CustomTitle() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -117,6 +136,11 @@ func (self *HeaderBar) CustomTitle() gtk.Widgetter {
 
 // DecorationLayout gets the decoration layout set with
 // hdy_header_bar_set_decoration_layout().
+//
+// The function returns the following values:
+//
+//    - utf8: decoration layout.
+//
 func (self *HeaderBar) DecorationLayout() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
@@ -135,6 +159,11 @@ func (self *HeaderBar) DecorationLayout() string {
 
 // HasSubtitle retrieves whether the header bar reserves space for a subtitle,
 // regardless if one is currently set or not.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the header bar reserves space for a subtitle.
+//
 func (self *HeaderBar) HasSubtitle() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
@@ -157,6 +186,12 @@ func (self *HeaderBar) HasSubtitle() bool {
 // child change.
 //
 // See hdy_header_bar_set_interpolate_size().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self interpolates its size on visible child change, FALSE if
+//      not.
+//
 func (self *HeaderBar) InterpolateSize() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
@@ -177,6 +212,11 @@ func (self *HeaderBar) InterpolateSize() bool {
 
 // ShowCloseButton returns whether this header bar shows the standard window
 // decorations.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the decorations are shown.
+//
 func (self *HeaderBar) ShowCloseButton() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
@@ -197,6 +237,13 @@ func (self *HeaderBar) ShowCloseButton() bool {
 
 // Subtitle retrieves the subtitle of the header. See
 // hdy_header_bar_set_subtitle().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): subtitle of the header, or NULL if none has been set
+//      explicitly. The returned string is owned by the widget and must not be
+//      modified or freed.
+//
 func (self *HeaderBar) Subtitle() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
@@ -216,6 +263,13 @@ func (self *HeaderBar) Subtitle() string {
 }
 
 // Title retrieves the title of the header. See hdy_header_bar_set_title().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title of the header, or NULL if none has been set
+//      explicitly. The returned string is owned by the widget and must not be
+//      modified or freed.
+//
 func (self *HeaderBar) Title() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
@@ -236,6 +290,11 @@ func (self *HeaderBar) Title() string {
 
 // TransitionDuration returns the amount of time (in milliseconds) that
 // transitions between pages in self will take.
+//
+// The function returns the following values:
+//
+//    - guint: transition duration.
+//
 func (self *HeaderBar) TransitionDuration() uint {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.guint         // in
@@ -254,6 +313,11 @@ func (self *HeaderBar) TransitionDuration() uint {
 
 // TransitionRunning returns whether the self is currently in a transition from
 // one page to another.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the transition is currently running, FALSE otherwise.
+//
 func (self *HeaderBar) TransitionRunning() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
@@ -340,7 +404,7 @@ func (self *HeaderBar) SetCenteringPolicy(centeringPolicy CenteringPolicy) {
 //
 // The function takes the following parameters:
 //
-//    - titleWidget: custom widget to use for a title.
+//    - titleWidget (optional): custom widget to use for a title.
 //
 func (self *HeaderBar) SetCustomTitle(titleWidget gtk.Widgetter) {
 	var _arg0 *C.HdyHeaderBar // out
@@ -374,7 +438,7 @@ func (self *HeaderBar) SetCustomTitle(titleWidget gtk.Widgetter) {
 //
 // The function takes the following parameters:
 //
-//    - layout: decoration layout, or NULL to unset the layout.
+//    - layout (optional): decoration layout, or NULL to unset the layout.
 //
 func (self *HeaderBar) SetDecorationLayout(layout string) {
 	var _arg0 *C.HdyHeaderBar // out
@@ -467,7 +531,7 @@ func (self *HeaderBar) SetShowCloseButton(setting bool) {
 //
 // The function takes the following parameters:
 //
-//    - subtitle: subtitle, or NULL.
+//    - subtitle (optional): subtitle, or NULL.
 //
 func (self *HeaderBar) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyHeaderBar // out
@@ -490,7 +554,7 @@ func (self *HeaderBar) SetSubtitle(subtitle string) {
 //
 // The function takes the following parameters:
 //
-//    - title: title, or NULL.
+//    - title (optional): title, or NULL.
 //
 func (self *HeaderBar) SetTitle(title string) {
 	var _arg0 *C.HdyHeaderBar // out

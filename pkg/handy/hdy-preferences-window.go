@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type PreferencesWindow struct {
+	_ [0]func() // equal guard
 	Window
 }
 
@@ -62,6 +61,11 @@ func marshalPreferencesWindower(p uintptr) (interface{}, error) {
 }
 
 // NewPreferencesWindow creates a new PreferencesWindow.
+//
+// The function returns the following values:
+//
+//    - preferencesWindow: new PreferencesWindow.
+//
 func NewPreferencesWindow() *PreferencesWindow {
 	var _cret *C.GtkWidget // in
 
@@ -87,6 +91,11 @@ func (self *PreferencesWindow) CloseSubpage() {
 
 // CanSwipeBack returns whether or not self allows switching from a subpage to
 // the preferences via a swipe gesture.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if back swipe is enabled.
+//
 func (self *PreferencesWindow) CanSwipeBack() bool {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _cret C.gboolean              // in
@@ -106,6 +115,11 @@ func (self *PreferencesWindow) CanSwipeBack() bool {
 }
 
 // SearchEnabled gets whether search is enabled for self.
+//
+// The function returns the following values:
+//
+//    - ok: whether search is enabled for self.
+//
 func (self *PreferencesWindow) SearchEnabled() bool {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _cret C.gboolean              // in

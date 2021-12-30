@@ -13,8 +13,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -27,6 +25,7 @@ func init() {
 }
 
 type TabBar struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -59,7 +58,20 @@ func marshalTabBarrer(p uintptr) (interface{}, error) {
 	return wrapTabBar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectExtraDragDataReceived: this signal is emitted when content allowed via
+// TabBar:extra-drag-dest-targets is dropped onto a tab.
+//
+// See Widget::drag-data-received.
+func (self *TabBar) ConnectExtraDragDataReceived(f func(page TabPage, context gdk.DragContext, data *gtk.SelectionData, info, time uint)) externglib.SignalHandle {
+	return self.Connect("extra-drag-data-received", f)
+}
+
 // NewTabBar creates a new TabBar widget.
+//
+// The function returns the following values:
+//
+//    - tabBar: new TabBar.
+//
 func NewTabBar() *TabBar {
 	var _cret *C.HdyTabBar // in
 
@@ -74,6 +86,11 @@ func NewTabBar() *TabBar {
 
 // Autohide gets whether the tabs automatically hide, see
 // hdy_tab_bar_set_autohide().
+//
+// The function returns the following values:
+//
+//    - ok: whether the tabs automatically hide.
+//
 func (self *TabBar) Autohide() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
@@ -93,6 +110,11 @@ func (self *TabBar) Autohide() bool {
 }
 
 // EndActionWidget gets the widget shown after the tabs.
+//
+// The function returns the following values:
+//
+//    - widget (optional) shown after the tabs, or NULL.
+//
 func (self *TabBar) EndActionWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabBar // out
 	var _cret *C.GtkWidget // in
@@ -109,9 +131,13 @@ func (self *TabBar) EndActionWidget() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -122,6 +148,11 @@ func (self *TabBar) EndActionWidget() gtk.Widgetter {
 
 // ExpandTabs gets whether tabs should expand, see
 // hdy_tab_bar_set_expand_tabs().
+//
+// The function returns the following values:
+//
+//    - ok: whether tabs should expand.
+//
 func (self *TabBar) ExpandTabs() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
@@ -142,6 +173,11 @@ func (self *TabBar) ExpandTabs() bool {
 
 // ExtraDragDestTargets gets extra drag destination targets, see
 // hdy_tab_bar_set_extra_drag_dest_targets().
+//
+// The function returns the following values:
+//
+//    - targetList (optional): extra drag targets, or NULL.
+//
 func (self *TabBar) ExtraDragDestTargets() *gtk.TargetList {
 	var _arg0 *C.HdyTabBar     // out
 	var _cret *C.GtkTargetList // in
@@ -169,6 +205,11 @@ func (self *TabBar) ExtraDragDestTargets() *gtk.TargetList {
 
 // Inverted gets whether tabs use inverted layout, see
 // hdy_tab_bar_set_inverted().
+//
+// The function returns the following values:
+//
+//    - ok: whether tabs use inverted layout.
+//
 func (self *TabBar) Inverted() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
@@ -188,6 +229,11 @@ func (self *TabBar) Inverted() bool {
 }
 
 // IsOverflowing gets whether self is overflowing.
+//
+// The function returns the following values:
+//
+//    - ok: whether self is overflowing.
+//
 func (self *TabBar) IsOverflowing() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
@@ -207,6 +253,11 @@ func (self *TabBar) IsOverflowing() bool {
 }
 
 // StartActionWidget gets the widget shown before the tabs.
+//
+// The function returns the following values:
+//
+//    - widget (optional) shown before the tabs, or NULL.
+//
 func (self *TabBar) StartActionWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabBar // out
 	var _cret *C.GtkWidget // in
@@ -223,9 +274,13 @@ func (self *TabBar) StartActionWidget() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -235,6 +290,11 @@ func (self *TabBar) StartActionWidget() gtk.Widgetter {
 }
 
 // TabsRevealed gets the value of the TabBar:tabs-revealed property.
+//
+// The function returns the following values:
+//
+//    - ok: whether the tabs are current revealed.
+//
 func (self *TabBar) TabsRevealed() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
@@ -254,6 +314,11 @@ func (self *TabBar) TabsRevealed() bool {
 }
 
 // View gets the TabView self controls.
+//
+// The function returns the following values:
+//
+//    - tabView (optional) self controls.
+//
 func (self *TabBar) View() *TabView {
 	var _arg0 *C.HdyTabBar  // out
 	var _cret *C.HdyTabView // in
@@ -303,7 +368,7 @@ func (self *TabBar) SetAutohide(autohide bool) {
 //
 // The function takes the following parameters:
 //
-//    - widget to show after the tabs, or NULL.
+//    - widget (optional) to show after the tabs, or NULL.
 //
 func (self *TabBar) SetEndActionWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabBar // out
@@ -358,7 +423,7 @@ func (self *TabBar) SetExpandTabs(expandTabs bool) {
 //
 // The function takes the following parameters:
 //
-//    - extraDragDestTargets: extra drag targets, or NULL.
+//    - extraDragDestTargets (optional): extra drag targets, or NULL.
 //
 func (self *TabBar) SetExtraDragDestTargets(extraDragDestTargets *gtk.TargetList) {
 	var _arg0 *C.HdyTabBar     // out
@@ -401,7 +466,7 @@ func (self *TabBar) SetInverted(inverted bool) {
 //
 // The function takes the following parameters:
 //
-//    - widget to show before the tabs, or NULL.
+//    - widget (optional) to show before the tabs, or NULL.
 //
 func (self *TabBar) SetStartActionWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabBar // out
@@ -421,7 +486,7 @@ func (self *TabBar) SetStartActionWidget(widget gtk.Widgetter) {
 //
 // The function takes the following parameters:
 //
-//    - view: TabView.
+//    - view (optional): TabView.
 //
 func (self *TabBar) SetView(view *TabView) {
 	var _arg0 *C.HdyTabBar  // out
@@ -435,12 +500,4 @@ func (self *TabBar) SetView(view *TabView) {
 	C.hdy_tab_bar_set_view(_arg0, _arg1)
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(view)
-}
-
-// ConnectExtraDragDataReceived: this signal is emitted when content allowed via
-// TabBar:extra-drag-dest-targets is dropped onto a tab.
-//
-// See Widget::drag-data-received.
-func (self *TabBar) ConnectExtraDragDataReceived(f func(page TabPage, context gdk.DragContext, data *gtk.SelectionData, info, time uint)) externglib.SignalHandle {
-	return self.Connect("extra-drag-data-received", f)
 }

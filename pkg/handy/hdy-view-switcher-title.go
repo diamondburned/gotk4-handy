@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type ViewSwitcherTitle struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalViewSwitcherTitler(p uintptr) (interface{}, error) {
 }
 
 // NewViewSwitcherTitle creates a new ViewSwitcherTitle widget.
+//
+// The function returns the following values:
+//
+//    - viewSwitcherTitle: new ViewSwitcherTitle.
+//
 func NewViewSwitcherTitle() *ViewSwitcherTitle {
 	var _cret *C.HdyViewSwitcherTitle // in
 
@@ -71,6 +75,11 @@ func NewViewSwitcherTitle() *ViewSwitcherTitle {
 }
 
 // Policy gets the policy of self.
+//
+// The function returns the following values:
+//
+//    - viewSwitcherPolicy: policy of self.
+//
 func (self *ViewSwitcherTitle) Policy() ViewSwitcherPolicy {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.HdyViewSwitcherPolicy // in
@@ -88,6 +97,11 @@ func (self *ViewSwitcherTitle) Policy() ViewSwitcherPolicy {
 }
 
 // Stack: get the Stack being controlled by the ViewSwitcher.
+//
+// The function returns the following values:
+//
+//    - stack (optional) or NULL if none has been set.
+//
 func (self *ViewSwitcherTitle) Stack() *gtk.Stack {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.GtkStack             // in
@@ -126,6 +140,11 @@ func (self *ViewSwitcherTitle) Stack() *gtk.Stack {
 
 // Subtitle gets the subtitle of self. See
 // hdy_view_switcher_title_set_subtitle().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): subtitle of self, or NULL.
+//
 func (self *ViewSwitcherTitle) Subtitle() string {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.gchar                // in
@@ -145,6 +164,11 @@ func (self *ViewSwitcherTitle) Subtitle() string {
 }
 
 // Title gets the title of self. See hdy_view_switcher_title_set_title().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title of self, or NULL.
+//
 func (self *ViewSwitcherTitle) Title() string {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.gchar                // in
@@ -164,6 +188,11 @@ func (self *ViewSwitcherTitle) Title() string {
 }
 
 // TitleVisible: get whether the title label of self is visible.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the title label of self is visible, FALSE if not.
+//
 func (self *ViewSwitcherTitle) TitleVisible() bool {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.gboolean              // in
@@ -185,6 +214,11 @@ func (self *ViewSwitcherTitle) TitleVisible() bool {
 // ViewSwitcherEnabled gets whether self's view switcher is enabled.
 //
 // See hdy_view_switcher_title_set_view_switcher_enabled().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the view switcher is enabled, FALSE otherwise.
+//
 func (self *ViewSwitcherTitle) ViewSwitcherEnabled() bool {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.gboolean              // in
@@ -225,7 +259,7 @@ func (self *ViewSwitcherTitle) SetPolicy(policy ViewSwitcherPolicy) {
 //
 // The function takes the following parameters:
 //
-//    - stack: Stack.
+//    - stack (optional): Stack.
 //
 func (self *ViewSwitcherTitle) SetStack(stack *gtk.Stack) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
@@ -246,7 +280,7 @@ func (self *ViewSwitcherTitle) SetStack(stack *gtk.Stack) {
 //
 // The function takes the following parameters:
 //
-//    - subtitle: subtitle, or NULL.
+//    - subtitle (optional): subtitle, or NULL.
 //
 func (self *ViewSwitcherTitle) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
@@ -268,7 +302,7 @@ func (self *ViewSwitcherTitle) SetSubtitle(subtitle string) {
 //
 // The function takes the following parameters:
 //
-//    - title: title, or NULL.
+//    - title (optional): title, or NULL.
 //
 func (self *ViewSwitcherTitle) SetTitle(title string) {
 	var _arg0 *C.HdyViewSwitcherTitle // out

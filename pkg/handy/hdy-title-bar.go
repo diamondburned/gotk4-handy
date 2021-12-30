@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type TitleBar struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalTitleBarrer(p uintptr) (interface{}, error) {
 }
 
 // NewTitleBar creates a new TitleBar.
+//
+// The function returns the following values:
+//
+//    - titleBar: new TitleBar.
+//
 func NewTitleBar() *TitleBar {
 	var _cret *C.GtkWidget // in
 
@@ -71,6 +75,11 @@ func NewTitleBar() *TitleBar {
 }
 
 // SelectionMode returns whether whether self is in selection mode.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the title bar is in selection mode.
+//
 func (self *TitleBar) SelectionMode() bool {
 	var _arg0 *C.HdyTitleBar // out
 	var _cret C.gboolean     // in

@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type Clamp struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 
 	*externglib.Object
@@ -66,6 +65,11 @@ func marshalClamper(p uintptr) (interface{}, error) {
 }
 
 // NewClamp creates a new Clamp.
+//
+// The function returns the following values:
+//
+//    - clamp: new Clamp.
+//
 func NewClamp() *Clamp {
 	var _cret *C.GtkWidget // in
 
@@ -80,6 +84,11 @@ func NewClamp() *Clamp {
 
 // MaximumSize gets the maximum size to allocate to the contained child. It is
 // the width if self is horizontal, or the height if it is vertical.
+//
+// The function returns the following values:
+//
+//    - gint: maximum size to allocate to the contained child.
+//
 func (self *Clamp) MaximumSize() int {
 	var _arg0 *C.HdyClamp // out
 	var _cret C.gint      // in
@@ -98,6 +107,12 @@ func (self *Clamp) MaximumSize() int {
 
 // TighteningThreshold gets the size starting from which the clamp will tighten
 // its grip on the child.
+//
+// The function returns the following values:
+//
+//    - gint: size starting from which the clamp will tighten its grip on the
+//      child.
+//
 func (self *Clamp) TighteningThreshold() int {
 	var _arg0 *C.HdyClamp // out
 	var _cret C.gint      // in

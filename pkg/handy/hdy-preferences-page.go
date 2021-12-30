@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type PreferencesPage struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalPreferencesPager(p uintptr) (interface{}, error) {
 }
 
 // NewPreferencesPage creates a new PreferencesPage.
+//
+// The function returns the following values:
+//
+//    - preferencesPage: new PreferencesPage.
+//
 func NewPreferencesPage() *PreferencesPage {
 	var _cret *C.GtkWidget // in
 
@@ -71,6 +75,11 @@ func NewPreferencesPage() *PreferencesPage {
 }
 
 // IconName gets the icon name for self, or NULL.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): icon name for self, or NULL.
+//
 func (self *PreferencesPage) IconName() string {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _cret *C.gchar              // in
@@ -90,6 +99,11 @@ func (self *PreferencesPage) IconName() string {
 }
 
 // Title gets the title of self, or NULL.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title of the self, or NULL.
+//
 func (self *PreferencesPage) Title() string {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _cret *C.gchar              // in
@@ -112,7 +126,7 @@ func (self *PreferencesPage) Title() string {
 //
 // The function takes the following parameters:
 //
-//    - iconName: icon name, or NULL.
+//    - iconName (optional): icon name, or NULL.
 //
 func (self *PreferencesPage) SetIconName(iconName string) {
 	var _arg0 *C.HdyPreferencesPage // out
@@ -133,7 +147,7 @@ func (self *PreferencesPage) SetIconName(iconName string) {
 //
 // The function takes the following parameters:
 //
-//    - title of the page, or NULL.
+//    - title (optional) of the page, or NULL.
 //
 func (self *PreferencesPage) SetTitle(title string) {
 	var _arg0 *C.HdyPreferencesPage // out

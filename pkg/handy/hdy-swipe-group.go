@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type SwipeGroup struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 
 	gtk.Buildable
@@ -48,6 +47,11 @@ func marshalSwipeGrouper(p uintptr) (interface{}, error) {
 }
 
 // NewSwipeGroup: create a new SwipeGroup object.
+//
+// The function returns the following values:
+//
+//    - swipeGroup: newly created SwipeGroup object.
+//
 func NewSwipeGroup() *SwipeGroup {
 	var _cret *C.HdySwipeGroup // in
 
@@ -80,6 +84,12 @@ func (self *SwipeGroup) AddSwipeable(swipeable Swipeabler) {
 }
 
 // Swipeables returns the list of swipeables associated with self.
+//
+// The function returns the following values:
+//
+//    - sList of swipeables. The list is owned by libhandy and should not be
+//      modified.
+//
 func (self *SwipeGroup) Swipeables() []Swipeabler {
 	var _arg0 *C.HdySwipeGroup // out
 	var _cret *C.GSList        // in
@@ -102,9 +112,13 @@ func (self *SwipeGroup) Swipeables() []Swipeabler {
 			}
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(Swipeabler)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(Swipeabler)
+				return ok
+			})
+			rv, ok := casted.(Swipeabler)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not handy.Swipeabler")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching handy.Swipeabler")
 			}
 			dst = rv
 		}

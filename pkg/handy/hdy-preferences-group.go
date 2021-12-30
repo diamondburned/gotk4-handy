@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type PreferencesGroup struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalPreferencesGrouper(p uintptr) (interface{}, error) {
 }
 
 // NewPreferencesGroup creates a new PreferencesGroup.
+//
+// The function returns the following values:
+//
+//    - preferencesGroup: new PreferencesGroup.
+//
 func NewPreferencesGroup() *PreferencesGroup {
 	var _cret *C.GtkWidget // in
 
@@ -70,6 +74,10 @@ func NewPreferencesGroup() *PreferencesGroup {
 	return _preferencesGroup
 }
 
+// The function returns the following values:
+//
+//    - utf8: description of self.
+//
 func (self *PreferencesGroup) Description() string {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _cret *C.gchar               // in
@@ -87,6 +95,11 @@ func (self *PreferencesGroup) Description() string {
 }
 
 // Title gets the title of self.
+//
+// The function returns the following values:
+//
+//    - utf8: title of self.
+//
 func (self *PreferencesGroup) Title() string {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _cret *C.gchar               // in

@@ -12,8 +12,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -65,6 +63,7 @@ func (l LeafletTransitionType) String() string {
 }
 
 type Leaflet struct {
+	_ [0]func() // equal guard
 	gtk.Container
 
 	*externglib.Object
@@ -144,6 +143,8 @@ func marshalLeafletter(p uintptr) (interface{}, error) {
 	return wrapLeaflet(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// The function returns the following values:
+//
 func NewLeaflet() *Leaflet {
 	var _cret *C.GtkWidget // in
 
@@ -164,6 +165,10 @@ func NewLeaflet() *Leaflet {
 //
 //    - direction: direction.
 //
+// The function returns the following values:
+//
+//    - widget (optional) previous or next child, or NULL if it doesn't exist.
+//
 func (self *Leaflet) AdjacentChild(direction NavigationDirection) gtk.Widgetter {
 	var _arg0 *C.HdyLeaflet            // out
 	var _arg1 C.HdyNavigationDirection // out
@@ -183,9 +188,13 @@ func (self *Leaflet) AdjacentChild(direction NavigationDirection) gtk.Widgetter 
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -196,6 +205,11 @@ func (self *Leaflet) AdjacentChild(direction NavigationDirection) gtk.Widgetter 
 
 // CanSwipeBack returns whether the Leaflet allows swiping to the previous
 // child.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if back swipe is enabled.
+//
 func (self *Leaflet) CanSwipeBack() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
@@ -215,6 +229,11 @@ func (self *Leaflet) CanSwipeBack() bool {
 }
 
 // CanSwipeForward returns whether the Leaflet allows swiping to the next child.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if forward swipe is enabled.
+//
 func (self *Leaflet) CanSwipeForward() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
@@ -240,6 +259,10 @@ func (self *Leaflet) CanSwipeForward() bool {
 //
 //    - name of the child to find.
 //
+// The function returns the following values:
+//
+//    - widget (optional): requested child of self.
+//
 func (self *Leaflet) ChildByName(name string) gtk.Widgetter {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 *C.gchar      // out
@@ -260,9 +283,13 @@ func (self *Leaflet) ChildByName(name string) gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -273,6 +300,11 @@ func (self *Leaflet) ChildByName(name string) gtk.Widgetter {
 
 // ChildTransitionDuration returns the amount of time (in milliseconds) that
 // transitions between children in self will take.
+//
+// The function returns the following values:
+//
+//    - guint: child transition duration.
+//
 func (self *Leaflet) ChildTransitionDuration() uint {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.guint       // in
@@ -291,6 +323,11 @@ func (self *Leaflet) ChildTransitionDuration() uint {
 
 // ChildTransitionRunning returns whether self is currently in a transition from
 // one page to another.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the transition is currently running, FALSE otherwise.
+//
 func (self *Leaflet) ChildTransitionRunning() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
@@ -310,6 +347,11 @@ func (self *Leaflet) ChildTransitionRunning() bool {
 }
 
 // Folded gets whether self is folded.
+//
+// The function returns the following values:
+//
+//    - ok: whether self is folded.
+//
 func (self *Leaflet) Folded() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
@@ -335,6 +377,10 @@ func (self *Leaflet) Folded() bool {
 //
 //    - folded: fold.
 //    - orientation: orientation.
+//
+// The function returns the following values:
+//
+//    - ok: whether self is homogeneous for the given fold and orientation.
 //
 func (self *Leaflet) Homogeneous(folded bool, orientation gtk.Orientation) bool {
 	var _arg0 *C.HdyLeaflet    // out
@@ -364,6 +410,11 @@ func (self *Leaflet) Homogeneous(folded bool, orientation gtk.Orientation) bool 
 
 // InterpolateSize returns whether the Leaflet is set up to interpolate between
 // the sizes of children on page switch.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if child sizes are interpolated.
+//
 func (self *Leaflet) InterpolateSize() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
@@ -384,6 +435,11 @@ func (self *Leaflet) InterpolateSize() bool {
 
 // ModeTransitionDuration returns the amount of time (in milliseconds) that
 // transitions between modes in self will take.
+//
+// The function returns the following values:
+//
+//    - guint: mode transition duration.
+//
 func (self *Leaflet) ModeTransitionDuration() uint {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.guint       // in
@@ -402,6 +458,11 @@ func (self *Leaflet) ModeTransitionDuration() uint {
 
 // TransitionType gets the type of animation that will be used for transitions
 // between modes and children in self.
+//
+// The function returns the following values:
+//
+//    - leafletTransitionType: current transition type of self.
+//
 func (self *Leaflet) TransitionType() LeafletTransitionType {
 	var _arg0 *C.HdyLeaflet              // out
 	var _cret C.HdyLeafletTransitionType // in
@@ -419,6 +480,11 @@ func (self *Leaflet) TransitionType() LeafletTransitionType {
 }
 
 // VisibleChild gets the visible child widget.
+//
+// The function returns the following values:
+//
+//    - widget: visible child widget.
+//
 func (self *Leaflet) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret *C.GtkWidget  // in
@@ -437,9 +503,13 @@ func (self *Leaflet) VisibleChild() gtk.Widgetter {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(gtk.Widgetter)
+			return ok
+		})
+		rv, ok := casted.(gtk.Widgetter)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 		}
 		_widget = rv
 	}
@@ -448,6 +518,11 @@ func (self *Leaflet) VisibleChild() gtk.Widgetter {
 }
 
 // VisibleChildName gets the name of the currently visible child widget.
+//
+// The function returns the following values:
+//
+//    - utf8: name of the visible child.
+//
 func (self *Leaflet) VisibleChildName() string {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret *C.gchar      // in
@@ -470,7 +545,7 @@ func (self *Leaflet) VisibleChildName() string {
 // The function takes the following parameters:
 //
 //    - child to insert.
-//    - sibling after which to insert child.
+//    - sibling (optional) after which to insert child.
 //
 func (self *Leaflet) InsertChildAfter(child, sibling gtk.Widgetter) {
 	var _arg0 *C.HdyLeaflet // out
@@ -496,6 +571,10 @@ func (self *Leaflet) InsertChildAfter(child, sibling gtk.Widgetter) {
 // The function takes the following parameters:
 //
 //    - direction: direction.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if visible child was changed, FALSE otherwise.
 //
 func (self *Leaflet) Navigate(direction NavigationDirection) bool {
 	var _arg0 *C.HdyLeaflet            // out
@@ -542,7 +621,7 @@ func (self *Leaflet) Prepend(child gtk.Widgetter) {
 // The function takes the following parameters:
 //
 //    - child to move, must be a child of self.
-//    - sibling to move child after, or NULL.
+//    - sibling (optional) to move child after, or NULL.
 //
 func (self *Leaflet) ReorderChildAfter(child, sibling gtk.Widgetter) {
 	var _arg0 *C.HdyLeaflet // out

@@ -12,8 +12,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -27,6 +25,7 @@ func init() {
 }
 
 type TabPage struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 }
 
@@ -45,6 +44,11 @@ func marshalTabPager(p uintptr) (interface{}, error) {
 }
 
 // Child gets the child of self.
+//
+// The function returns the following values:
+//
+//    - widget: child of self.
+//
 func (self *TabPage) Child() gtk.Widgetter {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GtkWidget  // in
@@ -63,9 +67,13 @@ func (self *TabPage) Child() gtk.Widgetter {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(gtk.Widgetter)
+			return ok
+		})
+		rv, ok := casted.(gtk.Widgetter)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 		}
 		_widget = rv
 	}
@@ -74,6 +82,11 @@ func (self *TabPage) Child() gtk.Widgetter {
 }
 
 // Icon gets the icon of self, see hdy_tab_page_set_icon().
+//
+// The function returns the following values:
+//
+//    - icon (optional) of self.
+//
 func (self *TabPage) Icon() gio.Iconner {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
@@ -90,9 +103,13 @@ func (self *TabPage) Icon() gio.Iconner {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gio.Iconner)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gio.Iconner)
+				return ok
+			})
+			rv, ok := casted.(gio.Iconner)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gio.Iconner")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
 			}
 			_icon = rv
 		}
@@ -103,6 +120,11 @@ func (self *TabPage) Icon() gio.Iconner {
 
 // IndicatorActivatable gets whether the indicator of self is activatable, see
 // hdy_tab_page_set_indicator_activatable().
+//
+// The function returns the following values:
+//
+//    - ok: whether the indicator is activatable.
+//
 func (self *TabPage) IndicatorActivatable() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
@@ -123,6 +145,11 @@ func (self *TabPage) IndicatorActivatable() bool {
 
 // IndicatorIcon gets the indicator icon of self, see
 // hdy_tab_page_set_indicator_icon().
+//
+// The function returns the following values:
+//
+//    - icon (optional): indicator icon of self.
+//
 func (self *TabPage) IndicatorIcon() gio.Iconner {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
@@ -139,9 +166,13 @@ func (self *TabPage) IndicatorIcon() gio.Iconner {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gio.Iconner)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gio.Iconner)
+				return ok
+			})
+			rv, ok := casted.(gio.Iconner)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gio.Iconner")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
 			}
 			_icon = rv
 		}
@@ -151,6 +182,11 @@ func (self *TabPage) IndicatorIcon() gio.Iconner {
 }
 
 // Loading gets whether self is loading, see hdy_tab_page_set_loading().
+//
+// The function returns the following values:
+//
+//    - ok: whether self is loading.
+//
 func (self *TabPage) Loading() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
@@ -171,6 +207,11 @@ func (self *TabPage) Loading() bool {
 
 // NeedsAttention gets whether self needs attention, see
 // hdy_tab_page_set_needs_attention().
+//
+// The function returns the following values:
+//
+//    - ok: whether self needs attention.
+//
 func (self *TabPage) NeedsAttention() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
@@ -193,6 +234,11 @@ func (self *TabPage) NeedsAttention() bool {
 // parent.
 //
 // See hdy_tab_view_add_page() and hdy_tab_view_close_page().
+//
+// The function returns the following values:
+//
+//    - tabPage (optional): parent page of self, or NULL.
+//
 func (self *TabPage) Parent() *TabPage {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.HdyTabPage // in
@@ -212,6 +258,11 @@ func (self *TabPage) Parent() *TabPage {
 }
 
 // Pinned gets whether self is pinned. See hdy_tab_view_set_page_pinned().
+//
+// The function returns the following values:
+//
+//    - ok: whether self is pinned.
+//
 func (self *TabPage) Pinned() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
@@ -231,6 +282,11 @@ func (self *TabPage) Pinned() bool {
 }
 
 // Selected gets whether self is selected. See hdy_tab_view_set_selected_page().
+//
+// The function returns the following values:
+//
+//    - ok: whether self is selected.
+//
 func (self *TabPage) Selected() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
@@ -250,6 +306,11 @@ func (self *TabPage) Selected() bool {
 }
 
 // Title gets the title of self, see hdy_tab_page_set_title().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title of self.
+//
 func (self *TabPage) Title() string {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.gchar      // in
@@ -269,6 +330,11 @@ func (self *TabPage) Title() string {
 }
 
 // Tooltip gets the tooltip of self, see hdy_tab_page_set_tooltip().
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): tooltip of self.
+//
 func (self *TabPage) Tooltip() string {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.gchar      // in
@@ -294,7 +360,7 @@ func (self *TabPage) Tooltip() string {
 //
 // The function takes the following parameters:
 //
-//    - icon of self.
+//    - icon (optional) of self.
 //
 func (self *TabPage) SetIcon(icon gio.Iconner) {
 	var _arg0 *C.HdyTabPage // out
@@ -350,7 +416,7 @@ func (self *TabPage) SetIndicatorActivatable(activatable bool) {
 //
 // The function takes the following parameters:
 //
-//    - indicatorIcon: indicator icon of self.
+//    - indicatorIcon (optional): indicator icon of self.
 //
 func (self *TabPage) SetIndicatorIcon(indicatorIcon gio.Iconner) {
 	var _arg0 *C.HdyTabPage // out
@@ -422,7 +488,7 @@ func (self *TabPage) SetNeedsAttention(needsAttention bool) {
 //
 // The function takes the following parameters:
 //
-//    - title of self.
+//    - title (optional) of self.
 //
 func (self *TabPage) SetTitle(title string) {
 	var _arg0 *C.HdyTabPage // out
@@ -446,7 +512,7 @@ func (self *TabPage) SetTitle(title string) {
 //
 // The function takes the following parameters:
 //
-//    - tooltip of self.
+//    - tooltip (optional) of self.
 //
 func (self *TabPage) SetTooltip(tooltip string) {
 	var _arg0 *C.HdyTabPage // out
@@ -464,6 +530,7 @@ func (self *TabPage) SetTooltip(tooltip string) {
 }
 
 type TabView struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -496,7 +563,96 @@ func marshalTabViewer(p uintptr) (interface{}, error) {
 	return wrapTabView(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectClosePage: this signal is emitted after hdy_tab_view_close_page() has
+// been called for page.
+//
+// The handler is expected to call hdy_tab_view_close_page_finish() to confirm
+// or reject the closing.
+//
+// The default handler will immediately confirm closing for non-pinned pages, or
+// reject it for pinned pages, equivalent to the following example:
+//
+//    static gboolean
+//    close_page_cb (HdyTabView *view,
+//                   HdyTabPage *page,
+//                   gpointer    user_data)
+//    {
+//      hdy_tab_view_close_page_finish (view, page, !hdy_tab_page_get_pinned (page));
+//
+//      return GDK_EVENT_STOP;
+//    }
+//
+// The hdy_tab_view_close_page_finish() doesn't have to happen during the
+// handler, so can be used to do asynchronous checks before confirming the
+// closing.
+//
+// A typical reason to connect to this signal is to show a confirmation dialog
+// for closing a tab.
+func (self *TabView) ConnectClosePage(f func(page TabPage) bool) externglib.SignalHandle {
+	return self.Connect("close-page", f)
+}
+
+// ConnectCreateWindow: this signal is emitted when a tab is dropped onto
+// desktop and should be transferred into a new window.
+//
+// The signal handler is expected to create a new window, position it as needed
+// and return its TabView that the page will be transferred into.
+func (self *TabView) ConnectCreateWindow(f func() TabView) externglib.SignalHandle {
+	return self.Connect("create-window", f)
+}
+
+// ConnectIndicatorActivated: this signal is emitted after the indicator icon on
+// page has been activated.
+//
+// See TabPage:indicator-icon and TabPage:indicator-activatable.
+func (self *TabView) ConnectIndicatorActivated(f func(page TabPage)) externglib.SignalHandle {
+	return self.Connect("indicator-activated", f)
+}
+
+// ConnectPageAttached: this signal is emitted when a page has been created or
+// transferred to self.
+//
+// A typical reason to connect to this signal would be to connect to page
+// signals for things such as updating window title.
+func (self *TabView) ConnectPageAttached(f func(page TabPage, position int)) externglib.SignalHandle {
+	return self.Connect("page-attached", f)
+}
+
+// ConnectPageDetached: this signal is emitted when a page has been removed or
+// transferred to another view.
+//
+// A typical reason to connect to this signal would be to disconnect signal
+// handlers connected in the TabView::page-attached handler.
+//
+// It is important not to try and destroy the page child in the handler of this
+// function as the child might merely be moved to another window; use child
+// dispose handler for that or do it in sync with your
+// hdy_tab_view_close_page_finish() calls.
+func (self *TabView) ConnectPageDetached(f func(page TabPage, position int)) externglib.SignalHandle {
+	return self.Connect("page-detached", f)
+}
+
+// ConnectPageReordered: this signal is emitted after page has been reordered to
+// position.
+func (self *TabView) ConnectPageReordered(f func(page TabPage, position int)) externglib.SignalHandle {
+	return self.Connect("page-reordered", f)
+}
+
+// ConnectSetupMenu: this signal is emitted before a context menu is opened for
+// page, and after it's closed, in the latter case the page will be set to NULL.
+//
+// It can be used to set up menu actions before showing the menu, for example
+// disable actions not applicable to page.
+func (self *TabView) ConnectSetupMenu(f func(page TabPage)) externglib.SignalHandle {
+	return self.Connect("setup-menu", f)
+}
+
 // NewTabView creates a new TabView widget.
+//
+// The function returns the following values:
+//
+//    - tabView: new TabView.
+//
 func NewTabView() *TabView {
 	var _cret *C.HdyTabView // in
 
@@ -520,7 +676,11 @@ func NewTabView() *TabView {
 // The function takes the following parameters:
 //
 //    - child: widget to add.
-//    - parent page for child, or NULL.
+//    - parent (optional) page for child, or NULL.
+//
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
 //
 func (self *TabView) AddPage(child gtk.Widgetter, parent *TabPage) *TabPage {
 	var _arg0 *C.HdyTabView // out
@@ -552,6 +712,10 @@ func (self *TabView) AddPage(child gtk.Widgetter, parent *TabPage) *TabPage {
 //
 //    - child: widget to add.
 //
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
+//
 func (self *TabView) Append(child gtk.Widgetter) *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
@@ -576,6 +740,10 @@ func (self *TabView) Append(child gtk.Widgetter) *TabPage {
 // The function takes the following parameters:
 //
 //    - child: widget to add.
+//
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
 //
 func (self *TabView) AppendPinned(child gtk.Widgetter) *TabPage {
 	var _arg0 *C.HdyTabView // out
@@ -721,6 +889,11 @@ func (self *TabView) ClosePagesBefore(page *TabPage) {
 }
 
 // DefaultIcon gets default icon of self, see hdy_tab_view_set_default_icon().
+//
+// The function returns the following values:
+//
+//    - icon: default icon of self.
+//
 func (self *TabView) DefaultIcon() gio.Iconner {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GIcon      // in
@@ -739,9 +912,13 @@ func (self *TabView) DefaultIcon() gio.Iconner {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(gio.Iconner)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(gio.Iconner)
+			return ok
+		})
+		rv, ok := casted.(gio.Iconner)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not gio.Iconner")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
 		}
 		_icon = rv
 	}
@@ -752,6 +929,11 @@ func (self *TabView) DefaultIcon() gio.Iconner {
 // IsTransferringPage: whether a page is being transferred.
 //
 // Gets the value of TabView:is-transferring-page property.
+//
+// The function returns the following values:
+//
+//    - ok: whether a page is being transferred.
+//
 func (self *TabView) IsTransferringPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
@@ -772,6 +954,11 @@ func (self *TabView) IsTransferringPage() bool {
 
 // MenuModel gets the tab context menu model for self, see
 // hdy_tab_view_set_menu_model().
+//
+// The function returns the following values:
+//
+//    - menuModel (optional): tab context menu model for self.
+//
 func (self *TabView) MenuModel() gio.MenuModeller {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GMenuModel // in
@@ -788,9 +975,13 @@ func (self *TabView) MenuModel() gio.MenuModeller {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gio.MenuModeller)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gio.MenuModeller)
+				return ok
+			})
+			rv, ok := casted.(gio.MenuModeller)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gio.MenuModeller")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.MenuModeller")
 			}
 			_menuModel = rv
 		}
@@ -800,6 +991,11 @@ func (self *TabView) MenuModel() gio.MenuModeller {
 }
 
 // NPages gets the number of pages in self.
+//
+// The function returns the following values:
+//
+//    - gint: number of pages in self.
+//
 func (self *TabView) NPages() int {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gint        // in
@@ -819,6 +1015,11 @@ func (self *TabView) NPages() int {
 // NPinnedPages gets the number of pinned pages in self.
 //
 // See hdy_tab_view_set_page_pinned().
+//
+// The function returns the following values:
+//
+//    - gint: number of pinned pages in self.
+//
 func (self *TabView) NPinnedPages() int {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gint        // in
@@ -840,6 +1041,10 @@ func (self *TabView) NPinnedPages() int {
 // The function takes the following parameters:
 //
 //    - position: index of the page in self, starting from 0.
+//
+// The function returns the following values:
+//
+//    - tabPage: page object at position.
 //
 func (self *TabView) NthPage(position int) *TabPage {
 	var _arg0 *C.HdyTabView // out
@@ -866,6 +1071,10 @@ func (self *TabView) NthPage(position int) *TabPage {
 //
 //    - child in self.
 //
+// The function returns the following values:
+//
+//    - tabPage representing child.
+//
 func (self *TabView) Page(child gtk.Widgetter) *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
@@ -891,6 +1100,10 @@ func (self *TabView) Page(child gtk.Widgetter) *TabPage {
 //
 //    - page of self.
 //
+// The function returns the following values:
+//
+//    - gint: position of page in self.
+//
 func (self *TabView) PagePosition(page *TabPage) int {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
@@ -912,6 +1125,11 @@ func (self *TabView) PagePosition(page *TabPage) int {
 
 // Pages returns a Model containing the pages of self. This model can be used to
 // keep an up to date view of the pages.
+//
+// The function returns the following values:
+//
+//    - listModel: model containing pages of self.
+//
 func (self *TabView) Pages() gio.ListModeller {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GListModel // in
@@ -930,9 +1148,13 @@ func (self *TabView) Pages() gio.ListModeller {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(gio.ListModeller)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(gio.ListModeller)
+			return ok
+		})
+		rv, ok := casted.(gio.ListModeller)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not gio.ListModeller")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.ListModeller")
 		}
 		_listModel = rv
 	}
@@ -941,6 +1163,11 @@ func (self *TabView) Pages() gio.ListModeller {
 }
 
 // SelectedPage gets the currently selected page in self.
+//
+// The function returns the following values:
+//
+//    - tabPage (optional): selected page in self.
+//
 func (self *TabView) SelectedPage() *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.HdyTabPage // in
@@ -961,6 +1188,11 @@ func (self *TabView) SelectedPage() *TabPage {
 
 // ShortcutWidget gets the shortcut widget for self, see
 // hdy_tab_view_set_shortcut_widget().
+//
+// The function returns the following values:
+//
+//    - widget (optional): shortcut widget for self.
+//
 func (self *TabView) ShortcutWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GtkWidget  // in
@@ -977,9 +1209,13 @@ func (self *TabView) ShortcutWidget() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -997,6 +1233,10 @@ func (self *TabView) ShortcutWidget() gtk.Widgetter {
 //
 //    - child: widget to add.
 //    - position to add child at, starting from 0.
+//
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
 //
 func (self *TabView) Insert(child gtk.Widgetter, position int) *TabPage {
 	var _arg0 *C.HdyTabView // out
@@ -1030,6 +1270,10 @@ func (self *TabView) Insert(child gtk.Widgetter, position int) *TabPage {
 //    - child: widget to add.
 //    - position to add child at, starting from 0.
 //
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
+//
 func (self *TabView) InsertPinned(child gtk.Widgetter, position int) *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
@@ -1058,6 +1302,10 @@ func (self *TabView) InsertPinned(child gtk.Widgetter, position int) *TabPage {
 //
 //    - child: widget to add.
 //
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
+//
 func (self *TabView) Prepend(child gtk.Widgetter) *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
@@ -1083,6 +1331,10 @@ func (self *TabView) Prepend(child gtk.Widgetter) *TabPage {
 //
 //    - child: widget to add.
 //
+// The function returns the following values:
+//
+//    - tabPage: page object representing child.
+//
 func (self *TabView) PrependPinned(child gtk.Widgetter) *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
@@ -1107,6 +1359,10 @@ func (self *TabView) PrependPinned(child gtk.Widgetter) *TabPage {
 // The function takes the following parameters:
 //
 //    - page of self.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if page was moved, FALSE otherwise.
 //
 func (self *TabView) ReorderBackward(page *TabPage) bool {
 	var _arg0 *C.HdyTabView // out
@@ -1135,6 +1391,10 @@ func (self *TabView) ReorderBackward(page *TabPage) bool {
 //
 //    - page of self.
 //
+// The function returns the following values:
+//
+//    - ok: TRUE if page was moved, FALSE otherwise.
+//
 func (self *TabView) ReorderFirst(page *TabPage) bool {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
@@ -1162,6 +1422,10 @@ func (self *TabView) ReorderFirst(page *TabPage) bool {
 //
 //    - page of self.
 //
+// The function returns the following values:
+//
+//    - ok: TRUE if page was moved, FALSE otherwise.
+//
 func (self *TabView) ReorderForward(page *TabPage) bool {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
@@ -1188,6 +1452,10 @@ func (self *TabView) ReorderForward(page *TabPage) bool {
 // The function takes the following parameters:
 //
 //    - page of self.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if page was moved, FALSE otherwise.
 //
 func (self *TabView) ReorderLast(page *TabPage) bool {
 	var _arg0 *C.HdyTabView // out
@@ -1220,6 +1488,10 @@ func (self *TabView) ReorderLast(page *TabPage) bool {
 //    - page of self.
 //    - position to insert the page at, starting at 0.
 //
+// The function returns the following values:
+//
+//    - ok: TRUE if page was moved, FALSE otherwise.
+//
 func (self *TabView) ReorderPage(page *TabPage, position int) bool {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
@@ -1247,6 +1519,11 @@ func (self *TabView) ReorderPage(page *TabPage, position int) bool {
 // SelectNextPage selects the page after the currently selected page.
 //
 // If the last page was already selected, this function does nothing.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the selected page was changed, FALSE otherwise.
+//
 func (self *TabView) SelectNextPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
@@ -1268,6 +1545,11 @@ func (self *TabView) SelectNextPage() bool {
 // SelectPreviousPage selects the page before the currently selected page.
 //
 // If the first page was already selected, this function does nothing.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the selected page was changed, FALSE otherwise.
+//
 func (self *TabView) SelectPreviousPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
@@ -1321,7 +1603,7 @@ func (self *TabView) SetDefaultIcon(defaultIcon gio.Iconner) {
 //
 // The function takes the following parameters:
 //
-//    - menuModel: menu model.
+//    - menuModel (optional): menu model.
 //
 func (self *TabView) SetMenuModel(menuModel gio.MenuModeller) {
 	var _arg0 *C.HdyTabView // out
@@ -1415,7 +1697,7 @@ func (self *TabView) SetSelectedPage(selectedPage *TabPage) {
 //
 // The function takes the following parameters:
 //
-//    - widget: shortcut widget.
+//    - widget (optional): shortcut widget.
 //
 func (self *TabView) SetShortcutWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabView // out
@@ -1459,88 +1741,4 @@ func (self *TabView) TransferPage(page *TabPage, otherView *TabView, position in
 	runtime.KeepAlive(page)
 	runtime.KeepAlive(otherView)
 	runtime.KeepAlive(position)
-}
-
-// ConnectClosePage: this signal is emitted after hdy_tab_view_close_page() has
-// been called for page.
-//
-// The handler is expected to call hdy_tab_view_close_page_finish() to confirm
-// or reject the closing.
-//
-// The default handler will immediately confirm closing for non-pinned pages, or
-// reject it for pinned pages, equivalent to the following example:
-//
-//    static gboolean
-//    close_page_cb (HdyTabView *view,
-//                   HdyTabPage *page,
-//                   gpointer    user_data)
-//    {
-//      hdy_tab_view_close_page_finish (view, page, !hdy_tab_page_get_pinned (page));
-//
-//      return GDK_EVENT_STOP;
-//    }
-//
-// The hdy_tab_view_close_page_finish() doesn't have to happen during the
-// handler, so can be used to do asynchronous checks before confirming the
-// closing.
-//
-// A typical reason to connect to this signal is to show a confirmation dialog
-// for closing a tab.
-func (self *TabView) ConnectClosePage(f func(page TabPage) bool) externglib.SignalHandle {
-	return self.Connect("close-page", f)
-}
-
-// ConnectCreateWindow: this signal is emitted when a tab is dropped onto
-// desktop and should be transferred into a new window.
-//
-// The signal handler is expected to create a new window, position it as needed
-// and return its TabView that the page will be transferred into.
-func (self *TabView) ConnectCreateWindow(f func() TabView) externglib.SignalHandle {
-	return self.Connect("create-window", f)
-}
-
-// ConnectIndicatorActivated: this signal is emitted after the indicator icon on
-// page has been activated.
-//
-// See TabPage:indicator-icon and TabPage:indicator-activatable.
-func (self *TabView) ConnectIndicatorActivated(f func(page TabPage)) externglib.SignalHandle {
-	return self.Connect("indicator-activated", f)
-}
-
-// ConnectPageAttached: this signal is emitted when a page has been created or
-// transferred to self.
-//
-// A typical reason to connect to this signal would be to connect to page
-// signals for things such as updating window title.
-func (self *TabView) ConnectPageAttached(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-attached", f)
-}
-
-// ConnectPageDetached: this signal is emitted when a page has been removed or
-// transferred to another view.
-//
-// A typical reason to connect to this signal would be to disconnect signal
-// handlers connected in the TabView::page-attached handler.
-//
-// It is important not to try and destroy the page child in the handler of this
-// function as the child might merely be moved to another window; use child
-// dispose handler for that or do it in sync with your
-// hdy_tab_view_close_page_finish() calls.
-func (self *TabView) ConnectPageDetached(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-detached", f)
-}
-
-// ConnectPageReordered: this signal is emitted after page has been reordered to
-// position.
-func (self *TabView) ConnectPageReordered(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-reordered", f)
-}
-
-// ConnectSetupMenu: this signal is emitted before a context menu is opened for
-// page, and after it's closed, in the latter case the page will be set to NULL.
-//
-// It can be used to set up menu actions before showing the menu, for example
-// disable actions not applicable to page.
-func (self *TabView) ConnectSetupMenu(f func(page TabPage)) externglib.SignalHandle {
-	return self.Connect("setup-menu", f)
 }

@@ -12,8 +12,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/pango"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -26,6 +24,7 @@ func init() {
 }
 
 type ViewSwitcher struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -59,6 +58,11 @@ func marshalViewSwitcherer(p uintptr) (interface{}, error) {
 }
 
 // NewViewSwitcher creates a new ViewSwitcher widget.
+//
+// The function returns the following values:
+//
+//    - viewSwitcher: new ViewSwitcher.
+//
 func NewViewSwitcher() *ViewSwitcher {
 	var _cret *C.GtkWidget // in
 
@@ -73,6 +77,11 @@ func NewViewSwitcher() *ViewSwitcher {
 
 // NarrowEllipsize: get the ellipsizing position of the narrow mode label. See
 // hdy_view_switcher_set_narrow_ellipsize().
+//
+// The function returns the following values:
+//
+//    - ellipsizeMode: EllipsizeMode.
+//
 func (self *ViewSwitcher) NarrowEllipsize() pango.EllipsizeMode {
 	var _arg0 *C.HdyViewSwitcher   // out
 	var _cret C.PangoEllipsizeMode // in
@@ -90,6 +99,11 @@ func (self *ViewSwitcher) NarrowEllipsize() pango.EllipsizeMode {
 }
 
 // Policy gets the policy of self.
+//
+// The function returns the following values:
+//
+//    - viewSwitcherPolicy: policy of self.
+//
 func (self *ViewSwitcher) Policy() ViewSwitcherPolicy {
 	var _arg0 *C.HdyViewSwitcher      // out
 	var _cret C.HdyViewSwitcherPolicy // in
@@ -109,6 +123,11 @@ func (self *ViewSwitcher) Policy() ViewSwitcherPolicy {
 // Stack: get the Stack being controlled by the ViewSwitcher.
 //
 // See: hdy_view_switcher_set_stack().
+//
+// The function returns the following values:
+//
+//    - stack (optional) or NULL if none has been set.
+//
 func (self *ViewSwitcher) Stack() *gtk.Stack {
 	var _arg0 *C.HdyViewSwitcher // out
 	var _cret *C.GtkStack        // in
@@ -186,7 +205,7 @@ func (self *ViewSwitcher) SetPolicy(policy ViewSwitcherPolicy) {
 //
 // The function takes the following parameters:
 //
-//    - stack: Stack.
+//    - stack (optional): Stack.
 //
 func (self *ViewSwitcher) SetStack(stack *gtk.Stack) {
 	var _arg0 *C.HdyViewSwitcher // out

@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type StatusPage struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -58,6 +57,11 @@ func marshalStatusPager(p uintptr) (interface{}, error) {
 }
 
 // NewStatusPage creates a new StatusPage.
+//
+// The function returns the following values:
+//
+//    - statusPage: new StatusPage.
+//
 func NewStatusPage() *StatusPage {
 	var _cret *C.GtkWidget // in
 
@@ -71,6 +75,11 @@ func NewStatusPage() *StatusPage {
 }
 
 // Description gets the description for self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): description for self, or NULL.
+//
 func (self *StatusPage) Description() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
@@ -90,6 +99,11 @@ func (self *StatusPage) Description() string {
 }
 
 // IconName gets the icon name for self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): icon name for self.
+//
 func (self *StatusPage) IconName() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
@@ -109,6 +123,11 @@ func (self *StatusPage) IconName() string {
 }
 
 // Title gets the title for self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title for self, or NULL.
+//
 func (self *StatusPage) Title() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
@@ -131,7 +150,7 @@ func (self *StatusPage) Title() string {
 //
 // The function takes the following parameters:
 //
-//    - description: description.
+//    - description (optional): description.
 //
 func (self *StatusPage) SetDescription(description string) {
 	var _arg0 *C.HdyStatusPage // out
@@ -152,7 +171,7 @@ func (self *StatusPage) SetDescription(description string) {
 //
 // The function takes the following parameters:
 //
-//    - iconName: icon name.
+//    - iconName (optional): icon name.
 //
 func (self *StatusPage) SetIconName(iconName string) {
 	var _arg0 *C.HdyStatusPage // out
@@ -173,7 +192,7 @@ func (self *StatusPage) SetIconName(iconName string) {
 //
 // The function takes the following parameters:
 //
-//    - title: title.
+//    - title (optional): title.
 //
 func (self *StatusPage) SetTitle(title string) {
 	var _arg0 *C.HdyStatusPage // out

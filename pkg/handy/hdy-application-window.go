@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type ApplicationWindow struct {
+	_ [0]func() // equal guard
 	gtk.ApplicationWindow
 }
 
@@ -70,6 +69,11 @@ func marshalApplicationWindower(p uintptr) (interface{}, error) {
 }
 
 // NewApplicationWindow creates a new ApplicationWindow.
+//
+// The function returns the following values:
+//
+//    - applicationWindow: newly created ApplicationWindow.
+//
 func NewApplicationWindow() *ApplicationWindow {
 	var _cret *C.GtkWidget // in
 

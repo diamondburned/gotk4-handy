@@ -9,8 +9,6 @@ import (
 	externglib "github.com/diamondburned/gotk4/pkg/core/glib"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -23,6 +21,7 @@ func init() {
 }
 
 type ValueObject struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 }
 
@@ -45,6 +44,10 @@ func marshalValueObjector(p uintptr) (interface{}, error) {
 // The function takes the following parameters:
 //
 //    - value to store.
+//
+// The function returns the following values:
+//
+//    - valueObject: new ValueObject.
 //
 func NewValueObject(value *externglib.Value) *ValueObject {
 	var _arg1 *C.GValue         // out
@@ -82,6 +85,11 @@ func (value *ValueObject) CopyValue(dest *externglib.Value) {
 
 // DupString returns a copy of the contained string if the value is of type
 // TYPE_STRING.
+//
+// The function returns the following values:
+//
+//    - utf8: copy of the contained string.
+//
 func (value *ValueObject) DupString() string {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.gchar          // in
@@ -100,6 +108,11 @@ func (value *ValueObject) DupString() string {
 }
 
 // String returns the contained string if the value is of type TYPE_STRING.
+//
+// The function returns the following values:
+//
+//    - utf8: contained string.
+//
 func (value *ValueObject) String() string {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.gchar          // in
@@ -117,6 +130,11 @@ func (value *ValueObject) String() string {
 }
 
 // Value: return the contained value.
+//
+// The function returns the following values:
+//
+//    - ret: contained #GValue.
+//
 func (value *ValueObject) Value() *externglib.Value {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.GValue         // in

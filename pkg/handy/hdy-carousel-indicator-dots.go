@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type CarouselIndicatorDots struct {
+	_ [0]func() // equal guard
 	gtk.DrawingArea
 
 	*externglib.Object
@@ -64,6 +63,11 @@ func marshalCarouselIndicatorDotser(p uintptr) (interface{}, error) {
 }
 
 // NewCarouselIndicatorDots: create a new CarouselIndicatorDots widget.
+//
+// The function returns the following values:
+//
+//    - carouselIndicatorDots: newly created CarouselIndicatorDots widget.
+//
 func NewCarouselIndicatorDots() *CarouselIndicatorDots {
 	var _cret *C.GtkWidget // in
 
@@ -79,6 +83,11 @@ func NewCarouselIndicatorDots() *CarouselIndicatorDots {
 // Carousel: get the Carousel the indicator uses.
 //
 // See: hdy_carousel_indicator_dots_set_carousel().
+//
+// The function returns the following values:
+//
+//    - carousel (optional) or NULL if none has been set.
+//
 func (self *CarouselIndicatorDots) Carousel() *Carousel {
 	var _arg0 *C.HdyCarouselIndicatorDots // out
 	var _cret *C.HdyCarousel              // in
@@ -101,7 +110,7 @@ func (self *CarouselIndicatorDots) Carousel() *Carousel {
 //
 // The function takes the following parameters:
 //
-//    - carousel: Carousel.
+//    - carousel (optional): Carousel.
 //
 func (self *CarouselIndicatorDots) SetCarousel(carousel *Carousel) {
 	var _arg0 *C.HdyCarouselIndicatorDots // out

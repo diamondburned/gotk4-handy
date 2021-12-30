@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type Keypad struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -62,8 +61,12 @@ func marshalKeypadder(p uintptr) (interface{}, error) {
 // The function takes the following parameters:
 //
 //    - symbolsVisible: whether the hash, plus, and asterisk symbols should be
-//    visible.
+//      visible.
 //    - lettersVisible: whether the letters below the digits should be visible.
+//
+// The function returns the following values:
+//
+//    - keypad: newly created Keypad widget.
 //
 func NewKeypad(symbolsVisible, lettersVisible bool) *Keypad {
 	var _arg1 C.gboolean   // out
@@ -89,6 +92,11 @@ func NewKeypad(symbolsVisible, lettersVisible bool) *Keypad {
 }
 
 // ColumnSpacing returns the amount of space between the columns of self.
+//
+// The function returns the following values:
+//
+//    - guint: column spacing of self.
+//
 func (self *Keypad) ColumnSpacing() uint {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.guint      // in
@@ -107,6 +115,11 @@ func (self *Keypad) ColumnSpacing() uint {
 
 // EndAction returns the widget for the lower right corner (or left, in RTL
 // locales) of self.
+//
+// The function returns the following values:
+//
+//    - widget (optional): end action widget.
+//
 func (self *Keypad) EndAction() gtk.Widgetter {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkWidget // in
@@ -123,9 +136,13 @@ func (self *Keypad) EndAction() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -135,6 +152,11 @@ func (self *Keypad) EndAction() gtk.Widgetter {
 }
 
 // Entry: get the connected entry. See hdy_keypad_set_entry() for details.
+//
+// The function returns the following values:
+//
+//    - entry: set Entry or NULL if no widget was set.
+//
 func (self *Keypad) Entry() *gtk.Entry {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkEntry  // in
@@ -187,6 +209,11 @@ func (self *Keypad) Entry() *gtk.Entry {
 
 // LettersVisible returns whether self should display the standard letters below
 // the digits on its buttons.
+//
+// The function returns the following values:
+//
+//    - ok: whether the letters below the digits should be visible.
+//
 func (self *Keypad) LettersVisible() bool {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.gboolean   // in
@@ -206,6 +233,11 @@ func (self *Keypad) LettersVisible() bool {
 }
 
 // RowSpacing returns the amount of space between the rows of self.
+//
+// The function returns the following values:
+//
+//    - guint: row spacing of self.
+//
 func (self *Keypad) RowSpacing() uint {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.guint      // in
@@ -224,6 +256,11 @@ func (self *Keypad) RowSpacing() uint {
 
 // StartAction returns the widget for the lower left corner (or right, in RTL
 // locales) of self.
+//
+// The function returns the following values:
+//
+//    - widget (optional): start action widget.
+//
 func (self *Keypad) StartAction() gtk.Widgetter {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkWidget // in
@@ -240,9 +277,13 @@ func (self *Keypad) StartAction() gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -256,6 +297,11 @@ func (self *Keypad) StartAction() gtk.Widgetter {
 //
 // Returns Whether self should display the hash and asterisk buttons, and should
 // display the plus symbol at the bottom of its 0 button.
+//
+// The function returns the following values:
+//
+//    - ok: whether the hash, plus, and asterisk symbols should be visible.
+//
 func (self *Keypad) SymbolsVisible() bool {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.gboolean   // in
@@ -297,7 +343,7 @@ func (self *Keypad) SetColumnSpacing(spacing uint) {
 //
 // The function takes the following parameters:
 //
-//    - endAction: end action widget.
+//    - endAction (optional): end action widget.
 //
 func (self *Keypad) SetEndAction(endAction gtk.Widgetter) {
 	var _arg0 *C.HdyKeypad // out
@@ -318,7 +364,7 @@ func (self *Keypad) SetEndAction(endAction gtk.Widgetter) {
 //
 // The function takes the following parameters:
 //
-//    - entry: Entry.
+//    - entry (optional): Entry.
 //
 func (self *Keypad) SetEntry(entry *gtk.Entry) {
 	var _arg0 *C.HdyKeypad // out
@@ -378,7 +424,7 @@ func (self *Keypad) SetRowSpacing(spacing uint) {
 //
 // The function takes the following parameters:
 //
-//    - startAction: start action widget.
+//    - startAction (optional): start action widget.
 //
 func (self *Keypad) SetStartAction(startAction gtk.Widgetter) {
 	var _arg0 *C.HdyKeypad // out
@@ -400,7 +446,7 @@ func (self *Keypad) SetStartAction(startAction gtk.Widgetter) {
 // The function takes the following parameters:
 //
 //    - symbolsVisible: whether the hash, plus, and asterisk symbols should be
-//    visible.
+//      visible.
 //
 func (self *Keypad) SetSymbolsVisible(symbolsVisible bool) {
 	var _arg0 *C.HdyKeypad // out

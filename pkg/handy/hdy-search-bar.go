@@ -13,8 +13,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -27,6 +25,7 @@ func init() {
 }
 
 type SearchBar struct {
+	_ [0]func() // equal guard
 	gtk.Bin
 }
 
@@ -61,6 +60,11 @@ func marshalSearchBarrer(p uintptr) (interface{}, error) {
 
 // NewSearchBar creates a SearchBar. You will need to tell it about which widget
 // is going to be your text entry using hdy_search_bar_connect_entry().
+//
+// The function returns the following values:
+//
+//    - searchBar: new SearchBar.
+//
 func NewSearchBar() *SearchBar {
 	var _cret *C.GtkWidget // in
 
@@ -95,6 +99,11 @@ func (self *SearchBar) ConnectEntry(entry *gtk.Entry) {
 }
 
 // SearchMode returns whether the search mode is on or off.
+//
+// The function returns the following values:
+//
+//    - ok: whether search mode is toggled on.
+//
 func (self *SearchBar) SearchMode() bool {
 	var _arg0 *C.HdySearchBar // out
 	var _cret C.gboolean      // in
@@ -114,6 +123,11 @@ func (self *SearchBar) SearchMode() bool {
 }
 
 // ShowCloseButton returns whether the close button is shown.
+//
+// The function returns the following values:
+//
+//    - ok: whether the close button is shown.
+//
 func (self *SearchBar) ShowCloseButton() bool {
 	var _arg0 *C.HdySearchBar // out
 	var _cret C.gboolean      // in
@@ -171,6 +185,12 @@ func (self *SearchBar) ShowCloseButton() bool {
 // The function takes the following parameters:
 //
 //    - event containing key press events.
+//
+// The function returns the following values:
+//
+//    - ok: GDK_EVENT_STOP if the key press event resulted in text being entered
+//      in the search entry (and revealing the search bar if necessary),
+//      GDK_EVENT_PROPAGATE otherwise.
 //
 func (self *SearchBar) HandleEvent(event *gdk.Event) bool {
 	var _arg0 *C.HdySearchBar // out

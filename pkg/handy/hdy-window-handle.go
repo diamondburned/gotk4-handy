@@ -10,8 +10,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -24,6 +22,7 @@ func init() {
 }
 
 type WindowHandle struct {
+	_ [0]func() // equal guard
 	gtk.EventBox
 }
 
@@ -59,6 +58,11 @@ func marshalWindowHandler(p uintptr) (interface{}, error) {
 }
 
 // NewWindowHandle creates a new WindowHandle.
+//
+// The function returns the following values:
+//
+//    - windowHandle: newly created WindowHandle.
+//
 func NewWindowHandle() *WindowHandle {
 	var _cret *C.GtkWidget // in
 

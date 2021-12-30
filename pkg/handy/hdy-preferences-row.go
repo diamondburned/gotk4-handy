@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type PreferencesRow struct {
+	_ [0]func() // equal guard
 	gtk.ListBoxRow
 }
 
@@ -76,6 +75,11 @@ func marshalPreferencesRower(p uintptr) (interface{}, error) {
 }
 
 // NewPreferencesRow creates a new PreferencesRow.
+//
+// The function returns the following values:
+//
+//    - preferencesRow: new PreferencesRow.
+//
 func NewPreferencesRow() *PreferencesRow {
 	var _cret *C.GtkWidget // in
 
@@ -89,6 +93,11 @@ func NewPreferencesRow() *PreferencesRow {
 }
 
 // Title gets the title of the preference represented by self.
+//
+// The function returns the following values:
+//
+//    - utf8 (optional): title of the preference represented by self, or NULL.
+//
 func (self *PreferencesRow) Title() string {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _cret *C.gchar             // in
@@ -109,6 +118,12 @@ func (self *PreferencesRow) Title() string {
 
 // UseUnderline gets whether an embedded underline in the text of the title
 // indicates a mnemonic. See hdy_preferences_row_set_use_underline().
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if an embedded underline in the title indicates the mnemonic
+//      accelerator keys.
+//
 func (self *PreferencesRow) UseUnderline() bool {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _cret C.gboolean           // in
@@ -131,7 +146,7 @@ func (self *PreferencesRow) UseUnderline() bool {
 //
 // The function takes the following parameters:
 //
-//    - title: title, or NULL.
+//    - title (optional): title, or NULL.
 //
 func (self *PreferencesRow) SetTitle(title string) {
 	var _arg0 *C.HdyPreferencesRow // out

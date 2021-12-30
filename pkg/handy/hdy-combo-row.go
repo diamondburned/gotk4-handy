@@ -14,8 +14,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -86,7 +84,11 @@ func _gotk4_handy1_ComboRowGetNameFunc(arg0 C.gpointer, arg1 C.gpointer) (cret *
 // The function takes the following parameters:
 //
 //    - value from the enum from which to get a name.
-//    - userData: unused user data.
+//    - userData (optional): unused user data.
+//
+// The function returns the following values:
+//
+//    - utf8: newly allocated displayable name that represents value.
 //
 func EnumValueRowName(value *EnumValueObject, userData cgo.Handle) string {
 	var _arg1 *C.HdyEnumValueObject // out
@@ -109,6 +111,7 @@ func EnumValueRowName(value *EnumValueObject, userData cgo.Handle) string {
 }
 
 type ComboRow struct {
+	_ [0]func() // equal guard
 	ActionRow
 }
 
@@ -164,6 +167,11 @@ func marshalComboRower(p uintptr) (interface{}, error) {
 }
 
 // NewComboRow creates a new ComboRow.
+//
+// The function returns the following values:
+//
+//    - comboRow: new ComboRow.
+//
 func NewComboRow() *ComboRow {
 	var _cret *C.GtkWidget // in
 
@@ -186,12 +194,12 @@ func NewComboRow() *ComboRow {
 //
 // The function takes the following parameters:
 //
-//    - model to be bound to self.
-//    - createListWidgetFunc: function that creates widgets for items to
-//    display in the list, or NULL in case you also passed NULL as model.
-//    - createCurrentWidgetFunc: function that creates widgets for items to
-//    display as the selected item, or NULL in case you also passed NULL as
-//    model.
+//    - model (optional) to be bound to self.
+//    - createListWidgetFunc (optional): function that creates widgets for items
+//      to display in the list, or NULL in case you also passed NULL as model.
+//    - createCurrentWidgetFunc (optional): function that creates widgets for
+//      items to display as the selected item, or NULL in case you also passed
+//      NULL as model.
 //
 func (self *ComboRow) BindModel(model gio.ListModeller, createListWidgetFunc, createCurrentWidgetFunc gtk.ListBoxCreateWidgetFunc) {
 	var _arg0 *C.HdyComboRow               // out
@@ -233,9 +241,9 @@ func (self *ComboRow) BindModel(model gio.ListModeller, createListWidgetFunc, cr
 //
 // The function takes the following parameters:
 //
-//    - model to be bound to self.
-//    - getNameFunc: function that creates names for items, or NULL in case you
-//    also passed NULL as model.
+//    - model (optional) to be bound to self.
+//    - getNameFunc (optional): function that creates names for items, or NULL in
+//      case you also passed NULL as model.
 //
 func (self *ComboRow) BindNameModel(model gio.ListModeller, getNameFunc ComboRowGetNameFunc) {
 	var _arg0 *C.HdyComboRow           // out
@@ -261,6 +269,11 @@ func (self *ComboRow) BindNameModel(model gio.ListModeller, getNameFunc ComboRow
 }
 
 // Model gets the model bound to self, or NULL if none is bound.
+//
+// The function returns the following values:
+//
+//    - listModel (optional) bound to self or NULL.
+//
 func (self *ComboRow) Model() gio.ListModeller {
 	var _arg0 *C.HdyComboRow // out
 	var _cret *C.GListModel  // in
@@ -277,9 +290,13 @@ func (self *ComboRow) Model() gio.ListModeller {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gio.ListModeller)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gio.ListModeller)
+				return ok
+			})
+			rv, ok := casted.(gio.ListModeller)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gio.ListModeller")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.ListModeller")
 			}
 			_listModel = rv
 		}
@@ -289,6 +306,11 @@ func (self *ComboRow) Model() gio.ListModeller {
 }
 
 // SelectedIndex gets the index of the selected item in its Model.
+//
+// The function returns the following values:
+//
+//    - gint: index of the selected item, or -1 if no item is selected.
+//
 func (self *ComboRow) SelectedIndex() int {
 	var _arg0 *C.HdyComboRow // out
 	var _cret C.gint         // in
@@ -307,6 +329,12 @@ func (self *ComboRow) SelectedIndex() int {
 
 // UseSubtitle gets whether the current value of self should be displayed as its
 // subtitle.
+//
+// The function returns the following values:
+//
+//    - ok: whether the current value of self should be displayed as its
+//      subtitle.
+//
 func (self *ComboRow) UseSubtitle() bool {
 	var _arg0 *C.HdyComboRow // out
 	var _cret C.gboolean     // in
@@ -342,8 +370,8 @@ func (self *ComboRow) UseSubtitle() bool {
 // The function takes the following parameters:
 //
 //    - enumType: enumeration #GType to be bound to self.
-//    - getNameFunc: function that creates names for items, or NULL in case you
-//    also passed NULL as model.
+//    - getNameFunc (optional): function that creates names for items, or NULL in
+//      case you also passed NULL as model.
 //
 func (self *ComboRow) SetForEnum(enumType externglib.Type, getNameFunc ComboRowGetEnumValueNameFunc) {
 	var _arg0 *C.HdyComboRow                    // out
@@ -371,8 +399,8 @@ func (self *ComboRow) SetForEnum(enumType externglib.Type, getNameFunc ComboRowG
 //
 // The function takes the following parameters:
 //
-//    - getNameFunc: function that creates names for items, or NULL in case you
-//    also passed NULL as model.
+//    - getNameFunc (optional): function that creates names for items, or NULL in
+//      case you also passed NULL as model.
 //
 func (self *ComboRow) SetGetNameFunc(getNameFunc ComboRowGetNameFunc) {
 	var _arg0 *C.HdyComboRow           // out

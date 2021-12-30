@@ -10,8 +10,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -24,6 +22,7 @@ func init() {
 }
 
 type SwipeTracker struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 
 	gtk.Orientable
@@ -46,11 +45,33 @@ func marshalSwipeTrackerer(p uintptr) (interface{}, error) {
 	return wrapSwipeTracker(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectBeginSwipe: this signal is emitted when a possible swipe is detected.
+//
+// The direction value can be used to restrict the swipe to a certain direction.
+func (self *SwipeTracker) ConnectBeginSwipe(f func(direction NavigationDirection, direct bool)) externglib.SignalHandle {
+	return self.Connect("begin-swipe", f)
+}
+
+// ConnectEndSwipe: this signal is emitted as soon as the gesture has stopped.
+func (self *SwipeTracker) ConnectEndSwipe(f func(duration int64, to float64)) externglib.SignalHandle {
+	return self.Connect("end-swipe", f)
+}
+
+// ConnectUpdateSwipe: this signal is emitted every time the progress value
+// changes.
+func (self *SwipeTracker) ConnectUpdateSwipe(f func(progress float64)) externglib.SignalHandle {
+	return self.Connect("update-swipe", f)
+}
+
 // NewSwipeTracker: create a new SwipeTracker object on widget.
 //
 // The function takes the following parameters:
 //
 //    - swipeable to add the tracker on.
+//
+// The function returns the following values:
+//
+//    - swipeTracker: newly created SwipeTracker object.
 //
 func NewSwipeTracker(swipeable Swipeabler) *SwipeTracker {
 	var _arg1 *C.HdySwipeable    // out
@@ -71,6 +92,11 @@ func NewSwipeTracker(swipeable Swipeabler) *SwipeTracker {
 // AllowLongSwipes: whether to allow swiping for more than one snap point at a
 // time. If the value is FALSE, each swipe can only move to the adjacent snap
 // points.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if long swipes are allowed, FALSE otherwise.
+//
 func (self *SwipeTracker) AllowLongSwipes() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
@@ -90,6 +116,11 @@ func (self *SwipeTracker) AllowLongSwipes() bool {
 }
 
 // AllowMouseDrag: get whether self can be dragged with mouse pointer.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE is mouse dragging is allowed.
+//
 func (self *SwipeTracker) AllowMouseDrag() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
@@ -110,6 +141,11 @@ func (self *SwipeTracker) AllowMouseDrag() bool {
 
 // Enabled: get whether self is enabled. When it's not enabled, no events will
 // be processed. Generally widgets will want to expose this via a property.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self is enabled.
+//
 func (self *SwipeTracker) Enabled() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
@@ -129,6 +165,11 @@ func (self *SwipeTracker) Enabled() bool {
 }
 
 // Reversed: get whether self is reversing the swipe direction.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE is the direction is reversed.
+//
 func (self *SwipeTracker) Reversed() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
@@ -148,6 +189,11 @@ func (self *SwipeTracker) Reversed() bool {
 }
 
 // Swipeable: get self's swipeable widget.
+//
+// The function returns the following values:
+//
+//    - swipeable widget.
+//
 func (self *SwipeTracker) Swipeable() Swipeabler {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret *C.HdySwipeable    // in
@@ -166,9 +212,13 @@ func (self *SwipeTracker) Swipeable() Swipeabler {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(Swipeabler)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(Swipeabler)
+			return ok
+		})
+		rv, ok := casted.(Swipeabler)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not handy.Swipeabler")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching handy.Swipeabler")
 		}
 		_swipeable = rv
 	}
@@ -278,22 +328,4 @@ func (self *SwipeTracker) ShiftPosition(delta float64) {
 	C.hdy_swipe_tracker_shift_position(_arg0, _arg1)
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(delta)
-}
-
-// ConnectBeginSwipe: this signal is emitted when a possible swipe is detected.
-//
-// The direction value can be used to restrict the swipe to a certain direction.
-func (self *SwipeTracker) ConnectBeginSwipe(f func(direction NavigationDirection, direct bool)) externglib.SignalHandle {
-	return self.Connect("begin-swipe", f)
-}
-
-// ConnectEndSwipe: this signal is emitted as soon as the gesture has stopped.
-func (self *SwipeTracker) ConnectEndSwipe(f func(duration int64, to float64)) externglib.SignalHandle {
-	return self.Connect("end-swipe", f)
-}
-
-// ConnectUpdateSwipe: this signal is emitted every time the progress value
-// changes.
-func (self *SwipeTracker) ConnectUpdateSwipe(f func(progress float64)) externglib.SignalHandle {
-	return self.Connect("update-swipe", f)
 }

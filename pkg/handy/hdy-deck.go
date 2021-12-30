@@ -12,8 +12,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -65,6 +63,7 @@ func (d DeckTransitionType) String() string {
 }
 
 type Deck struct {
+	_ [0]func() // equal guard
 	gtk.Container
 
 	*externglib.Object
@@ -144,6 +143,8 @@ func marshalDecker(p uintptr) (interface{}, error) {
 	return wrapDeck(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// The function returns the following values:
+//
 func NewDeck() *Deck {
 	var _cret *C.GtkWidget // in
 
@@ -162,6 +163,10 @@ func NewDeck() *Deck {
 // The function takes the following parameters:
 //
 //    - direction: direction.
+//
+// The function returns the following values:
+//
+//    - widget (optional) previous or next child, or NULL if it doesn't exist.
 //
 func (self *Deck) AdjacentChild(direction NavigationDirection) gtk.Widgetter {
 	var _arg0 *C.HdyDeck               // out
@@ -182,9 +187,13 @@ func (self *Deck) AdjacentChild(direction NavigationDirection) gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -194,6 +203,11 @@ func (self *Deck) AdjacentChild(direction NavigationDirection) gtk.Widgetter {
 }
 
 // CanSwipeBack returns whether the Deck allows swiping to the previous child.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if back swipe is enabled.
+//
 func (self *Deck) CanSwipeBack() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
@@ -213,6 +227,11 @@ func (self *Deck) CanSwipeBack() bool {
 }
 
 // CanSwipeForward returns whether the Deck allows swiping to the next child.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if forward swipe is enabled.
+//
 func (self *Deck) CanSwipeForward() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
@@ -238,6 +257,10 @@ func (self *Deck) CanSwipeForward() bool {
 //
 //    - name of the child to find.
 //
+// The function returns the following values:
+//
+//    - widget (optional): requested child of self.
+//
 func (self *Deck) ChildByName(name string) gtk.Widgetter {
 	var _arg0 *C.HdyDeck   // out
 	var _arg1 *C.gchar     // out
@@ -258,9 +281,13 @@ func (self *Deck) ChildByName(name string) gtk.Widgetter {
 			objptr := unsafe.Pointer(_cret)
 
 			object := externglib.Take(objptr)
-			rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+			casted := object.WalkCast(func(obj externglib.Objector) bool {
+				_, ok := obj.(gtk.Widgetter)
+				return ok
+			})
+			rv, ok := casted.(gtk.Widgetter)
 			if !ok {
-				panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 			}
 			_widget = rv
 		}
@@ -275,6 +302,10 @@ func (self *Deck) ChildByName(name string) gtk.Widgetter {
 // The function takes the following parameters:
 //
 //    - orientation: orientation.
+//
+// The function returns the following values:
+//
+//    - ok: whether self is homogeneous for the given orientation.
 //
 func (self *Deck) Homogeneous(orientation gtk.Orientation) bool {
 	var _arg0 *C.HdyDeck       // out
@@ -299,6 +330,11 @@ func (self *Deck) Homogeneous(orientation gtk.Orientation) bool {
 
 // InterpolateSize returns whether the Deck is set up to interpolate between the
 // sizes of children on page switch.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if child sizes are interpolated.
+//
 func (self *Deck) InterpolateSize() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
@@ -319,6 +355,11 @@ func (self *Deck) InterpolateSize() bool {
 
 // TransitionDuration returns the amount of time (in milliseconds) that
 // transitions between children in self will take.
+//
+// The function returns the following values:
+//
+//    - guint: child transition duration.
+//
 func (self *Deck) TransitionDuration() uint {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.guint    // in
@@ -337,6 +378,11 @@ func (self *Deck) TransitionDuration() uint {
 
 // TransitionRunning returns whether self is currently in a transition from one
 // page to another.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the transition is currently running, FALSE otherwise.
+//
 func (self *Deck) TransitionRunning() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
@@ -357,6 +403,11 @@ func (self *Deck) TransitionRunning() bool {
 
 // TransitionType gets the type of animation that will be used for transitions
 // between children in self.
+//
+// The function returns the following values:
+//
+//    - deckTransitionType: current transition type of self.
+//
 func (self *Deck) TransitionType() DeckTransitionType {
 	var _arg0 *C.HdyDeck              // out
 	var _cret C.HdyDeckTransitionType // in
@@ -374,6 +425,11 @@ func (self *Deck) TransitionType() DeckTransitionType {
 }
 
 // VisibleChild gets the visible child widget.
+//
+// The function returns the following values:
+//
+//    - widget: visible child widget.
+//
 func (self *Deck) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdyDeck   // out
 	var _cret *C.GtkWidget // in
@@ -392,9 +448,13 @@ func (self *Deck) VisibleChild() gtk.Widgetter {
 		}
 
 		object := externglib.Take(objptr)
-		rv, ok := (externglib.CastObject(object)).(gtk.Widgetter)
+		casted := object.WalkCast(func(obj externglib.Objector) bool {
+			_, ok := obj.(gtk.Widgetter)
+			return ok
+		})
+		rv, ok := casted.(gtk.Widgetter)
 		if !ok {
-			panic("object of type " + object.TypeFromInstance().String() + " is not gtk.Widgetter")
+			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gtk.Widgetter")
 		}
 		_widget = rv
 	}
@@ -403,6 +463,11 @@ func (self *Deck) VisibleChild() gtk.Widgetter {
 }
 
 // VisibleChildName gets the name of the currently visible child widget.
+//
+// The function returns the following values:
+//
+//    - utf8: name of the visible child.
+//
 func (self *Deck) VisibleChildName() string {
 	var _arg0 *C.HdyDeck // out
 	var _cret *C.gchar   // in
@@ -425,7 +490,7 @@ func (self *Deck) VisibleChildName() string {
 // The function takes the following parameters:
 //
 //    - child to insert.
-//    - sibling after which to insert child.
+//    - sibling (optional) after which to insert child.
 //
 func (self *Deck) InsertChildAfter(child, sibling gtk.Widgetter) {
 	var _arg0 *C.HdyDeck   // out
@@ -450,6 +515,10 @@ func (self *Deck) InsertChildAfter(child, sibling gtk.Widgetter) {
 // The function takes the following parameters:
 //
 //    - direction: direction.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if visible child was changed, FALSE otherwise.
 //
 func (self *Deck) Navigate(direction NavigationDirection) bool {
 	var _arg0 *C.HdyDeck               // out
@@ -496,7 +565,7 @@ func (self *Deck) Prepend(child gtk.Widgetter) {
 // The function takes the following parameters:
 //
 //    - child to move, must be a child of self.
-//    - sibling to move child after, or NULL.
+//    - sibling (optional) to move child after, or NULL.
 //
 func (self *Deck) ReorderChildAfter(child, sibling gtk.Widgetter) {
 	var _arg0 *C.HdyDeck   // out

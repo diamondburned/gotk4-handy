@@ -11,8 +11,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -25,6 +23,7 @@ func init() {
 }
 
 type Carousel struct {
+	_ [0]func() // equal guard
 	gtk.EventBox
 
 	*externglib.Object
@@ -82,7 +81,19 @@ func marshalCarouseller(p uintptr) (interface{}, error) {
 	return wrapCarousel(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectPageChanged: this signal is emitted after a page has been changed.
+// This can be used to implement "infinite scrolling" by connecting to this
+// signal and amending the pages.
+func (self *Carousel) ConnectPageChanged(f func(index uint)) externglib.SignalHandle {
+	return self.Connect("page-changed", f)
+}
+
 // NewCarousel: create a new Carousel widget.
+//
+// The function returns the following values:
+//
+//    - carousel: newly created Carousel widget.
+//
 func NewCarousel() *Carousel {
 	var _cret *C.GtkWidget // in
 
@@ -97,6 +108,11 @@ func NewCarousel() *Carousel {
 
 // AllowLongSwipes: whether to allow swiping for more than one page at a time.
 // If the value is FALSE, each swipe can only move to the adjacent pages.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if long swipes are allowed, FALSE otherwise.
+//
 func (self *Carousel) AllowLongSwipes() bool {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.gboolean     // in
@@ -116,6 +132,11 @@ func (self *Carousel) AllowLongSwipes() bool {
 }
 
 // AllowMouseDrag sets whether self can be dragged with mouse pointer.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self can be dragged with mouse.
+//
 func (self *Carousel) AllowMouseDrag() bool {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.gboolean     // in
@@ -135,6 +156,11 @@ func (self *Carousel) AllowMouseDrag() bool {
 }
 
 // AnimationDuration gets animation duration used by hdy_carousel_scroll_to().
+//
+// The function returns the following values:
+//
+//    - guint: animation duration in milliseconds.
+//
 func (self *Carousel) AnimationDuration() uint {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.guint        // in
@@ -152,6 +178,11 @@ func (self *Carousel) AnimationDuration() uint {
 }
 
 // Interactive gets whether self can be navigated.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if self can be swiped.
+//
 func (self *Carousel) Interactive() bool {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.gboolean     // in
@@ -171,6 +202,11 @@ func (self *Carousel) Interactive() bool {
 }
 
 // NPages gets the number of pages in self.
+//
+// The function returns the following values:
+//
+//    - guint: number of pages in self.
+//
 func (self *Carousel) NPages() uint {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.guint        // in
@@ -189,6 +225,11 @@ func (self *Carousel) NPages() uint {
 
 // Position gets current scroll position in self. It's unitless, 1 matches 1
 // page.
+//
+// The function returns the following values:
+//
+//    - gdouble: scroll position.
+//
 func (self *Carousel) Position() float64 {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.gdouble      // in
@@ -207,6 +248,11 @@ func (self *Carousel) Position() float64 {
 
 // RevealDuration gets duration of the animation used when adding or removing
 // pages in milliseconds.
+//
+// The function returns the following values:
+//
+//    - guint: page reveal duration.
+//
 func (self *Carousel) RevealDuration() uint {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.guint        // in
@@ -224,6 +270,11 @@ func (self *Carousel) RevealDuration() uint {
 }
 
 // Spacing gets spacing between pages in pixels.
+//
+// The function returns the following values:
+//
+//    - guint: spacing between pages.
+//
 func (self *Carousel) Spacing() uint {
 	var _arg0 *C.HdyCarousel // out
 	var _cret C.guint        // in
@@ -467,11 +518,4 @@ func (self *Carousel) SetSpacing(spacing uint) {
 	C.hdy_carousel_set_spacing(_arg0, _arg1)
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(spacing)
-}
-
-// ConnectPageChanged: this signal is emitted after a page has been changed.
-// This can be used to implement "infinite scrolling" by connecting to this
-// signal and amending the pages.
-func (self *Carousel) ConnectPageChanged(f func(index uint)) externglib.SignalHandle {
-	return self.Connect("page-changed", f)
 }

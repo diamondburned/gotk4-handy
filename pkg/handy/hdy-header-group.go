@@ -13,8 +13,6 @@ import (
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
-// #cgo pkg-config: libhandy-1
-// #cgo CFLAGS: -Wno-deprecated-declarations
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
@@ -62,6 +60,7 @@ func (h HeaderGroupChildType) String() string {
 }
 
 type HeaderGroup struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 
 	gtk.Buildable
@@ -84,6 +83,14 @@ func marshalHeaderGrouper(p uintptr) (interface{}, error) {
 	return wrapHeaderGroup(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
+// ConnectUpdateDecorationLayouts: this signal is emitted before updating the
+// decoration layouts.
+func (self *HeaderGroup) ConnectUpdateDecorationLayouts(f func()) externglib.SignalHandle {
+	return self.Connect("update-decoration-layouts", f)
+}
+
+// The function returns the following values:
+//
 func NewHeaderGroup() *HeaderGroup {
 	var _cret *C.HdyHeaderGroup // in
 
@@ -154,6 +161,12 @@ func (self *HeaderGroup) AddHeaderGroup(headerGroup *HeaderGroup) {
 }
 
 // Children returns the list of children associated with self.
+//
+// The function returns the following values:
+//
+//    - sList of children. The list is owned by libhandy and should not be
+//      modified.
+//
 func (self *HeaderGroup) Children() []HeaderGroupChild {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _cret *C.GSList         // in
@@ -178,6 +191,12 @@ func (self *HeaderGroup) Children() []HeaderGroupChild {
 
 // DecorateAll gets whether the elements of the group should all receive the
 // full decoration.
+//
+// The function returns the following values:
+//
+//    - ok: TRUE if the elements of the group should all receive the full
+//      decoration, FALSE otherwise.
+//
 func (self *HeaderGroup) DecorateAll() bool {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _cret C.gboolean        // in
@@ -274,7 +293,7 @@ func (self *HeaderGroup) RemoveHeaderGroup(headerGroup *HeaderGroup) {
 // The function takes the following parameters:
 //
 //    - decorateAll: whether the elements of the group should all receive the
-//    full decoration.
+//      full decoration.
 //
 func (self *HeaderGroup) SetDecorateAll(decorateAll bool) {
 	var _arg0 *C.HdyHeaderGroup // out
@@ -290,13 +309,8 @@ func (self *HeaderGroup) SetDecorateAll(decorateAll bool) {
 	runtime.KeepAlive(decorateAll)
 }
 
-// ConnectUpdateDecorationLayouts: this signal is emitted before updating the
-// decoration layouts.
-func (self *HeaderGroup) ConnectUpdateDecorationLayouts(f func()) externglib.SignalHandle {
-	return self.Connect("update-decoration-layouts", f)
-}
-
 type HeaderGroupChild struct {
+	_ [0]func() // equal guard
 	*externglib.Object
 }
 
@@ -315,6 +329,11 @@ func marshalHeaderGroupChilder(p uintptr) (interface{}, error) {
 }
 
 // ChildType gets the child type.
+//
+// The function returns the following values:
+//
+//    - headerGroupChildType: child type.
+//
 func (self *HeaderGroupChild) ChildType() HeaderGroupChildType {
 	var _arg0 *C.HdyHeaderGroupChild    // out
 	var _cret C.HdyHeaderGroupChildType // in
@@ -333,6 +352,11 @@ func (self *HeaderGroupChild) ChildType() HeaderGroupChildType {
 
 // GTKHeaderBar gets the child HeaderBar. Use
 // hdy_header_group_child_get_child_type() to check the child type.
+//
+// The function returns the following values:
+//
+//    - headerBar: child HeaderBar, or NULL in case of error.
+//
 func (self *HeaderGroupChild) GTKHeaderBar() *gtk.HeaderBar {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.GtkHeaderBar        // in
@@ -369,6 +393,11 @@ func (self *HeaderGroupChild) GTKHeaderBar() *gtk.HeaderBar {
 
 // HeaderBar gets the child HeaderBar. Use
 // hdy_header_group_child_get_child_type() to check the child type.
+//
+// The function returns the following values:
+//
+//    - headerBar: child HeaderBar, or NULL in case of error.
+//
 func (self *HeaderGroupChild) HeaderBar() *HeaderBar {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.HdyHeaderBar        // in
@@ -387,6 +416,11 @@ func (self *HeaderGroupChild) HeaderBar() *HeaderBar {
 
 // HeaderGroup gets the child HeaderGroup. Use
 // hdy_header_group_child_get_child_type() to check the child type.
+//
+// The function returns the following values:
+//
+//    - headerGroup: child HeaderGroup, or NULL in case of error.
+//
 func (self *HeaderGroupChild) HeaderGroup() *HeaderGroup {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.HdyHeaderGroup      // in
