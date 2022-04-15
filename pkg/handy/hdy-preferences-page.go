@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-preferences-page.go.
+var GTypePreferencesPage = externglib.Type(C.hdy_preferences_page_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_preferences_page_get_type()), F: marshalPreferencesPager},
+		{T: GTypePreferencesPage, F: marshalPreferencesPage},
 	})
+}
+
+// PreferencesPageOverrider contains methods that are overridable.
+type PreferencesPageOverrider interface {
 }
 
 type PreferencesPage struct {
@@ -30,6 +37,14 @@ type PreferencesPage struct {
 var (
 	_ gtk.Binner = (*PreferencesPage)(nil)
 )
+
+func classInitPreferencesPager(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapPreferencesPage(obj *externglib.Object) *PreferencesPage {
 	return &PreferencesPage{
@@ -52,7 +67,7 @@ func wrapPreferencesPage(obj *externglib.Object) *PreferencesPage {
 	}
 }
 
-func marshalPreferencesPager(p uintptr) (interface{}, error) {
+func marshalPreferencesPage(p uintptr) (interface{}, error) {
 	return wrapPreferencesPage(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -84,7 +99,7 @@ func (self *PreferencesPage) IconName() string {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _cret *C.gchar              // in
 
-	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_page_get_icon_name(_arg0)
 	runtime.KeepAlive(self)
@@ -108,7 +123,7 @@ func (self *PreferencesPage) Title() string {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _cret *C.gchar              // in
 
-	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_page_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -132,7 +147,7 @@ func (self *PreferencesPage) SetIconName(iconName string) {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _arg1 *C.gchar              // out
 
-	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if iconName != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(iconName)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -153,7 +168,7 @@ func (self *PreferencesPage) SetTitle(title string) {
 	var _arg0 *C.HdyPreferencesPage // out
 	var _arg1 *C.gchar              // out
 
-	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))

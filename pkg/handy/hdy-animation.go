@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"unsafe"
 
+	externglib "github.com/diamondburned/gotk4/pkg/core/glib"
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
 
@@ -55,7 +56,7 @@ func GetEnableAnimations(widget gtk.Widgetter) bool {
 	var _arg1 *C.GtkWidget // out
 	var _cret C.gboolean   // in
 
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 
 	_cret = C.hdy_get_enable_animations(_arg1)
 	runtime.KeepAlive(widget)

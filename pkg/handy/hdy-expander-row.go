@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-expander-row.go.
+var GTypeExpanderRow = externglib.Type(C.hdy_expander_row_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_expander_row_get_type()), F: marshalExpanderRower},
+		{T: GTypeExpanderRow, F: marshalExpanderRow},
 	})
+}
+
+// ExpanderRowOverrider contains methods that are overridable.
+type ExpanderRowOverrider interface {
 }
 
 type ExpanderRow struct {
@@ -31,6 +38,14 @@ var (
 	_ gtk.Binner          = (*ExpanderRow)(nil)
 	_ externglib.Objector = (*ExpanderRow)(nil)
 )
+
+func classInitExpanderRower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapExpanderRow(obj *externglib.Object) *ExpanderRow {
 	return &ExpanderRow{
@@ -72,7 +87,7 @@ func wrapExpanderRow(obj *externglib.Object) *ExpanderRow {
 	}
 }
 
-func marshalExpanderRower(p uintptr) (interface{}, error) {
+func marshalExpanderRow(p uintptr) (interface{}, error) {
 	return wrapExpanderRow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -104,8 +119,8 @@ func (self *ExpanderRow) AddAction(widget gtk.Widgetter) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 *C.GtkWidget      // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 
 	C.hdy_expander_row_add_action(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -122,8 +137,8 @@ func (self *ExpanderRow) AddPrefix(widget gtk.Widgetter) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 *C.GtkWidget      // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 
 	C.hdy_expander_row_add_prefix(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -140,7 +155,7 @@ func (self *ExpanderRow) EnableExpansion() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_enable_expansion(_arg0)
 	runtime.KeepAlive(self)
@@ -160,7 +175,7 @@ func (self *ExpanderRow) Expanded() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_expanded(_arg0)
 	runtime.KeepAlive(self)
@@ -184,7 +199,7 @@ func (self *ExpanderRow) IconName() string {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret *C.gchar          // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_icon_name(_arg0)
 	runtime.KeepAlive(self)
@@ -207,7 +222,7 @@ func (self *ExpanderRow) ShowEnableSwitch() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_show_enable_switch(_arg0)
 	runtime.KeepAlive(self)
@@ -231,7 +246,7 @@ func (self *ExpanderRow) Subtitle() string {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret *C.gchar          // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -258,7 +273,7 @@ func (self *ExpanderRow) UseUnderline() bool {
 	var _arg0 *C.HdyExpanderRow // out
 	var _cret C.gboolean        // in
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_expander_row_get_use_underline(_arg0)
 	runtime.KeepAlive(self)
@@ -282,7 +297,7 @@ func (self *ExpanderRow) SetEnableExpansion(enableExpansion bool) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 C.gboolean        // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if enableExpansion {
 		_arg1 = C.TRUE
 	}
@@ -298,7 +313,7 @@ func (self *ExpanderRow) SetExpanded(expanded bool) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 C.gboolean        // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if expanded {
 		_arg1 = C.TRUE
 	}
@@ -318,7 +333,7 @@ func (self *ExpanderRow) SetIconName(iconName string) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 *C.gchar          // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(iconName)))
 	defer C.free(unsafe.Pointer(_arg1))
 
@@ -338,7 +353,7 @@ func (self *ExpanderRow) SetShowEnableSwitch(showEnableSwitch bool) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 C.gboolean        // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if showEnableSwitch {
 		_arg1 = C.TRUE
 	}
@@ -358,7 +373,7 @@ func (self *ExpanderRow) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 *C.gchar          // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if subtitle != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(subtitle)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -381,7 +396,7 @@ func (self *ExpanderRow) SetUseUnderline(useUnderline bool) {
 	var _arg0 *C.HdyExpanderRow // out
 	var _arg1 C.gboolean        // out
 
-	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyExpanderRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if useUnderline {
 		_arg1 = C.TRUE
 	}

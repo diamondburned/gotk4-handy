@@ -18,10 +18,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-search-bar.go.
+var GTypeSearchBar = externglib.Type(C.hdy_search_bar_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_search_bar_get_type()), F: marshalSearchBarrer},
+		{T: GTypeSearchBar, F: marshalSearchBar},
 	})
+}
+
+// SearchBarOverrider contains methods that are overridable.
+type SearchBarOverrider interface {
 }
 
 type SearchBar struct {
@@ -32,6 +39,14 @@ type SearchBar struct {
 var (
 	_ gtk.Binner = (*SearchBar)(nil)
 )
+
+func classInitSearchBarrer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapSearchBar(obj *externglib.Object) *SearchBar {
 	return &SearchBar{
@@ -54,7 +69,7 @@ func wrapSearchBar(obj *externglib.Object) *SearchBar {
 	}
 }
 
-func marshalSearchBarrer(p uintptr) (interface{}, error) {
+func marshalSearchBar(p uintptr) (interface{}, error) {
 	return wrapSearchBar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -90,8 +105,8 @@ func (self *SearchBar) ConnectEntry(entry *gtk.Entry) {
 	var _arg0 *C.HdySearchBar // out
 	var _arg1 *C.GtkEntry     // out
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkEntry)(unsafe.Pointer(entry.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkEntry)(unsafe.Pointer(externglib.InternObject(entry).Native()))
 
 	C.hdy_search_bar_connect_entry(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -108,7 +123,7 @@ func (self *SearchBar) SearchMode() bool {
 	var _arg0 *C.HdySearchBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_search_bar_get_search_mode(_arg0)
 	runtime.KeepAlive(self)
@@ -132,7 +147,7 @@ func (self *SearchBar) ShowCloseButton() bool {
 	var _arg0 *C.HdySearchBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_search_bar_get_show_close_button(_arg0)
 	runtime.KeepAlive(self)
@@ -197,7 +212,7 @@ func (self *SearchBar) HandleEvent(event *gdk.Event) bool {
 	var _arg1 *C.GdkEvent     // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.GdkEvent)(gextras.StructNative(unsafe.Pointer(event)))
 
 	_cret = C.hdy_search_bar_handle_event(_arg0, _arg1)
@@ -223,7 +238,7 @@ func (self *SearchBar) SetSearchMode(searchMode bool) {
 	var _arg0 *C.HdySearchBar // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if searchMode {
 		_arg1 = C.TRUE
 	}
@@ -245,7 +260,7 @@ func (self *SearchBar) SetShowCloseButton(visible bool) {
 	var _arg0 *C.HdySearchBar // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySearchBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if visible {
 		_arg1 = C.TRUE
 	}

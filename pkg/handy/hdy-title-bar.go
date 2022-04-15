@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-title-bar.go.
+var GTypeTitleBar = externglib.Type(C.hdy_title_bar_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_title_bar_get_type()), F: marshalTitleBarrer},
+		{T: GTypeTitleBar, F: marshalTitleBar},
 	})
+}
+
+// TitleBarOverrider contains methods that are overridable.
+type TitleBarOverrider interface {
 }
 
 type TitleBar struct {
@@ -30,6 +37,14 @@ type TitleBar struct {
 var (
 	_ gtk.Binner = (*TitleBar)(nil)
 )
+
+func classInitTitleBarrer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapTitleBar(obj *externglib.Object) *TitleBar {
 	return &TitleBar{
@@ -52,7 +67,7 @@ func wrapTitleBar(obj *externglib.Object) *TitleBar {
 	}
 }
 
-func marshalTitleBarrer(p uintptr) (interface{}, error) {
+func marshalTitleBar(p uintptr) (interface{}, error) {
 	return wrapTitleBar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -84,7 +99,7 @@ func (self *TitleBar) SelectionMode() bool {
 	var _arg0 *C.HdyTitleBar // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdyTitleBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTitleBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_title_bar_get_selection_mode(_arg0)
 	runtime.KeepAlive(self)
@@ -108,7 +123,7 @@ func (self *TitleBar) SetSelectionMode(selectionMode bool) {
 	var _arg0 *C.HdyTitleBar // out
 	var _arg1 C.gboolean     // out
 
-	_arg0 = (*C.HdyTitleBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTitleBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if selectionMode {
 		_arg1 = C.TRUE
 	}

@@ -17,10 +17,16 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-squeezer.go.
+var (
+	GTypeSqueezerTransitionType = externglib.Type(C.hdy_squeezer_transition_type_get_type())
+	GTypeSqueezer               = externglib.Type(C.hdy_squeezer_get_type())
+)
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_squeezer_transition_type_get_type()), F: marshalSqueezerTransitionType},
-		{T: externglib.Type(C.hdy_squeezer_get_type()), F: marshalSqueezerer},
+		{T: GTypeSqueezerTransitionType, F: marshalSqueezerTransitionType},
+		{T: GTypeSqueezer, F: marshalSqueezer},
 	})
 }
 
@@ -51,6 +57,10 @@ func (s SqueezerTransitionType) String() string {
 	}
 }
 
+// SqueezerOverrider contains methods that are overridable.
+type SqueezerOverrider interface {
+}
+
 type Squeezer struct {
 	_ [0]func() // equal guard
 	gtk.Container
@@ -63,6 +73,14 @@ var (
 	_ gtk.Containerer     = (*Squeezer)(nil)
 	_ externglib.Objector = (*Squeezer)(nil)
 )
+
+func classInitSqueezerer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapSqueezer(obj *externglib.Object) *Squeezer {
 	return &Squeezer{
@@ -87,7 +105,7 @@ func wrapSqueezer(obj *externglib.Object) *Squeezer {
 	}
 }
 
-func marshalSqueezerer(p uintptr) (interface{}, error) {
+func marshalSqueezer(p uintptr) (interface{}, error) {
 	return wrapSqueezer(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -126,8 +144,8 @@ func (self *Squeezer) ChildEnabled(child gtk.Widgetter) bool {
 	var _arg1 *C.GtkWidget   // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_squeezer_get_child_enabled(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -154,7 +172,7 @@ func (self *Squeezer) Homogeneous() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_homogeneous(_arg0)
 	runtime.KeepAlive(self)
@@ -182,7 +200,7 @@ func (self *Squeezer) InterpolateSize() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_interpolate_size(_arg0)
 	runtime.KeepAlive(self)
@@ -207,7 +225,7 @@ func (self *Squeezer) TransitionDuration() uint {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.guint        // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_transition_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -230,7 +248,7 @@ func (self *Squeezer) TransitionRunning() bool {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_transition_running(_arg0)
 	runtime.KeepAlive(self)
@@ -255,7 +273,7 @@ func (self *Squeezer) TransitionType() SqueezerTransitionType {
 	var _arg0 *C.HdySqueezer              // out
 	var _cret C.HdySqueezerTransitionType // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_transition_type(_arg0)
 	runtime.KeepAlive(self)
@@ -278,7 +296,7 @@ func (self *Squeezer) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdySqueezer // out
 	var _cret *C.GtkWidget   // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_visible_child(_arg0)
 	runtime.KeepAlive(self)
@@ -315,7 +333,7 @@ func (self *Squeezer) XAlign() float32 {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gfloat       // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_xalign(_arg0)
 	runtime.KeepAlive(self)
@@ -337,7 +355,7 @@ func (self *Squeezer) YAlign() float32 {
 	var _arg0 *C.HdySqueezer // out
 	var _cret C.gfloat       // in
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_squeezer_get_yalign(_arg0)
 	runtime.KeepAlive(self)
@@ -367,8 +385,8 @@ func (self *Squeezer) SetChildEnabled(child gtk.Widgetter, enabled bool) {
 	var _arg1 *C.GtkWidget   // out
 	var _arg2 C.gboolean     // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if enabled {
 		_arg2 = C.TRUE
 	}
@@ -393,7 +411,7 @@ func (self *Squeezer) SetHomogeneous(homogeneous bool) {
 	var _arg0 *C.HdySqueezer // out
 	var _arg1 C.gboolean     // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if homogeneous {
 		_arg1 = C.TRUE
 	}
@@ -418,7 +436,7 @@ func (self *Squeezer) SetInterpolateSize(interpolateSize bool) {
 	var _arg0 *C.HdySqueezer // out
 	var _arg1 C.gboolean     // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if interpolateSize {
 		_arg1 = C.TRUE
 	}
@@ -439,7 +457,7 @@ func (self *Squeezer) SetTransitionDuration(duration uint) {
 	var _arg0 *C.HdySqueezer // out
 	var _arg1 C.guint        // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_squeezer_set_transition_duration(_arg0, _arg1)
@@ -463,7 +481,7 @@ func (self *Squeezer) SetTransitionType(transition SqueezerTransitionType) {
 	var _arg0 *C.HdySqueezer              // out
 	var _arg1 C.HdySqueezerTransitionType // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdySqueezerTransitionType(transition)
 
 	C.hdy_squeezer_set_transition_type(_arg0, _arg1)
@@ -481,7 +499,7 @@ func (self *Squeezer) SetXAlign(xalign float32) {
 	var _arg0 *C.HdySqueezer // out
 	var _arg1 C.gfloat       // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gfloat(xalign)
 
 	C.hdy_squeezer_set_xalign(_arg0, _arg1)
@@ -499,7 +517,7 @@ func (self *Squeezer) SetYAlign(yalign float32) {
 	var _arg0 *C.HdySqueezer // out
 	var _arg1 C.gfloat       // out
 
-	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySqueezer)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gfloat(yalign)
 
 	C.hdy_squeezer_set_yalign(_arg0, _arg1)

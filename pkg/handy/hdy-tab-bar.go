@@ -16,12 +16,20 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern void _gotk4_handy1_TabBar_ConnectExtraDragDataReceived(gpointer, HdyTabPage*, GdkDragContext*, GtkSelectionData*, guint, guint, guintptr);
 import "C"
+
+// glib.Type values for hdy-tab-bar.go.
+var GTypeTabBar = externglib.Type(C.hdy_tab_bar_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_tab_bar_get_type()), F: marshalTabBarrer},
+		{T: GTypeTabBar, F: marshalTabBar},
 	})
+}
+
+// TabBarOverrider contains methods that are overridable.
+type TabBarOverrider interface {
 }
 
 type TabBar struct {
@@ -32,6 +40,14 @@ type TabBar struct {
 var (
 	_ gtk.Binner = (*TabBar)(nil)
 )
+
+func classInitTabBarrer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapTabBar(obj *externglib.Object) *TabBar {
 	return &TabBar{
@@ -54,16 +70,49 @@ func wrapTabBar(obj *externglib.Object) *TabBar {
 	}
 }
 
-func marshalTabBarrer(p uintptr) (interface{}, error) {
+func marshalTabBar(p uintptr) (interface{}, error) {
 	return wrapTabBar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_TabBar_ConnectExtraDragDataReceived
+func _gotk4_handy1_TabBar_ConnectExtraDragDataReceived(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 *C.GdkDragContext, arg3 *C.GtkSelectionData, arg4 C.guint, arg5 C.guint, arg6 C.guintptr) {
+	var f func(page *TabPage, context *gdk.DragContext, data *gtk.SelectionData, info, time uint)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg6))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage, context *gdk.DragContext, data *gtk.SelectionData, info, time uint))
+	}
+
+	var _page *TabPage            // out
+	var _context *gdk.DragContext // out
+	var _data *gtk.SelectionData  // out
+	var _info uint                // out
+	var _time uint                // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+	{
+		obj := externglib.Take(unsafe.Pointer(arg2))
+		_context = &gdk.DragContext{
+			Object: obj,
+		}
+	}
+	_data = (*gtk.SelectionData)(gextras.NewStructNative(unsafe.Pointer(arg3)))
+	_info = uint(arg4)
+	_time = uint(arg5)
+
+	f(_page, _context, _data, _info, _time)
 }
 
 // ConnectExtraDragDataReceived: this signal is emitted when content allowed via
 // TabBar:extra-drag-dest-targets is dropped onto a tab.
 //
 // See Widget::drag-data-received.
-func (self *TabBar) ConnectExtraDragDataReceived(f func(page TabPage, context gdk.DragContext, data *gtk.SelectionData, info, time uint)) externglib.SignalHandle {
-	return self.Connect("extra-drag-data-received", f)
+func (self *TabBar) ConnectExtraDragDataReceived(f func(page *TabPage, context *gdk.DragContext, data *gtk.SelectionData, info, time uint)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "extra-drag-data-received", false, unsafe.Pointer(C._gotk4_handy1_TabBar_ConnectExtraDragDataReceived), f)
 }
 
 // NewTabBar creates a new TabBar widget.
@@ -95,7 +144,7 @@ func (self *TabBar) Autohide() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_autohide(_arg0)
 	runtime.KeepAlive(self)
@@ -119,7 +168,7 @@ func (self *TabBar) EndActionWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabBar // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_end_action_widget(_arg0)
 	runtime.KeepAlive(self)
@@ -157,7 +206,7 @@ func (self *TabBar) ExpandTabs() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_expand_tabs(_arg0)
 	runtime.KeepAlive(self)
@@ -182,7 +231,7 @@ func (self *TabBar) ExtraDragDestTargets() *gtk.TargetList {
 	var _arg0 *C.HdyTabBar     // out
 	var _cret *C.GtkTargetList // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_extra_drag_dest_targets(_arg0)
 	runtime.KeepAlive(self)
@@ -214,7 +263,7 @@ func (self *TabBar) Inverted() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_inverted(_arg0)
 	runtime.KeepAlive(self)
@@ -238,7 +287,7 @@ func (self *TabBar) IsOverflowing() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_is_overflowing(_arg0)
 	runtime.KeepAlive(self)
@@ -262,7 +311,7 @@ func (self *TabBar) StartActionWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabBar // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_start_action_widget(_arg0)
 	runtime.KeepAlive(self)
@@ -299,7 +348,7 @@ func (self *TabBar) TabsRevealed() bool {
 	var _arg0 *C.HdyTabBar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_tabs_revealed(_arg0)
 	runtime.KeepAlive(self)
@@ -323,7 +372,7 @@ func (self *TabBar) View() *TabView {
 	var _arg0 *C.HdyTabBar  // out
 	var _cret *C.HdyTabView // in
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_bar_get_view(_arg0)
 	runtime.KeepAlive(self)
@@ -354,7 +403,7 @@ func (self *TabBar) SetAutohide(autohide bool) {
 	var _arg0 *C.HdyTabBar // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if autohide {
 		_arg1 = C.TRUE
 	}
@@ -374,9 +423,9 @@ func (self *TabBar) SetEndActionWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabBar // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if widget != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 	}
 
 	C.hdy_tab_bar_set_end_action_widget(_arg0, _arg1)
@@ -400,7 +449,7 @@ func (self *TabBar) SetExpandTabs(expandTabs bool) {
 	var _arg0 *C.HdyTabBar // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if expandTabs {
 		_arg1 = C.TRUE
 	}
@@ -429,7 +478,7 @@ func (self *TabBar) SetExtraDragDestTargets(extraDragDestTargets *gtk.TargetList
 	var _arg0 *C.HdyTabBar     // out
 	var _arg1 *C.GtkTargetList // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if extraDragDestTargets != nil {
 		_arg1 = (*C.GtkTargetList)(gextras.StructNative(unsafe.Pointer(extraDragDestTargets)))
 	}
@@ -452,7 +501,7 @@ func (self *TabBar) SetInverted(inverted bool) {
 	var _arg0 *C.HdyTabBar // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if inverted {
 		_arg1 = C.TRUE
 	}
@@ -472,9 +521,9 @@ func (self *TabBar) SetStartActionWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabBar // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if widget != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 	}
 
 	C.hdy_tab_bar_set_start_action_widget(_arg0, _arg1)
@@ -492,9 +541,9 @@ func (self *TabBar) SetView(view *TabView) {
 	var _arg0 *C.HdyTabBar  // out
 	var _arg1 *C.HdyTabView // out
 
-	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if view != nil {
-		_arg1 = (*C.HdyTabView)(unsafe.Pointer(view.Native()))
+		_arg1 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(view).Native()))
 	}
 
 	C.hdy_tab_bar_set_view(_arg0, _arg1)

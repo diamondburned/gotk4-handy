@@ -17,15 +17,18 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
-// GtkWidget* _gotk4_gtk3_ListBoxCreateWidgetFunc(gpointer, gpointer);
+// extern GtkWidget* _gotk4_gtk3_ListBoxCreateWidgetFunc(gpointer, gpointer);
+// extern gchar* _gotk4_handy1_ComboRowGetEnumValueNameFunc(HdyEnumValueObject*, gpointer);
+// extern gchar* _gotk4_handy1_ComboRowGetNameFunc(gpointer, gpointer);
 // extern void callbackDelete(gpointer);
-// gchar* _gotk4_handy1_ComboRowGetEnumValueNameFunc(HdyEnumValueObject*, gpointer);
-// gchar* _gotk4_handy1_ComboRowGetNameFunc(gpointer, gpointer);
 import "C"
+
+// glib.Type values for hdy-combo-row.go.
+var GTypeComboRow = externglib.Type(C.hdy_combo_row_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_combo_row_get_type()), F: marshalComboRower},
+		{T: GTypeComboRow, F: marshalComboRow},
 	})
 }
 
@@ -35,18 +38,21 @@ func init() {
 type ComboRowGetEnumValueNameFunc func(value *EnumValueObject) (utf8 string)
 
 //export _gotk4_handy1_ComboRowGetEnumValueNameFunc
-func _gotk4_handy1_ComboRowGetEnumValueNameFunc(arg0 *C.HdyEnumValueObject, arg1 C.gpointer) (cret *C.gchar) {
-	v := gbox.Get(uintptr(arg1))
-	if v == nil {
-		panic(`callback not found`)
+func _gotk4_handy1_ComboRowGetEnumValueNameFunc(arg1 *C.HdyEnumValueObject, arg2 C.gpointer) (cret *C.gchar) {
+	var fn ComboRowGetEnumValueNameFunc
+	{
+		v := gbox.Get(uintptr(arg2))
+		if v == nil {
+			panic(`callback not found`)
+		}
+		fn = v.(ComboRowGetEnumValueNameFunc)
 	}
 
-	var value *EnumValueObject // out
+	var _value *EnumValueObject // out
 
-	value = wrapEnumValueObject(externglib.Take(unsafe.Pointer(arg0)))
+	_value = wrapEnumValueObject(externglib.Take(unsafe.Pointer(arg1)))
 
-	fn := v.(ComboRowGetEnumValueNameFunc)
-	utf8 := fn(value)
+	utf8 := fn(_value)
 
 	cret = (*C.gchar)(unsafe.Pointer(C.CString(utf8)))
 
@@ -58,18 +64,21 @@ func _gotk4_handy1_ComboRowGetEnumValueNameFunc(arg0 *C.HdyEnumValueObject, arg1
 type ComboRowGetNameFunc func(item *externglib.Object) (utf8 string)
 
 //export _gotk4_handy1_ComboRowGetNameFunc
-func _gotk4_handy1_ComboRowGetNameFunc(arg0 C.gpointer, arg1 C.gpointer) (cret *C.gchar) {
-	v := gbox.Get(uintptr(arg1))
-	if v == nil {
-		panic(`callback not found`)
+func _gotk4_handy1_ComboRowGetNameFunc(arg1 C.gpointer, arg2 C.gpointer) (cret *C.gchar) {
+	var fn ComboRowGetNameFunc
+	{
+		v := gbox.Get(uintptr(arg2))
+		if v == nil {
+			panic(`callback not found`)
+		}
+		fn = v.(ComboRowGetNameFunc)
 	}
 
-	var item *externglib.Object // out
+	var _item *externglib.Object // out
 
-	item = externglib.Take(unsafe.Pointer(arg0))
+	_item = externglib.Take(unsafe.Pointer(arg1))
 
-	fn := v.(ComboRowGetNameFunc)
-	utf8 := fn(item)
+	utf8 := fn(_item)
 
 	cret = (*C.gchar)(unsafe.Pointer(C.CString(utf8)))
 
@@ -95,7 +104,7 @@ func EnumValueRowName(value *EnumValueObject, userData cgo.Handle) string {
 	var _arg2 C.gpointer            // out
 	var _cret *C.gchar              // in
 
-	_arg1 = (*C.HdyEnumValueObject)(unsafe.Pointer(value.Native()))
+	_arg1 = (*C.HdyEnumValueObject)(unsafe.Pointer(externglib.InternObject(value).Native()))
 	_arg2 = (C.gpointer)(unsafe.Pointer(userData))
 
 	_cret = C.hdy_enum_value_row_name(_arg1, _arg2)
@@ -110,6 +119,10 @@ func EnumValueRowName(value *EnumValueObject, userData cgo.Handle) string {
 	return _utf8
 }
 
+// ComboRowOverrider contains methods that are overridable.
+type ComboRowOverrider interface {
+}
+
 type ComboRow struct {
 	_ [0]func() // equal guard
 	ActionRow
@@ -119,6 +132,14 @@ var (
 	_ gtk.Binner          = (*ComboRow)(nil)
 	_ externglib.Objector = (*ComboRow)(nil)
 )
+
+func classInitComboRower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapComboRow(obj *externglib.Object) *ComboRow {
 	return &ComboRow{
@@ -162,7 +183,7 @@ func wrapComboRow(obj *externglib.Object) *ComboRow {
 	}
 }
 
-func marshalComboRower(p uintptr) (interface{}, error) {
+func marshalComboRow(p uintptr) (interface{}, error) {
 	return wrapComboRow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -209,9 +230,9 @@ func (self *ComboRow) BindModel(model gio.ListModeller, createListWidgetFunc, cr
 	var _arg4 C.gpointer
 	var _arg5 C.GDestroyNotify
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if model != nil {
-		_arg1 = (*C.GListModel)(unsafe.Pointer(model.Native()))
+		_arg1 = (*C.GListModel)(unsafe.Pointer(externglib.InternObject(model).Native()))
 	}
 	if createListWidgetFunc != nil {
 	}
@@ -252,9 +273,9 @@ func (self *ComboRow) BindNameModel(model gio.ListModeller, getNameFunc ComboRow
 	var _arg3 C.gpointer
 	var _arg4 C.GDestroyNotify
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if model != nil {
-		_arg1 = (*C.GListModel)(unsafe.Pointer(model.Native()))
+		_arg1 = (*C.GListModel)(unsafe.Pointer(externglib.InternObject(model).Native()))
 	}
 	if getNameFunc != nil {
 		_arg2 = (*[0]byte)(C._gotk4_handy1_ComboRowGetNameFunc)
@@ -278,7 +299,7 @@ func (self *ComboRow) Model() gio.ListModeller {
 	var _arg0 *C.HdyComboRow // out
 	var _cret *C.GListModel  // in
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_combo_row_get_model(_arg0)
 	runtime.KeepAlive(self)
@@ -315,7 +336,7 @@ func (self *ComboRow) SelectedIndex() int {
 	var _arg0 *C.HdyComboRow // out
 	var _cret C.gint         // in
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_combo_row_get_selected_index(_arg0)
 	runtime.KeepAlive(self)
@@ -339,7 +360,7 @@ func (self *ComboRow) UseSubtitle() bool {
 	var _arg0 *C.HdyComboRow // out
 	var _cret C.gboolean     // in
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_combo_row_get_use_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -380,7 +401,7 @@ func (self *ComboRow) SetForEnum(enumType externglib.Type, getNameFunc ComboRowG
 	var _arg3 C.gpointer
 	var _arg4 C.GDestroyNotify
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.GType(enumType)
 	if getNameFunc != nil {
 		_arg2 = (*[0]byte)(C._gotk4_handy1_ComboRowGetEnumValueNameFunc)
@@ -408,7 +429,7 @@ func (self *ComboRow) SetGetNameFunc(getNameFunc ComboRowGetNameFunc) {
 	var _arg2 C.gpointer
 	var _arg3 C.GDestroyNotify
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if getNameFunc != nil {
 		_arg1 = (*[0]byte)(C._gotk4_handy1_ComboRowGetNameFunc)
 		_arg2 = C.gpointer(gbox.Assign(getNameFunc))
@@ -430,7 +451,7 @@ func (self *ComboRow) SetSelectedIndex(selectedIndex int) {
 	var _arg0 *C.HdyComboRow // out
 	var _arg1 C.gint         // out
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(selectedIndex)
 
 	C.hdy_combo_row_set_selected_index(_arg0, _arg1)
@@ -451,7 +472,7 @@ func (self *ComboRow) SetUseSubtitle(useSubtitle bool) {
 	var _arg0 *C.HdyComboRow // out
 	var _arg1 C.gboolean     // out
 
-	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyComboRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if useSubtitle {
 		_arg1 = C.TRUE
 	}

@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-view-switcher-title.go.
+var GTypeViewSwitcherTitle = externglib.Type(C.hdy_view_switcher_title_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_view_switcher_title_get_type()), F: marshalViewSwitcherTitler},
+		{T: GTypeViewSwitcherTitle, F: marshalViewSwitcherTitle},
 	})
+}
+
+// ViewSwitcherTitleOverrider contains methods that are overridable.
+type ViewSwitcherTitleOverrider interface {
 }
 
 type ViewSwitcherTitle struct {
@@ -30,6 +37,14 @@ type ViewSwitcherTitle struct {
 var (
 	_ gtk.Binner = (*ViewSwitcherTitle)(nil)
 )
+
+func classInitViewSwitcherTitler(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapViewSwitcherTitle(obj *externglib.Object) *ViewSwitcherTitle {
 	return &ViewSwitcherTitle{
@@ -52,7 +67,7 @@ func wrapViewSwitcherTitle(obj *externglib.Object) *ViewSwitcherTitle {
 	}
 }
 
-func marshalViewSwitcherTitler(p uintptr) (interface{}, error) {
+func marshalViewSwitcherTitle(p uintptr) (interface{}, error) {
 	return wrapViewSwitcherTitle(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -84,7 +99,7 @@ func (self *ViewSwitcherTitle) Policy() ViewSwitcherPolicy {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.HdyViewSwitcherPolicy // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_policy(_arg0)
 	runtime.KeepAlive(self)
@@ -106,7 +121,7 @@ func (self *ViewSwitcherTitle) Stack() *gtk.Stack {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.GtkStack             // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_stack(_arg0)
 	runtime.KeepAlive(self)
@@ -149,7 +164,7 @@ func (self *ViewSwitcherTitle) Subtitle() string {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.gchar                // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -173,7 +188,7 @@ func (self *ViewSwitcherTitle) Title() string {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret *C.gchar                // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -197,7 +212,7 @@ func (self *ViewSwitcherTitle) TitleVisible() bool {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.gboolean              // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_title_visible(_arg0)
 	runtime.KeepAlive(self)
@@ -223,7 +238,7 @@ func (self *ViewSwitcherTitle) ViewSwitcherEnabled() bool {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _cret C.gboolean              // in
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_title_get_view_switcher_enabled(_arg0)
 	runtime.KeepAlive(self)
@@ -247,7 +262,7 @@ func (self *ViewSwitcherTitle) SetPolicy(policy ViewSwitcherPolicy) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _arg1 C.HdyViewSwitcherPolicy // out
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyViewSwitcherPolicy(policy)
 
 	C.hdy_view_switcher_title_set_policy(_arg0, _arg1)
@@ -265,9 +280,9 @@ func (self *ViewSwitcherTitle) SetStack(stack *gtk.Stack) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _arg1 *C.GtkStack             // out
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if stack != nil {
-		_arg1 = (*C.GtkStack)(unsafe.Pointer(stack.Native()))
+		_arg1 = (*C.GtkStack)(unsafe.Pointer(externglib.InternObject(stack).Native()))
 	}
 
 	C.hdy_view_switcher_title_set_stack(_arg0, _arg1)
@@ -286,7 +301,7 @@ func (self *ViewSwitcherTitle) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _arg1 *C.gchar                // out
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if subtitle != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(subtitle)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -308,7 +323,7 @@ func (self *ViewSwitcherTitle) SetTitle(title string) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _arg1 *C.gchar                // out
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -335,7 +350,7 @@ func (self *ViewSwitcherTitle) SetViewSwitcherEnabled(enabled bool) {
 	var _arg0 *C.HdyViewSwitcherTitle // out
 	var _arg1 C.gboolean              // out
 
-	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcherTitle)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if enabled {
 		_arg1 = C.TRUE
 	}

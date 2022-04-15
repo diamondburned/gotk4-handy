@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-preferences-row.go.
+var GTypePreferencesRow = externglib.Type(C.hdy_preferences_row_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_preferences_row_get_type()), F: marshalPreferencesRower},
+		{T: GTypePreferencesRow, F: marshalPreferencesRow},
 	})
+}
+
+// PreferencesRowOverrider contains methods that are overridable.
+type PreferencesRowOverrider interface {
 }
 
 type PreferencesRow struct {
@@ -31,6 +38,14 @@ var (
 	_ gtk.Binner          = (*PreferencesRow)(nil)
 	_ externglib.Objector = (*PreferencesRow)(nil)
 )
+
+func classInitPreferencesRower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapPreferencesRow(obj *externglib.Object) *PreferencesRow {
 	return &PreferencesRow{
@@ -70,7 +85,7 @@ func wrapPreferencesRow(obj *externglib.Object) *PreferencesRow {
 	}
 }
 
-func marshalPreferencesRower(p uintptr) (interface{}, error) {
+func marshalPreferencesRow(p uintptr) (interface{}, error) {
 	return wrapPreferencesRow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -102,7 +117,7 @@ func (self *PreferencesRow) Title() string {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _cret *C.gchar             // in
 
-	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_row_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -128,7 +143,7 @@ func (self *PreferencesRow) UseUnderline() bool {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _cret C.gboolean           // in
 
-	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_row_get_use_underline(_arg0)
 	runtime.KeepAlive(self)
@@ -152,7 +167,7 @@ func (self *PreferencesRow) SetTitle(title string) {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _arg1 *C.gchar             // out
 
-	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -174,7 +189,7 @@ func (self *PreferencesRow) SetUseUnderline(useUnderline bool) {
 	var _arg0 *C.HdyPreferencesRow // out
 	var _arg1 C.gboolean           // out
 
-	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if useUnderline {
 		_arg1 = C.TRUE
 	}

@@ -13,12 +13,22 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern void _gotk4_handy1_SwipeTracker_ConnectBeginSwipe(gpointer, HdyNavigationDirection, gboolean, guintptr);
+// extern void _gotk4_handy1_SwipeTracker_ConnectEndSwipe(gpointer, gint64, gdouble, guintptr);
+// extern void _gotk4_handy1_SwipeTracker_ConnectUpdateSwipe(gpointer, gdouble, guintptr);
 import "C"
+
+// glib.Type values for hdy-swipe-tracker.go.
+var GTypeSwipeTracker = externglib.Type(C.hdy_swipe_tracker_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_swipe_tracker_get_type()), F: marshalSwipeTrackerer},
+		{T: GTypeSwipeTracker, F: marshalSwipeTracker},
 	})
+}
+
+// SwipeTrackerOverrider contains methods that are overridable.
+type SwipeTrackerOverrider interface {
 }
 
 type SwipeTracker struct {
@@ -32,6 +42,14 @@ var (
 	_ externglib.Objector = (*SwipeTracker)(nil)
 )
 
+func classInitSwipeTrackerer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapSwipeTracker(obj *externglib.Object) *SwipeTracker {
 	return &SwipeTracker{
 		Object: obj,
@@ -41,26 +59,92 @@ func wrapSwipeTracker(obj *externglib.Object) *SwipeTracker {
 	}
 }
 
-func marshalSwipeTrackerer(p uintptr) (interface{}, error) {
+func marshalSwipeTracker(p uintptr) (interface{}, error) {
 	return wrapSwipeTracker(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_SwipeTracker_ConnectBeginSwipe
+func _gotk4_handy1_SwipeTracker_ConnectBeginSwipe(arg0 C.gpointer, arg1 C.HdyNavigationDirection, arg2 C.gboolean, arg3 C.guintptr) {
+	var f func(direction NavigationDirection, direct bool)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(direction NavigationDirection, direct bool))
+	}
+
+	var _direction NavigationDirection // out
+	var _direct bool                   // out
+
+	_direction = NavigationDirection(arg1)
+	if arg2 != 0 {
+		_direct = true
+	}
+
+	f(_direction, _direct)
 }
 
 // ConnectBeginSwipe: this signal is emitted when a possible swipe is detected.
 //
 // The direction value can be used to restrict the swipe to a certain direction.
 func (self *SwipeTracker) ConnectBeginSwipe(f func(direction NavigationDirection, direct bool)) externglib.SignalHandle {
-	return self.Connect("begin-swipe", f)
+	return externglib.ConnectGeneratedClosure(self, "begin-swipe", false, unsafe.Pointer(C._gotk4_handy1_SwipeTracker_ConnectBeginSwipe), f)
+}
+
+//export _gotk4_handy1_SwipeTracker_ConnectEndSwipe
+func _gotk4_handy1_SwipeTracker_ConnectEndSwipe(arg0 C.gpointer, arg1 C.gint64, arg2 C.gdouble, arg3 C.guintptr) {
+	var f func(duration int64, to float64)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(duration int64, to float64))
+	}
+
+	var _duration int64 // out
+	var _to float64     // out
+
+	_duration = int64(arg1)
+	_to = float64(arg2)
+
+	f(_duration, _to)
 }
 
 // ConnectEndSwipe: this signal is emitted as soon as the gesture has stopped.
 func (self *SwipeTracker) ConnectEndSwipe(f func(duration int64, to float64)) externglib.SignalHandle {
-	return self.Connect("end-swipe", f)
+	return externglib.ConnectGeneratedClosure(self, "end-swipe", false, unsafe.Pointer(C._gotk4_handy1_SwipeTracker_ConnectEndSwipe), f)
+}
+
+//export _gotk4_handy1_SwipeTracker_ConnectUpdateSwipe
+func _gotk4_handy1_SwipeTracker_ConnectUpdateSwipe(arg0 C.gpointer, arg1 C.gdouble, arg2 C.guintptr) {
+	var f func(progress float64)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg2))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(progress float64))
+	}
+
+	var _progress float64 // out
+
+	_progress = float64(arg1)
+
+	f(_progress)
 }
 
 // ConnectUpdateSwipe: this signal is emitted every time the progress value
 // changes.
 func (self *SwipeTracker) ConnectUpdateSwipe(f func(progress float64)) externglib.SignalHandle {
-	return self.Connect("update-swipe", f)
+	return externglib.ConnectGeneratedClosure(self, "update-swipe", false, unsafe.Pointer(C._gotk4_handy1_SwipeTracker_ConnectUpdateSwipe), f)
 }
 
 // NewSwipeTracker: create a new SwipeTracker object on widget.
@@ -77,7 +161,7 @@ func NewSwipeTracker(swipeable Swipeabler) *SwipeTracker {
 	var _arg1 *C.HdySwipeable    // out
 	var _cret *C.HdySwipeTracker // in
 
-	_arg1 = (*C.HdySwipeable)(unsafe.Pointer(swipeable.Native()))
+	_arg1 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(swipeable).Native()))
 
 	_cret = C.hdy_swipe_tracker_new(_arg1)
 	runtime.KeepAlive(swipeable)
@@ -101,7 +185,7 @@ func (self *SwipeTracker) AllowLongSwipes() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipe_tracker_get_allow_long_swipes(_arg0)
 	runtime.KeepAlive(self)
@@ -125,7 +209,7 @@ func (self *SwipeTracker) AllowMouseDrag() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipe_tracker_get_allow_mouse_drag(_arg0)
 	runtime.KeepAlive(self)
@@ -150,7 +234,7 @@ func (self *SwipeTracker) Enabled() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipe_tracker_get_enabled(_arg0)
 	runtime.KeepAlive(self)
@@ -174,7 +258,7 @@ func (self *SwipeTracker) Reversed() bool {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret C.gboolean         // in
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipe_tracker_get_reversed(_arg0)
 	runtime.KeepAlive(self)
@@ -198,7 +282,7 @@ func (self *SwipeTracker) Swipeable() Swipeabler {
 	var _arg0 *C.HdySwipeTracker // out
 	var _cret *C.HdySwipeable    // in
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipe_tracker_get_swipeable(_arg0)
 	runtime.KeepAlive(self)
@@ -238,7 +322,7 @@ func (self *SwipeTracker) SetAllowLongSwipes(allowLongSwipes bool) {
 	var _arg0 *C.HdySwipeTracker // out
 	var _arg1 C.gboolean         // out
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if allowLongSwipes {
 		_arg1 = C.TRUE
 	}
@@ -259,7 +343,7 @@ func (self *SwipeTracker) SetAllowMouseDrag(allowMouseDrag bool) {
 	var _arg0 *C.HdySwipeTracker // out
 	var _arg1 C.gboolean         // out
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if allowMouseDrag {
 		_arg1 = C.TRUE
 	}
@@ -280,7 +364,7 @@ func (self *SwipeTracker) SetEnabled(enabled bool) {
 	var _arg0 *C.HdySwipeTracker // out
 	var _arg1 C.gboolean         // out
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if enabled {
 		_arg1 = C.TRUE
 	}
@@ -301,7 +385,7 @@ func (self *SwipeTracker) SetReversed(reversed bool) {
 	var _arg0 *C.HdySwipeTracker // out
 	var _arg1 C.gboolean         // out
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if reversed {
 		_arg1 = C.TRUE
 	}
@@ -322,7 +406,7 @@ func (self *SwipeTracker) ShiftPosition(delta float64) {
 	var _arg0 *C.HdySwipeTracker // out
 	var _arg1 C.gdouble          // out
 
-	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gdouble(delta)
 
 	C.hdy_swipe_tracker_shift_position(_arg0, _arg1)

@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-keypad.go.
+var GTypeKeypad = externglib.Type(C.hdy_keypad_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_keypad_get_type()), F: marshalKeypadder},
+		{T: GTypeKeypad, F: marshalKeypad},
 	})
+}
+
+// KeypadOverrider contains methods that are overridable.
+type KeypadOverrider interface {
 }
 
 type Keypad struct {
@@ -30,6 +37,14 @@ type Keypad struct {
 var (
 	_ gtk.Binner = (*Keypad)(nil)
 )
+
+func classInitKeypadder(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapKeypad(obj *externglib.Object) *Keypad {
 	return &Keypad{
@@ -52,7 +67,7 @@ func wrapKeypad(obj *externglib.Object) *Keypad {
 	}
 }
 
-func marshalKeypadder(p uintptr) (interface{}, error) {
+func marshalKeypad(p uintptr) (interface{}, error) {
 	return wrapKeypad(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -101,7 +116,7 @@ func (self *Keypad) ColumnSpacing() uint {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.guint      // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_column_spacing(_arg0)
 	runtime.KeepAlive(self)
@@ -124,7 +139,7 @@ func (self *Keypad) EndAction() gtk.Widgetter {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_end_action(_arg0)
 	runtime.KeepAlive(self)
@@ -161,7 +176,7 @@ func (self *Keypad) Entry() *gtk.Entry {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkEntry  // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_entry(_arg0)
 	runtime.KeepAlive(self)
@@ -218,7 +233,7 @@ func (self *Keypad) LettersVisible() bool {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_letters_visible(_arg0)
 	runtime.KeepAlive(self)
@@ -242,7 +257,7 @@ func (self *Keypad) RowSpacing() uint {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.guint      // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_row_spacing(_arg0)
 	runtime.KeepAlive(self)
@@ -265,7 +280,7 @@ func (self *Keypad) StartAction() gtk.Widgetter {
 	var _arg0 *C.HdyKeypad // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_start_action(_arg0)
 	runtime.KeepAlive(self)
@@ -306,7 +321,7 @@ func (self *Keypad) SymbolsVisible() bool {
 	var _arg0 *C.HdyKeypad // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_keypad_get_symbols_visible(_arg0)
 	runtime.KeepAlive(self)
@@ -330,7 +345,7 @@ func (self *Keypad) SetColumnSpacing(spacing uint) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 C.guint      // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(spacing)
 
 	C.hdy_keypad_set_column_spacing(_arg0, _arg1)
@@ -349,9 +364,9 @@ func (self *Keypad) SetEndAction(endAction gtk.Widgetter) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if endAction != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(endAction.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(endAction).Native()))
 	}
 
 	C.hdy_keypad_set_end_action(_arg0, _arg1)
@@ -370,9 +385,9 @@ func (self *Keypad) SetEntry(entry *gtk.Entry) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 *C.GtkEntry  // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if entry != nil {
-		_arg1 = (*C.GtkEntry)(unsafe.Pointer(entry.Native()))
+		_arg1 = (*C.GtkEntry)(unsafe.Pointer(externglib.InternObject(entry).Native()))
 	}
 
 	C.hdy_keypad_set_entry(_arg0, _arg1)
@@ -391,7 +406,7 @@ func (self *Keypad) SetLettersVisible(lettersVisible bool) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if lettersVisible {
 		_arg1 = C.TRUE
 	}
@@ -411,7 +426,7 @@ func (self *Keypad) SetRowSpacing(spacing uint) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 C.guint      // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(spacing)
 
 	C.hdy_keypad_set_row_spacing(_arg0, _arg1)
@@ -430,9 +445,9 @@ func (self *Keypad) SetStartAction(startAction gtk.Widgetter) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if startAction != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(startAction.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(startAction).Native()))
 	}
 
 	C.hdy_keypad_set_start_action(_arg0, _arg1)
@@ -452,7 +467,7 @@ func (self *Keypad) SetSymbolsVisible(symbolsVisible bool) {
 	var _arg0 *C.HdyKeypad // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyKeypad)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if symbolsVisible {
 		_arg1 = C.TRUE
 	}

@@ -17,10 +17,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-view-switcher.go.
+var GTypeViewSwitcher = externglib.Type(C.hdy_view_switcher_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_view_switcher_get_type()), F: marshalViewSwitcherer},
+		{T: GTypeViewSwitcher, F: marshalViewSwitcher},
 	})
+}
+
+// ViewSwitcherOverrider contains methods that are overridable.
+type ViewSwitcherOverrider interface {
 }
 
 type ViewSwitcher struct {
@@ -31,6 +38,14 @@ type ViewSwitcher struct {
 var (
 	_ gtk.Binner = (*ViewSwitcher)(nil)
 )
+
+func classInitViewSwitcherer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapViewSwitcher(obj *externglib.Object) *ViewSwitcher {
 	return &ViewSwitcher{
@@ -53,7 +68,7 @@ func wrapViewSwitcher(obj *externglib.Object) *ViewSwitcher {
 	}
 }
 
-func marshalViewSwitcherer(p uintptr) (interface{}, error) {
+func marshalViewSwitcher(p uintptr) (interface{}, error) {
 	return wrapViewSwitcher(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -86,7 +101,7 @@ func (self *ViewSwitcher) NarrowEllipsize() pango.EllipsizeMode {
 	var _arg0 *C.HdyViewSwitcher   // out
 	var _cret C.PangoEllipsizeMode // in
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_get_narrow_ellipsize(_arg0)
 	runtime.KeepAlive(self)
@@ -108,7 +123,7 @@ func (self *ViewSwitcher) Policy() ViewSwitcherPolicy {
 	var _arg0 *C.HdyViewSwitcher      // out
 	var _cret C.HdyViewSwitcherPolicy // in
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_get_policy(_arg0)
 	runtime.KeepAlive(self)
@@ -132,7 +147,7 @@ func (self *ViewSwitcher) Stack() *gtk.Stack {
 	var _arg0 *C.HdyViewSwitcher // out
 	var _cret *C.GtkStack        // in
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_view_switcher_get_stack(_arg0)
 	runtime.KeepAlive(self)
@@ -175,7 +190,7 @@ func (self *ViewSwitcher) SetNarrowEllipsize(mode pango.EllipsizeMode) {
 	var _arg0 *C.HdyViewSwitcher   // out
 	var _arg1 C.PangoEllipsizeMode // out
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.PangoEllipsizeMode(mode)
 
 	C.hdy_view_switcher_set_narrow_ellipsize(_arg0, _arg1)
@@ -193,7 +208,7 @@ func (self *ViewSwitcher) SetPolicy(policy ViewSwitcherPolicy) {
 	var _arg0 *C.HdyViewSwitcher      // out
 	var _arg1 C.HdyViewSwitcherPolicy // out
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyViewSwitcherPolicy(policy)
 
 	C.hdy_view_switcher_set_policy(_arg0, _arg1)
@@ -211,9 +226,9 @@ func (self *ViewSwitcher) SetStack(stack *gtk.Stack) {
 	var _arg0 *C.HdyViewSwitcher // out
 	var _arg1 *C.GtkStack        // out
 
-	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyViewSwitcher)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if stack != nil {
-		_arg1 = (*C.GtkStack)(unsafe.Pointer(stack.Native()))
+		_arg1 = (*C.GtkStack)(unsafe.Pointer(externglib.InternObject(stack).Native()))
 	}
 
 	C.hdy_view_switcher_set_stack(_arg0, _arg1)

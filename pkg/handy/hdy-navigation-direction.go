@@ -14,9 +14,12 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-navigation-direction.go.
+var GTypeNavigationDirection = externglib.Type(C.hdy_navigation_direction_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_navigation_direction_get_type()), F: marshalNavigationDirection},
+		{T: GTypeNavigationDirection, F: marshalNavigationDirection},
 	})
 }
 

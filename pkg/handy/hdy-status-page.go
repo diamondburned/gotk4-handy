@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-status-page.go.
+var GTypeStatusPage = externglib.Type(C.hdy_status_page_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_status_page_get_type()), F: marshalStatusPager},
+		{T: GTypeStatusPage, F: marshalStatusPage},
 	})
+}
+
+// StatusPageOverrider contains methods that are overridable.
+type StatusPageOverrider interface {
 }
 
 type StatusPage struct {
@@ -30,6 +37,14 @@ type StatusPage struct {
 var (
 	_ gtk.Binner = (*StatusPage)(nil)
 )
+
+func classInitStatusPager(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapStatusPage(obj *externglib.Object) *StatusPage {
 	return &StatusPage{
@@ -52,7 +67,7 @@ func wrapStatusPage(obj *externglib.Object) *StatusPage {
 	}
 }
 
-func marshalStatusPager(p uintptr) (interface{}, error) {
+func marshalStatusPage(p uintptr) (interface{}, error) {
 	return wrapStatusPage(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -84,7 +99,7 @@ func (self *StatusPage) Description() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_status_page_get_description(_arg0)
 	runtime.KeepAlive(self)
@@ -108,7 +123,7 @@ func (self *StatusPage) IconName() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_status_page_get_icon_name(_arg0)
 	runtime.KeepAlive(self)
@@ -132,7 +147,7 @@ func (self *StatusPage) Title() string {
 	var _arg0 *C.HdyStatusPage // out
 	var _cret *C.gchar         // in
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_status_page_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -156,7 +171,7 @@ func (self *StatusPage) SetDescription(description string) {
 	var _arg0 *C.HdyStatusPage // out
 	var _arg1 *C.gchar         // out
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if description != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(description)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -177,7 +192,7 @@ func (self *StatusPage) SetIconName(iconName string) {
 	var _arg0 *C.HdyStatusPage // out
 	var _arg1 *C.gchar         // out
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if iconName != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(iconName)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -198,7 +213,7 @@ func (self *StatusPage) SetTitle(title string) {
 	var _arg0 *C.HdyStatusPage // out
 	var _arg1 *C.gchar         // out
 
-	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyStatusPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))

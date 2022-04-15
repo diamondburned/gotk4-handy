@@ -15,13 +15,30 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern HdyTabView* _gotk4_handy1_TabView_ConnectCreateWindow(gpointer, guintptr);
+// extern gboolean _gotk4_handy1_TabView_ConnectClosePage(gpointer, HdyTabPage*, guintptr);
+// extern void _gotk4_handy1_TabView_ConnectIndicatorActivated(gpointer, HdyTabPage*, guintptr);
+// extern void _gotk4_handy1_TabView_ConnectPageAttached(gpointer, HdyTabPage*, gint, guintptr);
+// extern void _gotk4_handy1_TabView_ConnectPageDetached(gpointer, HdyTabPage*, gint, guintptr);
+// extern void _gotk4_handy1_TabView_ConnectPageReordered(gpointer, HdyTabPage*, gint, guintptr);
+// extern void _gotk4_handy1_TabView_ConnectSetupMenu(gpointer, HdyTabPage*, guintptr);
 import "C"
+
+// glib.Type values for hdy-tab-view.go.
+var (
+	GTypeTabPage = externglib.Type(C.hdy_tab_page_get_type())
+	GTypeTabView = externglib.Type(C.hdy_tab_view_get_type())
+)
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_tab_page_get_type()), F: marshalTabPager},
-		{T: externglib.Type(C.hdy_tab_view_get_type()), F: marshalTabViewer},
+		{T: GTypeTabPage, F: marshalTabPage},
+		{T: GTypeTabView, F: marshalTabView},
 	})
+}
+
+// TabPageOverrider contains methods that are overridable.
+type TabPageOverrider interface {
 }
 
 type TabPage struct {
@@ -33,13 +50,21 @@ var (
 	_ externglib.Objector = (*TabPage)(nil)
 )
 
+func classInitTabPager(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapTabPage(obj *externglib.Object) *TabPage {
 	return &TabPage{
 		Object: obj,
 	}
 }
 
-func marshalTabPager(p uintptr) (interface{}, error) {
+func marshalTabPage(p uintptr) (interface{}, error) {
 	return wrapTabPage(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -53,7 +78,7 @@ func (self *TabPage) Child() gtk.Widgetter {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GtkWidget  // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_child(_arg0)
 	runtime.KeepAlive(self)
@@ -91,7 +116,7 @@ func (self *TabPage) Icon() gio.Iconner {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_icon(_arg0)
 	runtime.KeepAlive(self)
@@ -129,7 +154,7 @@ func (self *TabPage) IndicatorActivatable() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_indicator_activatable(_arg0)
 	runtime.KeepAlive(self)
@@ -154,7 +179,7 @@ func (self *TabPage) IndicatorIcon() gio.Iconner {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_indicator_icon(_arg0)
 	runtime.KeepAlive(self)
@@ -191,7 +216,7 @@ func (self *TabPage) Loading() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_loading(_arg0)
 	runtime.KeepAlive(self)
@@ -216,7 +241,7 @@ func (self *TabPage) NeedsAttention() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_needs_attention(_arg0)
 	runtime.KeepAlive(self)
@@ -243,7 +268,7 @@ func (self *TabPage) Parent() *TabPage {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_parent(_arg0)
 	runtime.KeepAlive(self)
@@ -267,7 +292,7 @@ func (self *TabPage) Pinned() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_pinned(_arg0)
 	runtime.KeepAlive(self)
@@ -291,7 +316,7 @@ func (self *TabPage) Selected() bool {
 	var _arg0 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_selected(_arg0)
 	runtime.KeepAlive(self)
@@ -315,7 +340,7 @@ func (self *TabPage) Title() string {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.gchar      // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -339,7 +364,7 @@ func (self *TabPage) Tooltip() string {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.gchar      // in
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_page_get_tooltip(_arg0)
 	runtime.KeepAlive(self)
@@ -366,9 +391,9 @@ func (self *TabPage) SetIcon(icon gio.Iconner) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 *C.GIcon      // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if icon != nil {
-		_arg1 = (*C.GIcon)(unsafe.Pointer(icon.Native()))
+		_arg1 = (*C.GIcon)(unsafe.Pointer(externglib.InternObject(icon).Native()))
 	}
 
 	C.hdy_tab_page_set_icon(_arg0, _arg1)
@@ -391,7 +416,7 @@ func (self *TabPage) SetIndicatorActivatable(activatable bool) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if activatable {
 		_arg1 = C.TRUE
 	}
@@ -422,9 +447,9 @@ func (self *TabPage) SetIndicatorIcon(indicatorIcon gio.Iconner) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 *C.GIcon      // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if indicatorIcon != nil {
-		_arg1 = (*C.GIcon)(unsafe.Pointer(indicatorIcon.Native()))
+		_arg1 = (*C.GIcon)(unsafe.Pointer(externglib.InternObject(indicatorIcon).Native()))
 	}
 
 	C.hdy_tab_page_set_indicator_icon(_arg0, _arg1)
@@ -447,7 +472,7 @@ func (self *TabPage) SetLoading(loading bool) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if loading {
 		_arg1 = C.TRUE
 	}
@@ -471,7 +496,7 @@ func (self *TabPage) SetNeedsAttention(needsAttention bool) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if needsAttention {
 		_arg1 = C.TRUE
 	}
@@ -494,7 +519,7 @@ func (self *TabPage) SetTitle(title string) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 *C.gchar      // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -518,7 +543,7 @@ func (self *TabPage) SetTooltip(tooltip string) {
 	var _arg0 *C.HdyTabPage // out
 	var _arg1 *C.gchar      // out
 
-	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if tooltip != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(tooltip)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -529,6 +554,10 @@ func (self *TabPage) SetTooltip(tooltip string) {
 	runtime.KeepAlive(tooltip)
 }
 
+// TabViewOverrider contains methods that are overridable.
+type TabViewOverrider interface {
+}
+
 type TabView struct {
 	_ [0]func() // equal guard
 	gtk.Bin
@@ -537,6 +566,14 @@ type TabView struct {
 var (
 	_ gtk.Binner = (*TabView)(nil)
 )
+
+func classInitTabViewer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapTabView(obj *externglib.Object) *TabView {
 	return &TabView{
@@ -559,8 +596,34 @@ func wrapTabView(obj *externglib.Object) *TabView {
 	}
 }
 
-func marshalTabViewer(p uintptr) (interface{}, error) {
+func marshalTabView(p uintptr) (interface{}, error) {
 	return wrapTabView(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_TabView_ConnectClosePage
+func _gotk4_handy1_TabView_ConnectClosePage(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.guintptr) (cret C.gboolean) {
+	var f func(page *TabPage) (ok bool)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg2))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage) (ok bool))
+	}
+
+	var _page *TabPage // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+
+	ok := f(_page)
+
+	if ok {
+		cret = C.TRUE
+	}
+
+	return cret
 }
 
 // ConnectClosePage: this signal is emitted after hdy_tab_view_close_page() has
@@ -588,8 +651,30 @@ func marshalTabViewer(p uintptr) (interface{}, error) {
 //
 // A typical reason to connect to this signal is to show a confirmation dialog
 // for closing a tab.
-func (self *TabView) ConnectClosePage(f func(page TabPage) bool) externglib.SignalHandle {
-	return self.Connect("close-page", f)
+func (self *TabView) ConnectClosePage(f func(page *TabPage) (ok bool)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "close-page", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectClosePage), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectCreateWindow
+func _gotk4_handy1_TabView_ConnectCreateWindow(arg0 C.gpointer, arg1 C.guintptr) (cret *C.HdyTabView) {
+	var f func() (tabView *TabView)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg1))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func() (tabView *TabView))
+	}
+
+	tabView := f()
+
+	if tabView != nil {
+		cret = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(tabView).Native()))
+	}
+
+	return cret
 }
 
 // ConnectCreateWindow: this signal is emitted when a tab is dropped onto
@@ -597,16 +682,58 @@ func (self *TabView) ConnectClosePage(f func(page TabPage) bool) externglib.Sign
 //
 // The signal handler is expected to create a new window, position it as needed
 // and return its TabView that the page will be transferred into.
-func (self *TabView) ConnectCreateWindow(f func() TabView) externglib.SignalHandle {
-	return self.Connect("create-window", f)
+func (self *TabView) ConnectCreateWindow(f func() (tabView *TabView)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "create-window", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectCreateWindow), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectIndicatorActivated
+func _gotk4_handy1_TabView_ConnectIndicatorActivated(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.guintptr) {
+	var f func(page *TabPage)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg2))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage))
+	}
+
+	var _page *TabPage // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+
+	f(_page)
 }
 
 // ConnectIndicatorActivated: this signal is emitted after the indicator icon on
 // page has been activated.
 //
 // See TabPage:indicator-icon and TabPage:indicator-activatable.
-func (self *TabView) ConnectIndicatorActivated(f func(page TabPage)) externglib.SignalHandle {
-	return self.Connect("indicator-activated", f)
+func (self *TabView) ConnectIndicatorActivated(f func(page *TabPage)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "indicator-activated", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectIndicatorActivated), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectPageAttached
+func _gotk4_handy1_TabView_ConnectPageAttached(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.gint, arg3 C.guintptr) {
+	var f func(page *TabPage, position int)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage, position int))
+	}
+
+	var _page *TabPage // out
+	var _position int  // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+	_position = int(arg2)
+
+	f(_page, _position)
 }
 
 // ConnectPageAttached: this signal is emitted when a page has been created or
@@ -614,8 +741,30 @@ func (self *TabView) ConnectIndicatorActivated(f func(page TabPage)) externglib.
 //
 // A typical reason to connect to this signal would be to connect to page
 // signals for things such as updating window title.
-func (self *TabView) ConnectPageAttached(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-attached", f)
+func (self *TabView) ConnectPageAttached(f func(page *TabPage, position int)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "page-attached", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectPageAttached), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectPageDetached
+func _gotk4_handy1_TabView_ConnectPageDetached(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.gint, arg3 C.guintptr) {
+	var f func(page *TabPage, position int)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage, position int))
+	}
+
+	var _page *TabPage // out
+	var _position int  // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+	_position = int(arg2)
+
+	f(_page, _position)
 }
 
 // ConnectPageDetached: this signal is emitted when a page has been removed or
@@ -628,14 +777,56 @@ func (self *TabView) ConnectPageAttached(f func(page TabPage, position int)) ext
 // function as the child might merely be moved to another window; use child
 // dispose handler for that or do it in sync with your
 // hdy_tab_view_close_page_finish() calls.
-func (self *TabView) ConnectPageDetached(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-detached", f)
+func (self *TabView) ConnectPageDetached(f func(page *TabPage, position int)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "page-detached", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectPageDetached), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectPageReordered
+func _gotk4_handy1_TabView_ConnectPageReordered(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.gint, arg3 C.guintptr) {
+	var f func(page *TabPage, position int)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage, position int))
+	}
+
+	var _page *TabPage // out
+	var _position int  // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+	_position = int(arg2)
+
+	f(_page, _position)
 }
 
 // ConnectPageReordered: this signal is emitted after page has been reordered to
 // position.
-func (self *TabView) ConnectPageReordered(f func(page TabPage, position int)) externglib.SignalHandle {
-	return self.Connect("page-reordered", f)
+func (self *TabView) ConnectPageReordered(f func(page *TabPage, position int)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "page-reordered", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectPageReordered), f)
+}
+
+//export _gotk4_handy1_TabView_ConnectSetupMenu
+func _gotk4_handy1_TabView_ConnectSetupMenu(arg0 C.gpointer, arg1 *C.HdyTabPage, arg2 C.guintptr) {
+	var f func(page *TabPage)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg2))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(page *TabPage))
+	}
+
+	var _page *TabPage // out
+
+	_page = wrapTabPage(externglib.Take(unsafe.Pointer(arg1)))
+
+	f(_page)
 }
 
 // ConnectSetupMenu: this signal is emitted before a context menu is opened for
@@ -643,8 +834,8 @@ func (self *TabView) ConnectPageReordered(f func(page TabPage, position int)) ex
 //
 // It can be used to set up menu actions before showing the menu, for example
 // disable actions not applicable to page.
-func (self *TabView) ConnectSetupMenu(f func(page TabPage)) externglib.SignalHandle {
-	return self.Connect("setup-menu", f)
+func (self *TabView) ConnectSetupMenu(f func(page *TabPage)) externglib.SignalHandle {
+	return externglib.ConnectGeneratedClosure(self, "setup-menu", false, unsafe.Pointer(C._gotk4_handy1_TabView_ConnectSetupMenu), f)
 }
 
 // NewTabView creates a new TabView widget.
@@ -688,10 +879,10 @@ func (self *TabView) AddPage(child gtk.Widgetter, parent *TabPage) *TabPage {
 	var _arg2 *C.HdyTabPage // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if parent != nil {
-		_arg2 = (*C.HdyTabPage)(unsafe.Pointer(parent.Native()))
+		_arg2 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(parent).Native()))
 	}
 
 	_cret = C.hdy_tab_view_add_page(_arg0, _arg1, _arg2)
@@ -721,8 +912,8 @@ func (self *TabView) Append(child gtk.Widgetter) *TabPage {
 	var _arg1 *C.GtkWidget  // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_tab_view_append(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -750,8 +941,8 @@ func (self *TabView) AppendPinned(child gtk.Widgetter) *TabPage {
 	var _arg1 *C.GtkWidget  // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_tab_view_append_pinned(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -774,8 +965,8 @@ func (self *TabView) CloseOtherPages(page *TabPage) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	C.hdy_tab_view_close_other_pages(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -813,8 +1004,8 @@ func (self *TabView) ClosePage(page *TabPage) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	C.hdy_tab_view_close_page(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -840,8 +1031,8 @@ func (self *TabView) ClosePageFinish(page *TabPage, confirm bool) {
 	var _arg1 *C.HdyTabPage // out
 	var _arg2 C.gboolean    // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 	if confirm {
 		_arg2 = C.TRUE
 	}
@@ -862,8 +1053,8 @@ func (self *TabView) ClosePagesAfter(page *TabPage) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	C.hdy_tab_view_close_pages_after(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -880,8 +1071,8 @@ func (self *TabView) ClosePagesBefore(page *TabPage) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	C.hdy_tab_view_close_pages_before(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -898,7 +1089,7 @@ func (self *TabView) DefaultIcon() gio.Iconner {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GIcon      // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_default_icon(_arg0)
 	runtime.KeepAlive(self)
@@ -938,7 +1129,7 @@ func (self *TabView) IsTransferringPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_is_transferring_page(_arg0)
 	runtime.KeepAlive(self)
@@ -963,7 +1154,7 @@ func (self *TabView) MenuModel() gio.MenuModeller {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GMenuModel // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_menu_model(_arg0)
 	runtime.KeepAlive(self)
@@ -1000,7 +1191,7 @@ func (self *TabView) NPages() int {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gint        // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_n_pages(_arg0)
 	runtime.KeepAlive(self)
@@ -1024,7 +1215,7 @@ func (self *TabView) NPinnedPages() int {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gint        // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_n_pinned_pages(_arg0)
 	runtime.KeepAlive(self)
@@ -1051,7 +1242,7 @@ func (self *TabView) NthPage(position int) *TabPage {
 	var _arg1 C.gint        // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(position)
 
 	_cret = C.hdy_tab_view_get_nth_page(_arg0, _arg1)
@@ -1080,8 +1271,8 @@ func (self *TabView) Page(child gtk.Widgetter) *TabPage {
 	var _arg1 *C.GtkWidget  // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_tab_view_get_page(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1109,8 +1300,8 @@ func (self *TabView) PagePosition(page *TabPage) int {
 	var _arg1 *C.HdyTabPage // out
 	var _cret C.gint        // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	_cret = C.hdy_tab_view_get_page_position(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1134,7 +1325,7 @@ func (self *TabView) Pages() gio.ListModeller {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GListModel // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_pages(_arg0)
 	runtime.KeepAlive(self)
@@ -1172,7 +1363,7 @@ func (self *TabView) SelectedPage() *TabPage {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_selected_page(_arg0)
 	runtime.KeepAlive(self)
@@ -1197,7 +1388,7 @@ func (self *TabView) ShortcutWidget() gtk.Widgetter {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GtkWidget  // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_get_shortcut_widget(_arg0)
 	runtime.KeepAlive(self)
@@ -1244,8 +1435,8 @@ func (self *TabView) Insert(child gtk.Widgetter, position int) *TabPage {
 	var _arg2 C.gint        // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	_arg2 = C.gint(position)
 
 	_cret = C.hdy_tab_view_insert(_arg0, _arg1, _arg2)
@@ -1280,8 +1471,8 @@ func (self *TabView) InsertPinned(child gtk.Widgetter, position int) *TabPage {
 	var _arg2 C.gint        // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	_arg2 = C.gint(position)
 
 	_cret = C.hdy_tab_view_insert_pinned(_arg0, _arg1, _arg2)
@@ -1311,8 +1502,8 @@ func (self *TabView) Prepend(child gtk.Widgetter) *TabPage {
 	var _arg1 *C.GtkWidget  // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_tab_view_prepend(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1340,8 +1531,8 @@ func (self *TabView) PrependPinned(child gtk.Widgetter) *TabPage {
 	var _arg1 *C.GtkWidget  // out
 	var _cret *C.HdyTabPage // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	_cret = C.hdy_tab_view_prepend_pinned(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1369,8 +1560,8 @@ func (self *TabView) ReorderBackward(page *TabPage) bool {
 	var _arg1 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	_cret = C.hdy_tab_view_reorder_backward(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1400,8 +1591,8 @@ func (self *TabView) ReorderFirst(page *TabPage) bool {
 	var _arg1 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	_cret = C.hdy_tab_view_reorder_first(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1431,8 +1622,8 @@ func (self *TabView) ReorderForward(page *TabPage) bool {
 	var _arg1 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	_cret = C.hdy_tab_view_reorder_forward(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1462,8 +1653,8 @@ func (self *TabView) ReorderLast(page *TabPage) bool {
 	var _arg1 *C.HdyTabPage // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 
 	_cret = C.hdy_tab_view_reorder_last(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1498,8 +1689,8 @@ func (self *TabView) ReorderPage(page *TabPage, position int) bool {
 	var _arg2 C.gint        // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 	_arg2 = C.gint(position)
 
 	_cret = C.hdy_tab_view_reorder_page(_arg0, _arg1, _arg2)
@@ -1528,7 +1719,7 @@ func (self *TabView) SelectNextPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_select_next_page(_arg0)
 	runtime.KeepAlive(self)
@@ -1554,7 +1745,7 @@ func (self *TabView) SelectPreviousPage() bool {
 	var _arg0 *C.HdyTabView // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_tab_view_select_previous_page(_arg0)
 	runtime.KeepAlive(self)
@@ -1587,8 +1778,8 @@ func (self *TabView) SetDefaultIcon(defaultIcon gio.Iconner) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GIcon      // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GIcon)(unsafe.Pointer(defaultIcon.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GIcon)(unsafe.Pointer(externglib.InternObject(defaultIcon).Native()))
 
 	C.hdy_tab_view_set_default_icon(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1609,9 +1800,9 @@ func (self *TabView) SetMenuModel(menuModel gio.MenuModeller) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GMenuModel // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if menuModel != nil {
-		_arg1 = (*C.GMenuModel)(unsafe.Pointer(menuModel.Native()))
+		_arg1 = (*C.GMenuModel)(unsafe.Pointer(externglib.InternObject(menuModel).Native()))
 	}
 
 	C.hdy_tab_view_set_menu_model(_arg0, _arg1)
@@ -1651,8 +1842,8 @@ func (self *TabView) SetPagePinned(page *TabPage, pinned bool) {
 	var _arg1 *C.HdyTabPage // out
 	var _arg2 C.gboolean    // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
 	if pinned {
 		_arg2 = C.TRUE
 	}
@@ -1673,8 +1864,8 @@ func (self *TabView) SetSelectedPage(selectedPage *TabPage) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.HdyTabPage // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(selectedPage.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(selectedPage).Native()))
 
 	C.hdy_tab_view_set_selected_page(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -1703,9 +1894,9 @@ func (self *TabView) SetShortcutWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyTabView // out
 	var _arg1 *C.GtkWidget  // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if widget != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 	}
 
 	C.hdy_tab_view_set_shortcut_widget(_arg0, _arg1)
@@ -1731,9 +1922,9 @@ func (self *TabView) TransferPage(page *TabPage, otherView *TabView, position in
 	var _arg2 *C.HdyTabView // out
 	var _arg3 C.gint        // out
 
-	_arg0 = (*C.HdyTabView)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(page.Native()))
-	_arg2 = (*C.HdyTabView)(unsafe.Pointer(otherView.Native()))
+	_arg0 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyTabPage)(unsafe.Pointer(externglib.InternObject(page).Native()))
+	_arg2 = (*C.HdyTabView)(unsafe.Pointer(externglib.InternObject(otherView).Native()))
 	_arg3 = C.gint(position)
 
 	C.hdy_tab_view_transfer_page(_arg0, _arg1, _arg2, _arg3)

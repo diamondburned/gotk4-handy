@@ -17,11 +17,18 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-flap.go.
+var (
+	GTypeFlapFoldPolicy     = externglib.Type(C.hdy_flap_fold_policy_get_type())
+	GTypeFlapTransitionType = externglib.Type(C.hdy_flap_transition_type_get_type())
+	GTypeFlap               = externglib.Type(C.hdy_flap_get_type())
+)
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_flap_fold_policy_get_type()), F: marshalFlapFoldPolicy},
-		{T: externglib.Type(C.hdy_flap_transition_type_get_type()), F: marshalFlapTransitionType},
-		{T: externglib.Type(C.hdy_flap_get_type()), F: marshalFlapper},
+		{T: GTypeFlapFoldPolicy, F: marshalFlapFoldPolicy},
+		{T: GTypeFlapTransitionType, F: marshalFlapTransitionType},
+		{T: GTypeFlap, F: marshalFlap},
 	})
 }
 
@@ -93,6 +100,10 @@ func (f FlapTransitionType) String() string {
 	}
 }
 
+// FlapOverrider contains methods that are overridable.
+type FlapOverrider interface {
+}
+
 type Flap struct {
 	_ [0]func() // equal guard
 	gtk.Container
@@ -111,6 +122,14 @@ var (
 	_ externglib.Objector = (*Flap)(nil)
 	_ gtk.Widgetter       = (*Flap)(nil)
 )
+
+func classInitFlapper(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapFlap(obj *externglib.Object) *Flap {
 	return &Flap{
@@ -170,7 +189,7 @@ func wrapFlap(obj *externglib.Object) *Flap {
 	}
 }
 
-func marshalFlapper(p uintptr) (interface{}, error) {
+func marshalFlap(p uintptr) (interface{}, error) {
 	return wrapFlap(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -202,7 +221,7 @@ func (self *Flap) Content() gtk.Widgetter {
 	var _arg0 *C.HdyFlap   // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_content(_arg0)
 	runtime.KeepAlive(self)
@@ -239,7 +258,7 @@ func (self *Flap) Flap() gtk.Widgetter {
 	var _arg0 *C.HdyFlap   // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_flap(_arg0)
 	runtime.KeepAlive(self)
@@ -276,7 +295,7 @@ func (self *Flap) FlapPosition() gtk.PackType {
 	var _arg0 *C.HdyFlap    // out
 	var _cret C.GtkPackType // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_flap_position(_arg0)
 	runtime.KeepAlive(self)
@@ -299,7 +318,7 @@ func (self *Flap) FoldDuration() uint {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.guint    // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_fold_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -322,7 +341,7 @@ func (self *Flap) FoldPolicy() FlapFoldPolicy {
 	var _arg0 *C.HdyFlap          // out
 	var _cret C.HdyFlapFoldPolicy // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_fold_policy(_arg0)
 	runtime.KeepAlive(self)
@@ -346,7 +365,7 @@ func (self *Flap) Folded() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_folded(_arg0)
 	runtime.KeepAlive(self)
@@ -370,7 +389,7 @@ func (self *Flap) Locked() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_locked(_arg0)
 	runtime.KeepAlive(self)
@@ -394,7 +413,7 @@ func (self *Flap) Modal() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_modal(_arg0)
 	runtime.KeepAlive(self)
@@ -419,7 +438,7 @@ func (self *Flap) RevealDuration() uint {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.guint    // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_reveal_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -441,7 +460,7 @@ func (self *Flap) RevealFlap() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_reveal_flap(_arg0)
 	runtime.KeepAlive(self)
@@ -466,7 +485,7 @@ func (self *Flap) RevealProgress() float64 {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gdouble  // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_reveal_progress(_arg0)
 	runtime.KeepAlive(self)
@@ -488,7 +507,7 @@ func (self *Flap) Separator() gtk.Widgetter {
 	var _arg0 *C.HdyFlap   // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_separator(_arg0)
 	runtime.KeepAlive(self)
@@ -525,7 +544,7 @@ func (self *Flap) SwipeToClose() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_swipe_to_close(_arg0)
 	runtime.KeepAlive(self)
@@ -549,7 +568,7 @@ func (self *Flap) SwipeToOpen() bool {
 	var _arg0 *C.HdyFlap // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_swipe_to_open(_arg0)
 	runtime.KeepAlive(self)
@@ -574,7 +593,7 @@ func (self *Flap) TransitionType() FlapTransitionType {
 	var _arg0 *C.HdyFlap              // out
 	var _cret C.HdyFlapTransitionType // in
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_flap_get_transition_type(_arg0)
 	runtime.KeepAlive(self)
@@ -597,9 +616,9 @@ func (self *Flap) SetContent(content gtk.Widgetter) {
 	var _arg0 *C.HdyFlap   // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if content != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(content.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(content).Native()))
 	}
 
 	C.hdy_flap_set_content(_arg0, _arg1)
@@ -618,9 +637,9 @@ func (self *Flap) SetFlap(flap gtk.Widgetter) {
 	var _arg0 *C.HdyFlap   // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if flap != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(flap.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(flap).Native()))
 	}
 
 	C.hdy_flap_set_flap(_arg0, _arg1)
@@ -640,7 +659,7 @@ func (self *Flap) SetFlapPosition(position gtk.PackType) {
 	var _arg0 *C.HdyFlap    // out
 	var _arg1 C.GtkPackType // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.GtkPackType(position)
 
 	C.hdy_flap_set_flap_position(_arg0, _arg1)
@@ -658,7 +677,7 @@ func (self *Flap) SetFoldDuration(duration uint) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.guint    // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_flap_set_fold_duration(_arg0, _arg1)
@@ -677,7 +696,7 @@ func (self *Flap) SetFoldPolicy(policy FlapFoldPolicy) {
 	var _arg0 *C.HdyFlap          // out
 	var _arg1 C.HdyFlapFoldPolicy // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyFlapFoldPolicy(policy)
 
 	C.hdy_flap_set_fold_policy(_arg0, _arg1)
@@ -699,7 +718,7 @@ func (self *Flap) SetLocked(locked bool) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if locked {
 		_arg1 = C.TRUE
 	}
@@ -723,7 +742,7 @@ func (self *Flap) SetModal(modal bool) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if modal {
 		_arg1 = C.TRUE
 	}
@@ -744,7 +763,7 @@ func (self *Flap) SetRevealDuration(duration uint) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.guint    // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_flap_set_reveal_duration(_arg0, _arg1)
@@ -762,7 +781,7 @@ func (self *Flap) SetRevealFlap(revealFlap bool) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if revealFlap {
 		_arg1 = C.TRUE
 	}
@@ -784,9 +803,9 @@ func (self *Flap) SetSeparator(separator gtk.Widgetter) {
 	var _arg0 *C.HdyFlap   // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if separator != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(separator.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(separator).Native()))
 	}
 
 	C.hdy_flap_set_separator(_arg0, _arg1)
@@ -806,7 +825,7 @@ func (self *Flap) SetSwipeToClose(swipeToClose bool) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if swipeToClose {
 		_arg1 = C.TRUE
 	}
@@ -828,7 +847,7 @@ func (self *Flap) SetSwipeToOpen(swipeToOpen bool) {
 	var _arg0 *C.HdyFlap // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if swipeToOpen {
 		_arg1 = C.TRUE
 	}
@@ -853,7 +872,7 @@ func (self *Flap) SetTransitionType(transitionType FlapTransitionType) {
 	var _arg0 *C.HdyFlap              // out
 	var _arg1 C.HdyFlapTransitionType // out
 
-	_arg0 = (*C.HdyFlap)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyFlap)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyFlapTransitionType(transitionType)
 
 	C.hdy_flap_set_transition_type(_arg0, _arg1)

@@ -16,18 +16,26 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern HdySwipeTracker* _gotk4_handy1_SwipeableInterface_get_swipe_tracker(HdySwipeable*);
+// extern gdouble _gotk4_handy1_SwipeableInterface_get_cancel_progress(HdySwipeable*);
+// extern gdouble _gotk4_handy1_SwipeableInterface_get_distance(HdySwipeable*);
+// extern gdouble _gotk4_handy1_SwipeableInterface_get_progress(HdySwipeable*);
+// extern gdouble* _gotk4_handy1_SwipeableInterface_get_snap_points(HdySwipeable*, gint*);
+// extern void _gotk4_handy1_SwipeableInterface_get_swipe_area(HdySwipeable*, HdyNavigationDirection, gboolean, GdkRectangle*);
+// extern void _gotk4_handy1_SwipeableInterface_switch_child(HdySwipeable*, guint, gint64);
+// extern void _gotk4_handy1_Swipeable_ConnectChildSwitched(gpointer, guint, gint64, guintptr);
 import "C"
+
+// glib.Type values for hdy-swipeable.go.
+var GTypeSwipeable = externglib.Type(C.hdy_swipeable_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_swipeable_get_type()), F: marshalSwipeabler},
+		{T: GTypeSwipeable, F: marshalSwipeable},
 	})
 }
 
 // SwipeableOverrider contains methods that are overridable.
-//
-// As of right now, interface overriding and subclassing is not supported
-// yet, so the interface currently has no use.
 type SwipeableOverrider interface {
 	// CancelProgress gets the progress self will snap back to after the gesture
 	// is canceled.
@@ -129,9 +137,118 @@ type Swipeabler interface {
 	SwipeTracker() *SwipeTracker
 	// SwitchChild: see HdySwipeable::child-switched.
 	SwitchChild(index uint, duration int64)
+
+	// Child-switched: this signal should be emitted when the widget's visible
+	// child is changed.
+	ConnectChildSwitched(func(index uint, duration int64)) externglib.SignalHandle
 }
 
 var _ Swipeabler = (*Swipeable)(nil)
+
+func ifaceInitSwipeabler(gifacePtr, data C.gpointer) {
+	iface := (*C.HdySwipeableInterface)(unsafe.Pointer(gifacePtr))
+	iface.get_cancel_progress = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_cancel_progress)
+	iface.get_distance = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_distance)
+	iface.get_progress = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_progress)
+	iface.get_snap_points = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_snap_points)
+	iface.get_swipe_area = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_swipe_area)
+	iface.get_swipe_tracker = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_get_swipe_tracker)
+	iface.switch_child = (*[0]byte)(C._gotk4_handy1_SwipeableInterface_switch_child)
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_cancel_progress
+func _gotk4_handy1_SwipeableInterface_get_cancel_progress(arg0 *C.HdySwipeable) (cret C.gdouble) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	gdouble := iface.CancelProgress()
+
+	cret = C.gdouble(gdouble)
+
+	return cret
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_distance
+func _gotk4_handy1_SwipeableInterface_get_distance(arg0 *C.HdySwipeable) (cret C.gdouble) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	gdouble := iface.Distance()
+
+	cret = C.gdouble(gdouble)
+
+	return cret
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_progress
+func _gotk4_handy1_SwipeableInterface_get_progress(arg0 *C.HdySwipeable) (cret C.gdouble) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	gdouble := iface.Progress()
+
+	cret = C.gdouble(gdouble)
+
+	return cret
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_snap_points
+func _gotk4_handy1_SwipeableInterface_get_snap_points(arg0 *C.HdySwipeable, arg1 *C.gint) (cret *C.gdouble) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	gdoubles := iface.SnapPoints()
+
+	*arg1 = (C.gint)(len(gdoubles))
+	cret = (*C.gdouble)(C.calloc(C.size_t(len(gdoubles)), C.size_t(C.sizeof_gdouble)))
+	copy(unsafe.Slice((*float64)(cret), len(gdoubles)), gdoubles)
+
+	return cret
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_swipe_area
+func _gotk4_handy1_SwipeableInterface_get_swipe_area(arg0 *C.HdySwipeable, arg1 C.HdyNavigationDirection, arg2 C.gboolean, arg3 *C.GdkRectangle) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	var _navigationDirection NavigationDirection // out
+	var _isDrag bool                             // out
+
+	_navigationDirection = NavigationDirection(arg1)
+	if arg2 != 0 {
+		_isDrag = true
+	}
+
+	rect := iface.SwipeArea(_navigationDirection, _isDrag)
+
+	*arg3 = *(*C.GdkRectangle)(gextras.StructNative(unsafe.Pointer(rect)))
+}
+
+//export _gotk4_handy1_SwipeableInterface_get_swipe_tracker
+func _gotk4_handy1_SwipeableInterface_get_swipe_tracker(arg0 *C.HdySwipeable) (cret *C.HdySwipeTracker) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	swipeTracker := iface.SwipeTracker()
+
+	cret = (*C.HdySwipeTracker)(unsafe.Pointer(externglib.InternObject(swipeTracker).Native()))
+
+	return cret
+}
+
+//export _gotk4_handy1_SwipeableInterface_switch_child
+func _gotk4_handy1_SwipeableInterface_switch_child(arg0 *C.HdySwipeable, arg1 C.guint, arg2 C.gint64) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(SwipeableOverrider)
+
+	var _index uint     // out
+	var _duration int64 // out
+
+	_index = uint(arg1)
+	_duration = int64(arg2)
+
+	iface.SwitchChild(_index, _duration)
+}
 
 func wrapSwipeable(obj *externglib.Object) *Swipeable {
 	return &Swipeable{
@@ -150,8 +267,30 @@ func wrapSwipeable(obj *externglib.Object) *Swipeable {
 	}
 }
 
-func marshalSwipeabler(p uintptr) (interface{}, error) {
+func marshalSwipeable(p uintptr) (interface{}, error) {
 	return wrapSwipeable(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_Swipeable_ConnectChildSwitched
+func _gotk4_handy1_Swipeable_ConnectChildSwitched(arg0 C.gpointer, arg1 C.guint, arg2 C.gint64, arg3 C.guintptr) {
+	var f func(index uint, duration int64)
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg3))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func(index uint, duration int64))
+	}
+
+	var _index uint     // out
+	var _duration int64 // out
+
+	_index = uint(arg1)
+	_duration = int64(arg2)
+
+	f(_index, _duration)
 }
 
 // ConnectChildSwitched: this signal should be emitted when the widget's visible
@@ -161,7 +300,7 @@ func marshalSwipeabler(p uintptr) (interface{}, error) {
 //
 // This is used by SwipeGroup, applications should not connect to it.
 func (self *Swipeable) ConnectChildSwitched(f func(index uint, duration int64)) externglib.SignalHandle {
-	return self.Connect("child-switched", f)
+	return externglib.ConnectGeneratedClosure(self, "child-switched", false, unsafe.Pointer(C._gotk4_handy1_Swipeable_ConnectChildSwitched), f)
 }
 
 // EmitChildSwitched emits HdySwipeable::child-switched signal. This should be
@@ -179,7 +318,7 @@ func (self *Swipeable) EmitChildSwitched(index uint, duration int64) {
 	var _arg1 C.guint         // out
 	var _arg2 C.gint64        // out
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(index)
 	_arg2 = C.gint64(duration)
 
@@ -200,7 +339,7 @@ func (self *Swipeable) CancelProgress() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipeable_get_cancel_progress(_arg0)
 	runtime.KeepAlive(self)
@@ -223,7 +362,7 @@ func (self *Swipeable) Distance() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipeable_get_distance(_arg0)
 	runtime.KeepAlive(self)
@@ -245,7 +384,7 @@ func (self *Swipeable) Progress() float64 {
 	var _arg0 *C.HdySwipeable // out
 	var _cret C.gdouble       // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipeable_get_progress(_arg0)
 	runtime.KeepAlive(self)
@@ -269,7 +408,7 @@ func (self *Swipeable) SnapPoints() []float64 {
 	var _cret *C.gdouble      // in
 	var _arg1 C.gint          // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipeable_get_snap_points(_arg0, &_arg1)
 	runtime.KeepAlive(self)
@@ -309,7 +448,7 @@ func (self *Swipeable) SwipeArea(navigationDirection NavigationDirection, isDrag
 	var _arg2 C.gboolean               // out
 	var _arg3 C.GdkRectangle           // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyNavigationDirection(navigationDirection)
 	if isDrag {
 		_arg2 = C.TRUE
@@ -337,7 +476,7 @@ func (self *Swipeable) SwipeTracker() *SwipeTracker {
 	var _arg0 *C.HdySwipeable    // out
 	var _cret *C.HdySwipeTracker // in
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_swipeable_get_swipe_tracker(_arg0)
 	runtime.KeepAlive(self)
@@ -361,7 +500,7 @@ func (self *Swipeable) SwitchChild(index uint, duration int64) {
 	var _arg1 C.guint         // out
 	var _arg2 C.gint64        // out
 
-	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdySwipeable)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(index)
 	_arg2 = C.gint64(duration)
 

@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-preferences-group.go.
+var GTypePreferencesGroup = externglib.Type(C.hdy_preferences_group_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_preferences_group_get_type()), F: marshalPreferencesGrouper},
+		{T: GTypePreferencesGroup, F: marshalPreferencesGroup},
 	})
+}
+
+// PreferencesGroupOverrider contains methods that are overridable.
+type PreferencesGroupOverrider interface {
 }
 
 type PreferencesGroup struct {
@@ -30,6 +37,14 @@ type PreferencesGroup struct {
 var (
 	_ gtk.Binner = (*PreferencesGroup)(nil)
 )
+
+func classInitPreferencesGrouper(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapPreferencesGroup(obj *externglib.Object) *PreferencesGroup {
 	return &PreferencesGroup{
@@ -52,7 +67,7 @@ func wrapPreferencesGroup(obj *externglib.Object) *PreferencesGroup {
 	}
 }
 
-func marshalPreferencesGrouper(p uintptr) (interface{}, error) {
+func marshalPreferencesGroup(p uintptr) (interface{}, error) {
 	return wrapPreferencesGroup(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -82,7 +97,7 @@ func (self *PreferencesGroup) Description() string {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _cret *C.gchar               // in
 
-	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_group_get_description(_arg0)
 	runtime.KeepAlive(self)
@@ -104,7 +119,7 @@ func (self *PreferencesGroup) Title() string {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _cret *C.gchar               // in
 
-	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_group_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -126,7 +141,7 @@ func (self *PreferencesGroup) SetDescription(description string) {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _arg1 *C.gchar               // out
 
-	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(description)))
 	defer C.free(unsafe.Pointer(_arg1))
 
@@ -145,7 +160,7 @@ func (self *PreferencesGroup) SetTitle(title string) {
 	var _arg0 *C.HdyPreferencesGroup // out
 	var _arg1 *C.gchar               // out
 
-	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 	defer C.free(unsafe.Pointer(_arg1))
 

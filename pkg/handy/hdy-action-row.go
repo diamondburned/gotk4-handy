@@ -7,6 +7,7 @@ import (
 	"unsafe"
 
 	"github.com/diamondburned/gotk4/pkg/atk"
+	"github.com/diamondburned/gotk4/pkg/core/gbox"
 	externglib "github.com/diamondburned/gotk4/pkg/core/glib"
 	"github.com/diamondburned/gotk4/pkg/gtk/v3"
 )
@@ -14,18 +15,20 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern void _gotk4_handy1_ActionRowClass_activate(HdyActionRow*);
+// extern void _gotk4_handy1_ActionRow_ConnectActivated(gpointer, guintptr);
 import "C"
+
+// glib.Type values for hdy-action-row.go.
+var GTypeActionRow = externglib.Type(C.hdy_action_row_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_action_row_get_type()), F: marshalActionRower},
+		{T: GTypeActionRow, F: marshalActionRow},
 	})
 }
 
 // ActionRowOverrider contains methods that are overridable.
-//
-// As of right now, interface overriding and subclassing is not supported
-// yet, so the interface currently has no use.
 type ActionRowOverrider interface {
 	Activate()
 }
@@ -39,6 +42,30 @@ var (
 	_ gtk.Binner          = (*ActionRow)(nil)
 	_ externglib.Objector = (*ActionRow)(nil)
 )
+
+func classInitActionRower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+	goval := gbox.Get(uintptr(data))
+	pclass := (*C.HdyActionRowClass)(unsafe.Pointer(gclassPtr))
+	// gclass := (*C.GTypeClass)(unsafe.Pointer(gclassPtr))
+	// pclass := (*C.HdyActionRowClass)(unsafe.Pointer(C.g_type_class_peek_parent(gclass)))
+
+	if _, ok := goval.(interface{ Activate() }); ok {
+		pclass.activate = (*[0]byte)(C._gotk4_handy1_ActionRowClass_activate)
+	}
+}
+
+//export _gotk4_handy1_ActionRowClass_activate
+func _gotk4_handy1_ActionRowClass_activate(arg0 *C.HdyActionRow) {
+	goval := externglib.GoPrivateFromObject(unsafe.Pointer(arg0))
+	iface := goval.(interface{ Activate() })
+
+	iface.Activate()
+}
 
 func wrapActionRow(obj *externglib.Object) *ActionRow {
 	return &ActionRow{
@@ -80,13 +107,29 @@ func wrapActionRow(obj *externglib.Object) *ActionRow {
 	}
 }
 
-func marshalActionRower(p uintptr) (interface{}, error) {
+func marshalActionRow(p uintptr) (interface{}, error) {
 	return wrapActionRow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_ActionRow_ConnectActivated
+func _gotk4_handy1_ActionRow_ConnectActivated(arg0 C.gpointer, arg1 C.guintptr) {
+	var f func()
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg1))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func())
+	}
+
+	f()
 }
 
 // ConnectActivated: this signal is emitted after the row has been activated.
 func (self *ActionRow) ConnectActivated(f func()) externglib.SignalHandle {
-	return self.Connect("activated", f)
+	return externglib.ConnectGeneratedClosure(self, "activated", false, unsafe.Pointer(C._gotk4_handy1_ActionRow_ConnectActivated), f)
 }
 
 // NewActionRow creates a new ActionRow.
@@ -110,7 +153,7 @@ func NewActionRow() *ActionRow {
 func (self *ActionRow) Activate() {
 	var _arg0 *C.HdyActionRow // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	C.hdy_action_row_activate(_arg0)
 	runtime.KeepAlive(self)
@@ -126,8 +169,8 @@ func (self *ActionRow) AddPrefix(widget gtk.Widgetter) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 *C.GtkWidget    // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 
 	C.hdy_action_row_add_prefix(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -145,7 +188,7 @@ func (self *ActionRow) ActivatableWidget() gtk.Widgetter {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.GtkWidget    // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_activatable_widget(_arg0)
 	runtime.KeepAlive(self)
@@ -183,7 +226,7 @@ func (self *ActionRow) IconName() string {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.gchar        // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_icon_name(_arg0)
 	runtime.KeepAlive(self)
@@ -205,7 +248,7 @@ func (self *ActionRow) Subtitle() string {
 	var _arg0 *C.HdyActionRow // out
 	var _cret *C.gchar        // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -231,7 +274,7 @@ func (self *ActionRow) SubtitleLines() int {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gint          // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_subtitle_lines(_arg0)
 	runtime.KeepAlive(self)
@@ -255,7 +298,7 @@ func (self *ActionRow) TitleLines() int {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gint          // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_title_lines(_arg0)
 	runtime.KeepAlive(self)
@@ -279,7 +322,7 @@ func (self *ActionRow) UseUnderline() bool {
 	var _arg0 *C.HdyActionRow // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_action_row_get_use_underline(_arg0)
 	runtime.KeepAlive(self)
@@ -309,9 +352,9 @@ func (self *ActionRow) SetActivatableWidget(widget gtk.Widgetter) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 *C.GtkWidget    // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if widget != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(widget.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(widget).Native()))
 	}
 
 	C.hdy_action_row_set_activatable_widget(_arg0, _arg1)
@@ -329,7 +372,7 @@ func (self *ActionRow) SetIconName(iconName string) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 *C.gchar        // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(iconName)))
 	defer C.free(unsafe.Pointer(_arg1))
 
@@ -348,7 +391,7 @@ func (self *ActionRow) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 *C.gchar        // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if subtitle != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(subtitle)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -372,7 +415,7 @@ func (self *ActionRow) SetSubtitleLines(subtitleLines int) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 C.gint          // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(subtitleLines)
 
 	C.hdy_action_row_set_subtitle_lines(_arg0, _arg1)
@@ -392,7 +435,7 @@ func (self *ActionRow) SetTitleLines(titleLines int) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 C.gint          // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(titleLines)
 
 	C.hdy_action_row_set_title_lines(_arg0, _arg1)
@@ -412,7 +455,7 @@ func (self *ActionRow) SetUseUnderline(useUnderline bool) {
 	var _arg0 *C.HdyActionRow // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyActionRow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if useUnderline {
 		_arg1 = C.TRUE
 	}

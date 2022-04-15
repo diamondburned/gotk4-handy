@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-preferences-window.go.
+var GTypePreferencesWindow = externglib.Type(C.hdy_preferences_window_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_preferences_window_get_type()), F: marshalPreferencesWindower},
+		{T: GTypePreferencesWindow, F: marshalPreferencesWindow},
 	})
+}
+
+// PreferencesWindowOverrider contains methods that are overridable.
+type PreferencesWindowOverrider interface {
 }
 
 type PreferencesWindow struct {
@@ -30,6 +37,14 @@ type PreferencesWindow struct {
 var (
 	_ gtk.Binner = (*PreferencesWindow)(nil)
 )
+
+func classInitPreferencesWindower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapPreferencesWindow(obj *externglib.Object) *PreferencesWindow {
 	return &PreferencesWindow{
@@ -56,7 +71,7 @@ func wrapPreferencesWindow(obj *externglib.Object) *PreferencesWindow {
 	}
 }
 
-func marshalPreferencesWindower(p uintptr) (interface{}, error) {
+func marshalPreferencesWindow(p uintptr) (interface{}, error) {
 	return wrapPreferencesWindow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -83,7 +98,7 @@ func NewPreferencesWindow() *PreferencesWindow {
 func (self *PreferencesWindow) CloseSubpage() {
 	var _arg0 *C.HdyPreferencesWindow // out
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	C.hdy_preferences_window_close_subpage(_arg0)
 	runtime.KeepAlive(self)
@@ -100,7 +115,7 @@ func (self *PreferencesWindow) CanSwipeBack() bool {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _cret C.gboolean              // in
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_window_get_can_swipe_back(_arg0)
 	runtime.KeepAlive(self)
@@ -124,7 +139,7 @@ func (self *PreferencesWindow) SearchEnabled() bool {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _cret C.gboolean              // in
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_preferences_window_get_search_enabled(_arg0)
 	runtime.KeepAlive(self)
@@ -150,8 +165,8 @@ func (self *PreferencesWindow) PresentSubpage(subpage gtk.Widgetter) {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _arg1 *C.GtkWidget            // out
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(subpage.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(subpage).Native()))
 
 	C.hdy_preferences_window_present_subpage(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -169,7 +184,7 @@ func (self *PreferencesWindow) SetCanSwipeBack(canSwipeBack bool) {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _arg1 C.gboolean              // out
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if canSwipeBack {
 		_arg1 = C.TRUE
 	}
@@ -189,7 +204,7 @@ func (self *PreferencesWindow) SetSearchEnabled(searchEnabled bool) {
 	var _arg0 *C.HdyPreferencesWindow // out
 	var _arg1 C.gboolean              // out
 
-	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyPreferencesWindow)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if searchEnabled {
 		_arg1 = C.TRUE
 	}

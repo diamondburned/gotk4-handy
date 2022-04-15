@@ -14,10 +14,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-enum-value-object.go.
+var GTypeEnumValueObject = externglib.Type(C.hdy_enum_value_object_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_enum_value_object_get_type()), F: marshalEnumValueObjector},
+		{T: GTypeEnumValueObject, F: marshalEnumValueObject},
 	})
+}
+
+// EnumValueObjectOverrider contains methods that are overridable.
+type EnumValueObjectOverrider interface {
 }
 
 type EnumValueObject struct {
@@ -29,13 +36,21 @@ var (
 	_ externglib.Objector = (*EnumValueObject)(nil)
 )
 
+func classInitEnumValueObjector(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapEnumValueObject(obj *externglib.Object) *EnumValueObject {
 	return &EnumValueObject{
 		Object: obj,
 	}
 }
 
-func marshalEnumValueObjector(p uintptr) (interface{}, error) {
+func marshalEnumValueObject(p uintptr) (interface{}, error) {
 	return wrapEnumValueObject(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -45,7 +60,7 @@ func (self *EnumValueObject) Name() string {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret *C.gchar              // in
 
-	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_enum_value_object_get_name(_arg0)
 	runtime.KeepAlive(self)
@@ -63,7 +78,7 @@ func (self *EnumValueObject) Nick() string {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret *C.gchar              // in
 
-	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_enum_value_object_get_nick(_arg0)
 	runtime.KeepAlive(self)
@@ -81,7 +96,7 @@ func (self *EnumValueObject) Value() int {
 	var _arg0 *C.HdyEnumValueObject // out
 	var _cret C.gint                // in
 
-	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyEnumValueObject)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_enum_value_object_get_value(_arg0)
 	runtime.KeepAlive(self)

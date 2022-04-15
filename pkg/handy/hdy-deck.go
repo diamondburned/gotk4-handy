@@ -17,10 +17,16 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-deck.go.
+var (
+	GTypeDeckTransitionType = externglib.Type(C.hdy_deck_transition_type_get_type())
+	GTypeDeck               = externglib.Type(C.hdy_deck_get_type())
+)
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_deck_transition_type_get_type()), F: marshalDeckTransitionType},
-		{T: externglib.Type(C.hdy_deck_get_type()), F: marshalDecker},
+		{T: GTypeDeckTransitionType, F: marshalDeckTransitionType},
+		{T: GTypeDeck, F: marshalDeck},
 	})
 }
 
@@ -62,6 +68,10 @@ func (d DeckTransitionType) String() string {
 	}
 }
 
+// DeckOverrider contains methods that are overridable.
+type DeckOverrider interface {
+}
+
 type Deck struct {
 	_ [0]func() // equal guard
 	gtk.Container
@@ -80,6 +90,14 @@ var (
 	_ externglib.Objector = (*Deck)(nil)
 	_ gtk.Widgetter       = (*Deck)(nil)
 )
+
+func classInitDecker(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapDeck(obj *externglib.Object) *Deck {
 	return &Deck{
@@ -139,7 +157,7 @@ func wrapDeck(obj *externglib.Object) *Deck {
 	}
 }
 
-func marshalDecker(p uintptr) (interface{}, error) {
+func marshalDeck(p uintptr) (interface{}, error) {
 	return wrapDeck(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -173,7 +191,7 @@ func (self *Deck) AdjacentChild(direction NavigationDirection) gtk.Widgetter {
 	var _arg1 C.HdyNavigationDirection // out
 	var _cret *C.GtkWidget             // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyNavigationDirection(direction)
 
 	_cret = C.hdy_deck_get_adjacent_child(_arg0, _arg1)
@@ -212,7 +230,7 @@ func (self *Deck) CanSwipeBack() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_can_swipe_back(_arg0)
 	runtime.KeepAlive(self)
@@ -236,7 +254,7 @@ func (self *Deck) CanSwipeForward() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_can_swipe_forward(_arg0)
 	runtime.KeepAlive(self)
@@ -266,7 +284,7 @@ func (self *Deck) ChildByName(name string) gtk.Widgetter {
 	var _arg1 *C.gchar     // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(name)))
 	defer C.free(unsafe.Pointer(_arg1))
 
@@ -312,7 +330,7 @@ func (self *Deck) Homogeneous(orientation gtk.Orientation) bool {
 	var _arg1 C.GtkOrientation // out
 	var _cret C.gboolean       // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.GtkOrientation(orientation)
 
 	_cret = C.hdy_deck_get_homogeneous(_arg0, _arg1)
@@ -339,7 +357,7 @@ func (self *Deck) InterpolateSize() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_interpolate_size(_arg0)
 	runtime.KeepAlive(self)
@@ -364,7 +382,7 @@ func (self *Deck) TransitionDuration() uint {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.guint    // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_transition_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -387,7 +405,7 @@ func (self *Deck) TransitionRunning() bool {
 	var _arg0 *C.HdyDeck // out
 	var _cret C.gboolean // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_transition_running(_arg0)
 	runtime.KeepAlive(self)
@@ -412,7 +430,7 @@ func (self *Deck) TransitionType() DeckTransitionType {
 	var _arg0 *C.HdyDeck              // out
 	var _cret C.HdyDeckTransitionType // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_transition_type(_arg0)
 	runtime.KeepAlive(self)
@@ -434,7 +452,7 @@ func (self *Deck) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdyDeck   // out
 	var _cret *C.GtkWidget // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_visible_child(_arg0)
 	runtime.KeepAlive(self)
@@ -472,7 +490,7 @@ func (self *Deck) VisibleChildName() string {
 	var _arg0 *C.HdyDeck // out
 	var _cret *C.gchar   // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_deck_get_visible_child_name(_arg0)
 	runtime.KeepAlive(self)
@@ -497,10 +515,10 @@ func (self *Deck) InsertChildAfter(child, sibling gtk.Widgetter) {
 	var _arg1 *C.GtkWidget // out
 	var _arg2 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if sibling != nil {
-		_arg2 = (*C.GtkWidget)(unsafe.Pointer(sibling.Native()))
+		_arg2 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(sibling).Native()))
 	}
 
 	C.hdy_deck_insert_child_after(_arg0, _arg1, _arg2)
@@ -525,7 +543,7 @@ func (self *Deck) Navigate(direction NavigationDirection) bool {
 	var _arg1 C.HdyNavigationDirection // out
 	var _cret C.gboolean               // in
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyNavigationDirection(direction)
 
 	_cret = C.hdy_deck_navigate(_arg0, _arg1)
@@ -551,8 +569,8 @@ func (self *Deck) Prepend(child gtk.Widgetter) {
 	var _arg0 *C.HdyDeck   // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	C.hdy_deck_prepend(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -572,10 +590,10 @@ func (self *Deck) ReorderChildAfter(child, sibling gtk.Widgetter) {
 	var _arg1 *C.GtkWidget // out
 	var _arg2 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if sibling != nil {
-		_arg2 = (*C.GtkWidget)(unsafe.Pointer(sibling.Native()))
+		_arg2 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(sibling).Native()))
 	}
 
 	C.hdy_deck_reorder_child_after(_arg0, _arg1, _arg2)
@@ -595,7 +613,7 @@ func (self *Deck) SetCanSwipeBack(canSwipeBack bool) {
 	var _arg0 *C.HdyDeck // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if canSwipeBack {
 		_arg1 = C.TRUE
 	}
@@ -616,7 +634,7 @@ func (self *Deck) SetCanSwipeForward(canSwipeForward bool) {
 	var _arg0 *C.HdyDeck // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if canSwipeForward {
 		_arg1 = C.TRUE
 	}
@@ -641,7 +659,7 @@ func (self *Deck) SetHomogeneous(orientation gtk.Orientation, homogeneous bool) 
 	var _arg1 C.GtkOrientation // out
 	var _arg2 C.gboolean       // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.GtkOrientation(orientation)
 	if homogeneous {
 		_arg2 = C.TRUE
@@ -667,7 +685,7 @@ func (self *Deck) SetInterpolateSize(interpolateSize bool) {
 	var _arg0 *C.HdyDeck // out
 	var _arg1 C.gboolean // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if interpolateSize {
 		_arg1 = C.TRUE
 	}
@@ -688,7 +706,7 @@ func (self *Deck) SetTransitionDuration(duration uint) {
 	var _arg0 *C.HdyDeck // out
 	var _arg1 C.guint    // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_deck_set_transition_duration(_arg0, _arg1)
@@ -711,7 +729,7 @@ func (self *Deck) SetTransitionType(transition DeckTransitionType) {
 	var _arg0 *C.HdyDeck              // out
 	var _arg1 C.HdyDeckTransitionType // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyDeckTransitionType(transition)
 
 	C.hdy_deck_set_transition_type(_arg0, _arg1)
@@ -732,8 +750,8 @@ func (self *Deck) SetVisibleChild(visibleChild gtk.Widgetter) {
 	var _arg0 *C.HdyDeck   // out
 	var _arg1 *C.GtkWidget // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(visibleChild.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(visibleChild).Native()))
 
 	C.hdy_deck_set_visible_child(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -752,7 +770,7 @@ func (self *Deck) SetVisibleChildName(name string) {
 	var _arg0 *C.HdyDeck // out
 	var _arg1 *C.gchar   // out
 
-	_arg0 = (*C.HdyDeck)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyDeck)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(name)))
 	defer C.free(unsafe.Pointer(_arg1))
 

@@ -16,13 +16,21 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
+// extern void _gotk4_handy1_HeaderGroup_ConnectUpdateDecorationLayouts(gpointer, guintptr);
 import "C"
+
+// glib.Type values for hdy-header-group.go.
+var (
+	GTypeHeaderGroupChildType = externglib.Type(C.hdy_header_group_child_type_get_type())
+	GTypeHeaderGroup          = externglib.Type(C.hdy_header_group_get_type())
+	GTypeHeaderGroupChild     = externglib.Type(C.hdy_header_group_child_get_type())
+)
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_header_group_child_type_get_type()), F: marshalHeaderGroupChildType},
-		{T: externglib.Type(C.hdy_header_group_get_type()), F: marshalHeaderGrouper},
-		{T: externglib.Type(C.hdy_header_group_child_get_type()), F: marshalHeaderGroupChilder},
+		{T: GTypeHeaderGroupChildType, F: marshalHeaderGroupChildType},
+		{T: GTypeHeaderGroup, F: marshalHeaderGroup},
+		{T: GTypeHeaderGroupChild, F: marshalHeaderGroupChild},
 	})
 }
 
@@ -59,6 +67,10 @@ func (h HeaderGroupChildType) String() string {
 	}
 }
 
+// HeaderGroupOverrider contains methods that are overridable.
+type HeaderGroupOverrider interface {
+}
+
 type HeaderGroup struct {
 	_ [0]func() // equal guard
 	*externglib.Object
@@ -70,6 +82,14 @@ var (
 	_ externglib.Objector = (*HeaderGroup)(nil)
 )
 
+func classInitHeaderGrouper(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapHeaderGroup(obj *externglib.Object) *HeaderGroup {
 	return &HeaderGroup{
 		Object: obj,
@@ -79,14 +99,30 @@ func wrapHeaderGroup(obj *externglib.Object) *HeaderGroup {
 	}
 }
 
-func marshalHeaderGrouper(p uintptr) (interface{}, error) {
+func marshalHeaderGroup(p uintptr) (interface{}, error) {
 	return wrapHeaderGroup(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
+}
+
+//export _gotk4_handy1_HeaderGroup_ConnectUpdateDecorationLayouts
+func _gotk4_handy1_HeaderGroup_ConnectUpdateDecorationLayouts(arg0 C.gpointer, arg1 C.guintptr) {
+	var f func()
+	{
+		closure := externglib.ConnectedGeneratedClosure(uintptr(arg1))
+		if closure == nil {
+			panic("given unknown closure user_data")
+		}
+		defer closure.TryRepanic()
+
+		f = closure.Func.(func())
+	}
+
+	f()
 }
 
 // ConnectUpdateDecorationLayouts: this signal is emitted before updating the
 // decoration layouts.
 func (self *HeaderGroup) ConnectUpdateDecorationLayouts(f func()) externglib.SignalHandle {
-	return self.Connect("update-decoration-layouts", f)
+	return externglib.ConnectGeneratedClosure(self, "update-decoration-layouts", false, unsafe.Pointer(C._gotk4_handy1_HeaderGroup_ConnectUpdateDecorationLayouts), f)
 }
 
 // The function returns the following values:
@@ -114,8 +150,8 @@ func (self *HeaderGroup) AddGTKHeaderBar(headerBar *gtk.HeaderBar) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.GtkHeaderBar   // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkHeaderBar)(unsafe.Pointer(headerBar.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkHeaderBar)(unsafe.Pointer(externglib.InternObject(headerBar).Native()))
 
 	C.hdy_header_group_add_gtk_header_bar(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -133,8 +169,8 @@ func (self *HeaderGroup) AddHeaderBar(headerBar *HeaderBar) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.HdyHeaderBar   // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyHeaderBar)(unsafe.Pointer(headerBar.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(headerBar).Native()))
 
 	C.hdy_header_group_add_header_bar(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -152,8 +188,8 @@ func (self *HeaderGroup) AddHeaderGroup(headerGroup *HeaderGroup) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.HdyHeaderGroup // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyHeaderGroup)(unsafe.Pointer(headerGroup.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(headerGroup).Native()))
 
 	C.hdy_header_group_add_header_group(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -171,7 +207,7 @@ func (self *HeaderGroup) Children() []HeaderGroupChild {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _cret *C.GSList         // in
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_get_children(_arg0)
 	runtime.KeepAlive(self)
@@ -201,7 +237,7 @@ func (self *HeaderGroup) DecorateAll() bool {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _cret C.gboolean        // in
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_get_decorate_all(_arg0)
 	runtime.KeepAlive(self)
@@ -225,8 +261,8 @@ func (self *HeaderGroup) RemoveChild(child *HeaderGroupChild) {
 	var _arg0 *C.HdyHeaderGroup      // out
 	var _arg1 *C.HdyHeaderGroupChild // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	C.hdy_header_group_remove_child(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -243,8 +279,8 @@ func (self *HeaderGroup) RemoveGTKHeaderBar(headerBar *gtk.HeaderBar) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.GtkHeaderBar   // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkHeaderBar)(unsafe.Pointer(headerBar.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkHeaderBar)(unsafe.Pointer(externglib.InternObject(headerBar).Native()))
 
 	C.hdy_header_group_remove_gtk_header_bar(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -261,8 +297,8 @@ func (self *HeaderGroup) RemoveHeaderBar(headerBar *HeaderBar) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.HdyHeaderBar   // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyHeaderBar)(unsafe.Pointer(headerBar.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(headerBar).Native()))
 
 	C.hdy_header_group_remove_header_bar(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -279,8 +315,8 @@ func (self *HeaderGroup) RemoveHeaderGroup(headerGroup *HeaderGroup) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 *C.HdyHeaderGroup // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.HdyHeaderGroup)(unsafe.Pointer(headerGroup.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(headerGroup).Native()))
 
 	C.hdy_header_group_remove_header_group(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -299,7 +335,7 @@ func (self *HeaderGroup) SetDecorateAll(decorateAll bool) {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _arg1 C.gboolean        // out
 
-	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroup)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if decorateAll {
 		_arg1 = C.TRUE
 	}
@@ -307,6 +343,10 @@ func (self *HeaderGroup) SetDecorateAll(decorateAll bool) {
 	C.hdy_header_group_set_decorate_all(_arg0, _arg1)
 	runtime.KeepAlive(self)
 	runtime.KeepAlive(decorateAll)
+}
+
+// HeaderGroupChildOverrider contains methods that are overridable.
+type HeaderGroupChildOverrider interface {
 }
 
 type HeaderGroupChild struct {
@@ -318,13 +358,21 @@ var (
 	_ externglib.Objector = (*HeaderGroupChild)(nil)
 )
 
+func classInitHeaderGroupChilder(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapHeaderGroupChild(obj *externglib.Object) *HeaderGroupChild {
 	return &HeaderGroupChild{
 		Object: obj,
 	}
 }
 
-func marshalHeaderGroupChilder(p uintptr) (interface{}, error) {
+func marshalHeaderGroupChild(p uintptr) (interface{}, error) {
 	return wrapHeaderGroupChild(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -338,7 +386,7 @@ func (self *HeaderGroupChild) ChildType() HeaderGroupChildType {
 	var _arg0 *C.HdyHeaderGroupChild    // out
 	var _cret C.HdyHeaderGroupChildType // in
 
-	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_child_get_child_type(_arg0)
 	runtime.KeepAlive(self)
@@ -361,7 +409,7 @@ func (self *HeaderGroupChild) GTKHeaderBar() *gtk.HeaderBar {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.GtkHeaderBar        // in
 
-	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_child_get_gtk_header_bar(_arg0)
 	runtime.KeepAlive(self)
@@ -402,7 +450,7 @@ func (self *HeaderGroupChild) HeaderBar() *HeaderBar {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.HdyHeaderBar        // in
 
-	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_child_get_header_bar(_arg0)
 	runtime.KeepAlive(self)
@@ -425,7 +473,7 @@ func (self *HeaderGroupChild) HeaderGroup() *HeaderGroup {
 	var _arg0 *C.HdyHeaderGroupChild // out
 	var _cret *C.HdyHeaderGroup      // in
 
-	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderGroupChild)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_group_child_get_header_group(_arg0)
 	runtime.KeepAlive(self)

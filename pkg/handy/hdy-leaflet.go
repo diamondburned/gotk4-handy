@@ -17,10 +17,16 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-leaflet.go.
+var (
+	GTypeLeafletTransitionType = externglib.Type(C.hdy_leaflet_transition_type_get_type())
+	GTypeLeaflet               = externglib.Type(C.hdy_leaflet_get_type())
+)
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_leaflet_transition_type_get_type()), F: marshalLeafletTransitionType},
-		{T: externglib.Type(C.hdy_leaflet_get_type()), F: marshalLeafletter},
+		{T: GTypeLeafletTransitionType, F: marshalLeafletTransitionType},
+		{T: GTypeLeaflet, F: marshalLeaflet},
 	})
 }
 
@@ -62,6 +68,10 @@ func (l LeafletTransitionType) String() string {
 	}
 }
 
+// LeafletOverrider contains methods that are overridable.
+type LeafletOverrider interface {
+}
+
 type Leaflet struct {
 	_ [0]func() // equal guard
 	gtk.Container
@@ -80,6 +90,14 @@ var (
 	_ externglib.Objector = (*Leaflet)(nil)
 	_ gtk.Widgetter       = (*Leaflet)(nil)
 )
+
+func classInitLeafletter(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapLeaflet(obj *externglib.Object) *Leaflet {
 	return &Leaflet{
@@ -139,7 +157,7 @@ func wrapLeaflet(obj *externglib.Object) *Leaflet {
 	}
 }
 
-func marshalLeafletter(p uintptr) (interface{}, error) {
+func marshalLeaflet(p uintptr) (interface{}, error) {
 	return wrapLeaflet(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -174,7 +192,7 @@ func (self *Leaflet) AdjacentChild(direction NavigationDirection) gtk.Widgetter 
 	var _arg1 C.HdyNavigationDirection // out
 	var _cret *C.GtkWidget             // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyNavigationDirection(direction)
 
 	_cret = C.hdy_leaflet_get_adjacent_child(_arg0, _arg1)
@@ -214,7 +232,7 @@ func (self *Leaflet) CanSwipeBack() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_can_swipe_back(_arg0)
 	runtime.KeepAlive(self)
@@ -238,7 +256,7 @@ func (self *Leaflet) CanSwipeForward() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_can_swipe_forward(_arg0)
 	runtime.KeepAlive(self)
@@ -268,7 +286,7 @@ func (self *Leaflet) ChildByName(name string) gtk.Widgetter {
 	var _arg1 *C.gchar      // out
 	var _cret *C.GtkWidget  // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(name)))
 	defer C.free(unsafe.Pointer(_arg1))
 
@@ -309,7 +327,7 @@ func (self *Leaflet) ChildTransitionDuration() uint {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.guint       // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_child_transition_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -332,7 +350,7 @@ func (self *Leaflet) ChildTransitionRunning() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_child_transition_running(_arg0)
 	runtime.KeepAlive(self)
@@ -356,7 +374,7 @@ func (self *Leaflet) Folded() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_folded(_arg0)
 	runtime.KeepAlive(self)
@@ -388,7 +406,7 @@ func (self *Leaflet) Homogeneous(folded bool, orientation gtk.Orientation) bool 
 	var _arg2 C.GtkOrientation // out
 	var _cret C.gboolean       // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if folded {
 		_arg1 = C.TRUE
 	}
@@ -419,7 +437,7 @@ func (self *Leaflet) InterpolateSize() bool {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.gboolean    // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_interpolate_size(_arg0)
 	runtime.KeepAlive(self)
@@ -444,7 +462,7 @@ func (self *Leaflet) ModeTransitionDuration() uint {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret C.guint       // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_mode_transition_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -467,7 +485,7 @@ func (self *Leaflet) TransitionType() LeafletTransitionType {
 	var _arg0 *C.HdyLeaflet              // out
 	var _cret C.HdyLeafletTransitionType // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_transition_type(_arg0)
 	runtime.KeepAlive(self)
@@ -489,7 +507,7 @@ func (self *Leaflet) VisibleChild() gtk.Widgetter {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret *C.GtkWidget  // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_visible_child(_arg0)
 	runtime.KeepAlive(self)
@@ -527,7 +545,7 @@ func (self *Leaflet) VisibleChildName() string {
 	var _arg0 *C.HdyLeaflet // out
 	var _cret *C.gchar      // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_leaflet_get_visible_child_name(_arg0)
 	runtime.KeepAlive(self)
@@ -552,10 +570,10 @@ func (self *Leaflet) InsertChildAfter(child, sibling gtk.Widgetter) {
 	var _arg1 *C.GtkWidget  // out
 	var _arg2 *C.GtkWidget  // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if sibling != nil {
-		_arg2 = (*C.GtkWidget)(unsafe.Pointer(sibling.Native()))
+		_arg2 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(sibling).Native()))
 	}
 
 	C.hdy_leaflet_insert_child_after(_arg0, _arg1, _arg2)
@@ -581,7 +599,7 @@ func (self *Leaflet) Navigate(direction NavigationDirection) bool {
 	var _arg1 C.HdyNavigationDirection // out
 	var _cret C.gboolean               // in
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyNavigationDirection(direction)
 
 	_cret = C.hdy_leaflet_navigate(_arg0, _arg1)
@@ -607,8 +625,8 @@ func (self *Leaflet) Prepend(child gtk.Widgetter) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 *C.GtkWidget  // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	C.hdy_leaflet_prepend(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -628,10 +646,10 @@ func (self *Leaflet) ReorderChildAfter(child, sibling gtk.Widgetter) {
 	var _arg1 *C.GtkWidget  // out
 	var _arg2 *C.GtkWidget  // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 	if sibling != nil {
-		_arg2 = (*C.GtkWidget)(unsafe.Pointer(sibling.Native()))
+		_arg2 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(sibling).Native()))
 	}
 
 	C.hdy_leaflet_reorder_child_after(_arg0, _arg1, _arg2)
@@ -651,7 +669,7 @@ func (self *Leaflet) SetCanSwipeBack(canSwipeBack bool) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if canSwipeBack {
 		_arg1 = C.TRUE
 	}
@@ -672,7 +690,7 @@ func (self *Leaflet) SetCanSwipeForward(canSwipeForward bool) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if canSwipeForward {
 		_arg1 = C.TRUE
 	}
@@ -693,7 +711,7 @@ func (self *Leaflet) SetChildTransitionDuration(duration uint) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 C.guint       // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_leaflet_set_child_transition_duration(_arg0, _arg1)
@@ -719,7 +737,7 @@ func (self *Leaflet) SetHomogeneous(folded bool, orientation gtk.Orientation, ho
 	var _arg2 C.GtkOrientation // out
 	var _arg3 C.gboolean       // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if folded {
 		_arg1 = C.TRUE
 	}
@@ -749,7 +767,7 @@ func (self *Leaflet) SetInterpolateSize(interpolateSize bool) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 C.gboolean    // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if interpolateSize {
 		_arg1 = C.TRUE
 	}
@@ -770,7 +788,7 @@ func (self *Leaflet) SetModeTransitionDuration(duration uint) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 C.guint       // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_leaflet_set_mode_transition_duration(_arg0, _arg1)
@@ -793,7 +811,7 @@ func (self *Leaflet) SetTransitionType(transition LeafletTransitionType) {
 	var _arg0 *C.HdyLeaflet              // out
 	var _arg1 C.HdyLeafletTransitionType // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyLeafletTransitionType(transition)
 
 	C.hdy_leaflet_set_transition_type(_arg0, _arg1)
@@ -814,8 +832,8 @@ func (self *Leaflet) SetVisibleChild(visibleChild gtk.Widgetter) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 *C.GtkWidget  // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(visibleChild.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(visibleChild).Native()))
 
 	C.hdy_leaflet_set_visible_child(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -834,7 +852,7 @@ func (self *Leaflet) SetVisibleChildName(name string) {
 	var _arg0 *C.HdyLeaflet // out
 	var _arg1 *C.gchar      // out
 
-	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyLeaflet)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(name)))
 	defer C.free(unsafe.Pointer(_arg1))
 

@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-application-window.go.
+var GTypeApplicationWindow = externglib.Type(C.hdy_application_window_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_application_window_get_type()), F: marshalApplicationWindower},
+		{T: GTypeApplicationWindow, F: marshalApplicationWindow},
 	})
+}
+
+// ApplicationWindowOverrider contains methods that are overridable.
+type ApplicationWindowOverrider interface {
 }
 
 type ApplicationWindow struct {
@@ -31,6 +38,14 @@ var (
 	_ externglib.Objector = (*ApplicationWindow)(nil)
 	_ gtk.Binner          = (*ApplicationWindow)(nil)
 )
+
+func classInitApplicationWindower(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapApplicationWindow(obj *externglib.Object) *ApplicationWindow {
 	return &ApplicationWindow{
@@ -64,7 +79,7 @@ func wrapApplicationWindow(obj *externglib.Object) *ApplicationWindow {
 	}
 }
 
-func marshalApplicationWindower(p uintptr) (interface{}, error) {
+func marshalApplicationWindow(p uintptr) (interface{}, error) {
 	return wrapApplicationWindow(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 

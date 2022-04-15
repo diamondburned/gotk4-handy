@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-clamp.go.
+var GTypeClamp = externglib.Type(C.hdy_clamp_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_clamp_get_type()), F: marshalClamper},
+		{T: GTypeClamp, F: marshalClamp},
 	})
+}
+
+// ClampOverrider contains methods that are overridable.
+type ClampOverrider interface {
 }
 
 type Clamp struct {
@@ -34,6 +41,14 @@ var (
 	_ gtk.Binner          = (*Clamp)(nil)
 	_ externglib.Objector = (*Clamp)(nil)
 )
+
+func classInitClamper(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapClamp(obj *externglib.Object) *Clamp {
 	return &Clamp{
@@ -60,7 +75,7 @@ func wrapClamp(obj *externglib.Object) *Clamp {
 	}
 }
 
-func marshalClamper(p uintptr) (interface{}, error) {
+func marshalClamp(p uintptr) (interface{}, error) {
 	return wrapClamp(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -93,7 +108,7 @@ func (self *Clamp) MaximumSize() int {
 	var _arg0 *C.HdyClamp // out
 	var _cret C.gint      // in
 
-	_arg0 = (*C.HdyClamp)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyClamp)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_clamp_get_maximum_size(_arg0)
 	runtime.KeepAlive(self)
@@ -117,7 +132,7 @@ func (self *Clamp) TighteningThreshold() int {
 	var _arg0 *C.HdyClamp // out
 	var _cret C.gint      // in
 
-	_arg0 = (*C.HdyClamp)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyClamp)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_clamp_get_tightening_threshold(_arg0)
 	runtime.KeepAlive(self)
@@ -140,7 +155,7 @@ func (self *Clamp) SetMaximumSize(maximumSize int) {
 	var _arg0 *C.HdyClamp // out
 	var _arg1 C.gint      // out
 
-	_arg0 = (*C.HdyClamp)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyClamp)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(maximumSize)
 
 	C.hdy_clamp_set_maximum_size(_arg0, _arg1)
@@ -159,7 +174,7 @@ func (self *Clamp) SetTighteningThreshold(tighteningThreshold int) {
 	var _arg0 *C.HdyClamp // out
 	var _arg1 C.gint      // out
 
-	_arg0 = (*C.HdyClamp)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyClamp)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(tighteningThreshold)
 
 	C.hdy_clamp_set_tightening_threshold(_arg0, _arg1)

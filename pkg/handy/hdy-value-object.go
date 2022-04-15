@@ -14,10 +14,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-value-object.go.
+var GTypeValueObject = externglib.Type(C.hdy_value_object_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_value_object_get_type()), F: marshalValueObjector},
+		{T: GTypeValueObject, F: marshalValueObject},
 	})
+}
+
+// ValueObjectOverrider contains methods that are overridable.
+type ValueObjectOverrider interface {
 }
 
 type ValueObject struct {
@@ -29,13 +36,21 @@ var (
 	_ externglib.Objector = (*ValueObject)(nil)
 )
 
+func classInitValueObjector(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
+
 func wrapValueObject(obj *externglib.Object) *ValueObject {
 	return &ValueObject{
 		Object: obj,
 	}
 }
 
-func marshalValueObjector(p uintptr) (interface{}, error) {
+func marshalValueObject(p uintptr) (interface{}, error) {
 	return wrapValueObject(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -75,7 +90,7 @@ func (value *ValueObject) CopyValue(dest *externglib.Value) {
 	var _arg0 *C.HdyValueObject // out
 	var _arg1 *C.GValue         // out
 
-	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(value.Native()))
+	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(externglib.InternObject(value).Native()))
 	_arg1 = (*C.GValue)(unsafe.Pointer(dest.Native()))
 
 	C.hdy_value_object_copy_value(_arg0, _arg1)
@@ -94,7 +109,7 @@ func (value *ValueObject) DupString() string {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.gchar          // in
 
-	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(value.Native()))
+	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(externglib.InternObject(value).Native()))
 
 	_cret = C.hdy_value_object_dup_string(_arg0)
 	runtime.KeepAlive(value)
@@ -117,7 +132,7 @@ func (value *ValueObject) String() string {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.gchar          // in
 
-	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(value.Native()))
+	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(externglib.InternObject(value).Native()))
 
 	_cret = C.hdy_value_object_get_string(_arg0)
 	runtime.KeepAlive(value)
@@ -139,7 +154,7 @@ func (value *ValueObject) Value() *externglib.Value {
 	var _arg0 *C.HdyValueObject // out
 	var _cret *C.GValue         // in
 
-	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(value.Native()))
+	_arg0 = (*C.HdyValueObject)(unsafe.Pointer(externglib.InternObject(value).Native()))
 
 	_cret = C.hdy_value_object_get_value(_arg0)
 	runtime.KeepAlive(value)

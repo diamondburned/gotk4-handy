@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-header-bar.go.
+var GTypeHeaderBar = externglib.Type(C.hdy_header_bar_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_header_bar_get_type()), F: marshalHeaderBarrer},
+		{T: GTypeHeaderBar, F: marshalHeaderBar},
 	})
+}
+
+// HeaderBarOverrider contains methods that are overridable.
+type HeaderBarOverrider interface {
 }
 
 type HeaderBar struct {
@@ -30,6 +37,14 @@ type HeaderBar struct {
 var (
 	_ gtk.Containerer = (*HeaderBar)(nil)
 )
+
+func classInitHeaderBarrer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapHeaderBar(obj *externglib.Object) *HeaderBar {
 	return &HeaderBar{
@@ -50,7 +65,7 @@ func wrapHeaderBar(obj *externglib.Object) *HeaderBar {
 	}
 }
 
-func marshalHeaderBarrer(p uintptr) (interface{}, error) {
+func marshalHeaderBar(p uintptr) (interface{}, error) {
 	return wrapHeaderBar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -83,7 +98,7 @@ func (self *HeaderBar) CenteringPolicy() CenteringPolicy {
 	var _arg0 *C.HdyHeaderBar      // out
 	var _cret C.HdyCenteringPolicy // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_centering_policy(_arg0)
 	runtime.KeepAlive(self)
@@ -107,7 +122,7 @@ func (self *HeaderBar) CustomTitle() gtk.Widgetter {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.GtkWidget    // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_custom_title(_arg0)
 	runtime.KeepAlive(self)
@@ -145,7 +160,7 @@ func (self *HeaderBar) DecorationLayout() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_decoration_layout(_arg0)
 	runtime.KeepAlive(self)
@@ -168,7 +183,7 @@ func (self *HeaderBar) HasSubtitle() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_has_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -196,7 +211,7 @@ func (self *HeaderBar) InterpolateSize() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_interpolate_size(_arg0)
 	runtime.KeepAlive(self)
@@ -221,7 +236,7 @@ func (self *HeaderBar) ShowCloseButton() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_show_close_button(_arg0)
 	runtime.KeepAlive(self)
@@ -248,7 +263,7 @@ func (self *HeaderBar) Subtitle() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_subtitle(_arg0)
 	runtime.KeepAlive(self)
@@ -274,7 +289,7 @@ func (self *HeaderBar) Title() string {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret *C.gchar        // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_title(_arg0)
 	runtime.KeepAlive(self)
@@ -299,7 +314,7 @@ func (self *HeaderBar) TransitionDuration() uint {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.guint         // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_transition_duration(_arg0)
 	runtime.KeepAlive(self)
@@ -322,7 +337,7 @@ func (self *HeaderBar) TransitionRunning() bool {
 	var _arg0 *C.HdyHeaderBar // out
 	var _cret C.gboolean      // in
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_header_bar_get_transition_running(_arg0)
 	runtime.KeepAlive(self)
@@ -346,8 +361,8 @@ func (self *HeaderBar) PackEnd(child gtk.Widgetter) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.GtkWidget    // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	C.hdy_header_bar_pack_end(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -365,8 +380,8 @@ func (self *HeaderBar) PackStart(child gtk.Widgetter) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.GtkWidget    // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GtkWidget)(unsafe.Pointer(child.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(child).Native()))
 
 	C.hdy_header_bar_pack_start(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -384,7 +399,7 @@ func (self *HeaderBar) SetCenteringPolicy(centeringPolicy CenteringPolicy) {
 	var _arg0 *C.HdyHeaderBar      // out
 	var _arg1 C.HdyCenteringPolicy // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.HdyCenteringPolicy(centeringPolicy)
 
 	C.hdy_header_bar_set_centering_policy(_arg0, _arg1)
@@ -410,9 +425,9 @@ func (self *HeaderBar) SetCustomTitle(titleWidget gtk.Widgetter) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.GtkWidget    // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if titleWidget != nil {
-		_arg1 = (*C.GtkWidget)(unsafe.Pointer(titleWidget.Native()))
+		_arg1 = (*C.GtkWidget)(unsafe.Pointer(externglib.InternObject(titleWidget).Native()))
 	}
 
 	C.hdy_header_bar_set_custom_title(_arg0, _arg1)
@@ -444,7 +459,7 @@ func (self *HeaderBar) SetDecorationLayout(layout string) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.gchar        // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if layout != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(layout)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -466,7 +481,7 @@ func (self *HeaderBar) SetHasSubtitle(setting bool) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if setting {
 		_arg1 = C.TRUE
 	}
@@ -491,7 +506,7 @@ func (self *HeaderBar) SetInterpolateSize(interpolateSize bool) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if interpolateSize {
 		_arg1 = C.TRUE
 	}
@@ -512,7 +527,7 @@ func (self *HeaderBar) SetShowCloseButton(setting bool) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 C.gboolean      // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if setting {
 		_arg1 = C.TRUE
 	}
@@ -537,7 +552,7 @@ func (self *HeaderBar) SetSubtitle(subtitle string) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.gchar        // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if subtitle != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(subtitle)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -560,7 +575,7 @@ func (self *HeaderBar) SetTitle(title string) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 *C.gchar        // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if title != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(title)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -582,7 +597,7 @@ func (self *HeaderBar) SetTransitionDuration(duration uint) {
 	var _arg0 *C.HdyHeaderBar // out
 	var _arg1 C.guint         // out
 
-	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyHeaderBar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.guint(duration)
 
 	C.hdy_header_bar_set_transition_duration(_arg0, _arg1)

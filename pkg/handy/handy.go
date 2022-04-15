@@ -17,10 +17,16 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for handy.go.
+var (
+	GTypeCenteringPolicy    = externglib.Type(C.hdy_centering_policy_get_type())
+	GTypeViewSwitcherPolicy = externglib.Type(C.hdy_view_switcher_policy_get_type())
+)
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_centering_policy_get_type()), F: marshalCenteringPolicy},
-		{T: externglib.Type(C.hdy_view_switcher_policy_get_type()), F: marshalViewSwitcherPolicy},
+		{T: GTypeCenteringPolicy, F: marshalCenteringPolicy},
+		{T: GTypeViewSwitcherPolicy, F: marshalViewSwitcherPolicy},
 	})
 }
 

@@ -16,10 +16,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-carousel-indicator-lines.go.
+var GTypeCarouselIndicatorLines = externglib.Type(C.hdy_carousel_indicator_lines_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_carousel_indicator_lines_get_type()), F: marshalCarouselIndicatorLinesser},
+		{T: GTypeCarouselIndicatorLines, F: marshalCarouselIndicatorLines},
 	})
+}
+
+// CarouselIndicatorLinesOverrider contains methods that are overridable.
+type CarouselIndicatorLinesOverrider interface {
 }
 
 type CarouselIndicatorLines struct {
@@ -34,6 +41,14 @@ var (
 	_ externglib.Objector = (*CarouselIndicatorLines)(nil)
 	_ gtk.Widgetter       = (*CarouselIndicatorLines)(nil)
 )
+
+func classInitCarouselIndicatorLinesser(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapCarouselIndicatorLines(obj *externglib.Object) *CarouselIndicatorLines {
 	return &CarouselIndicatorLines{
@@ -58,7 +73,7 @@ func wrapCarouselIndicatorLines(obj *externglib.Object) *CarouselIndicatorLines 
 	}
 }
 
-func marshalCarouselIndicatorLinesser(p uintptr) (interface{}, error) {
+func marshalCarouselIndicatorLines(p uintptr) (interface{}, error) {
 	return wrapCarouselIndicatorLines(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -92,7 +107,7 @@ func (self *CarouselIndicatorLines) Carousel() *Carousel {
 	var _arg0 *C.HdyCarouselIndicatorLines // out
 	var _cret *C.HdyCarousel               // in
 
-	_arg0 = (*C.HdyCarouselIndicatorLines)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyCarouselIndicatorLines)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_carousel_indicator_lines_get_carousel(_arg0)
 	runtime.KeepAlive(self)
@@ -116,9 +131,9 @@ func (self *CarouselIndicatorLines) SetCarousel(carousel *Carousel) {
 	var _arg0 *C.HdyCarouselIndicatorLines // out
 	var _arg1 *C.HdyCarousel               // out
 
-	_arg0 = (*C.HdyCarouselIndicatorLines)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyCarouselIndicatorLines)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if carousel != nil {
-		_arg1 = (*C.HdyCarousel)(unsafe.Pointer(carousel.Native()))
+		_arg1 = (*C.HdyCarousel)(unsafe.Pointer(externglib.InternObject(carousel).Native()))
 	}
 
 	C.hdy_carousel_indicator_lines_set_carousel(_arg0, _arg1)

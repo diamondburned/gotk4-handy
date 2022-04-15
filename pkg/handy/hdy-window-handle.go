@@ -15,10 +15,17 @@ import (
 // #include <handy.h>
 import "C"
 
+// glib.Type values for hdy-window-handle.go.
+var GTypeWindowHandle = externglib.Type(C.hdy_window_handle_get_type())
+
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_window_handle_get_type()), F: marshalWindowHandler},
+		{T: GTypeWindowHandle, F: marshalWindowHandle},
 	})
+}
+
+// WindowHandleOverrider contains methods that are overridable.
+type WindowHandleOverrider interface {
 }
 
 type WindowHandle struct {
@@ -29,6 +36,14 @@ type WindowHandle struct {
 var (
 	_ gtk.Binner = (*WindowHandle)(nil)
 )
+
+func classInitWindowHandler(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapWindowHandle(obj *externglib.Object) *WindowHandle {
 	return &WindowHandle{
@@ -53,7 +68,7 @@ func wrapWindowHandle(obj *externglib.Object) *WindowHandle {
 	}
 }
 
-func marshalWindowHandler(p uintptr) (interface{}, error) {
+func marshalWindowHandle(p uintptr) (interface{}, error) {
 	return wrapWindowHandle(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 

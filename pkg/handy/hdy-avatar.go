@@ -19,14 +19,17 @@ import (
 // #include <stdlib.h>
 // #include <glib-object.h>
 // #include <handy.h>
-// GdkPixbuf* _gotk4_handy1_AvatarImageLoadFunc(gint, gpointer);
+// extern GdkPixbuf* _gotk4_handy1_AvatarImageLoadFunc(gint, gpointer);
+// extern void _gotk4_gio2_AsyncReadyCallback(GObject*, GAsyncResult*, gpointer);
 // extern void callbackDelete(gpointer);
-// void _gotk4_gio2_AsyncReadyCallback(GObject*, GAsyncResult*, gpointer);
 import "C"
+
+// glib.Type values for hdy-avatar.go.
+var GTypeAvatar = externglib.Type(C.hdy_avatar_get_type())
 
 func init() {
 	externglib.RegisterGValueMarshalers([]externglib.TypeMarshaler{
-		{T: externglib.Type(C.hdy_avatar_get_type()), F: marshalAvatarrer},
+		{T: GTypeAvatar, F: marshalAvatar},
 	})
 }
 
@@ -38,25 +41,32 @@ func init() {
 type AvatarImageLoadFunc func(size int) (pixbuf *gdkpixbuf.Pixbuf)
 
 //export _gotk4_handy1_AvatarImageLoadFunc
-func _gotk4_handy1_AvatarImageLoadFunc(arg0 C.gint, arg1 C.gpointer) (cret *C.GdkPixbuf) {
-	v := gbox.Get(uintptr(arg1))
-	if v == nil {
-		panic(`callback not found`)
+func _gotk4_handy1_AvatarImageLoadFunc(arg1 C.gint, arg2 C.gpointer) (cret *C.GdkPixbuf) {
+	var fn AvatarImageLoadFunc
+	{
+		v := gbox.Get(uintptr(arg2))
+		if v == nil {
+			panic(`callback not found`)
+		}
+		fn = v.(AvatarImageLoadFunc)
 	}
 
-	var size int // out
+	var _size int // out
 
-	size = int(arg0)
+	_size = int(arg1)
 
-	fn := v.(AvatarImageLoadFunc)
-	pixbuf := fn(size)
+	pixbuf := fn(_size)
 
 	if pixbuf != nil {
-		cret = (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
-		C.g_object_ref(C.gpointer(pixbuf.Native()))
+		cret = (*C.GdkPixbuf)(unsafe.Pointer(externglib.InternObject(pixbuf).Native()))
+		C.g_object_ref(C.gpointer(externglib.InternObject(pixbuf).Native()))
 	}
 
 	return cret
+}
+
+// AvatarOverrider contains methods that are overridable.
+type AvatarOverrider interface {
 }
 
 type Avatar struct {
@@ -67,6 +77,14 @@ type Avatar struct {
 var (
 	_ gtk.Widgetter = (*Avatar)(nil)
 )
+
+func classInitAvatarrer(gclassPtr, data C.gpointer) {
+	C.g_type_class_add_private(gclassPtr, C.gsize(unsafe.Sizeof(uintptr(0))))
+
+	goffset := C.g_type_class_get_instance_private_offset(gclassPtr)
+	*(*C.gpointer)(unsafe.Add(unsafe.Pointer(gclassPtr), goffset)) = data
+
+}
 
 func wrapAvatar(obj *externglib.Object) *Avatar {
 	return &Avatar{
@@ -87,7 +105,7 @@ func wrapAvatar(obj *externglib.Object) *Avatar {
 	}
 }
 
-func marshalAvatarrer(p uintptr) (interface{}, error) {
+func marshalAvatar(p uintptr) (interface{}, error) {
 	return wrapAvatar(externglib.ValueFromNative(unsafe.Pointer(p)).Object()), nil
 }
 
@@ -150,7 +168,7 @@ func (self *Avatar) DrawToPixbuf(size, scaleFactor int) *gdkpixbuf.Pixbuf {
 	var _arg2 C.gint       // out
 	var _cret *C.GdkPixbuf // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(size)
 	_arg2 = C.gint(scaleFactor)
 
@@ -194,7 +212,7 @@ func (self *Avatar) DrawToPixbufAsync(ctx context.Context, size, scaleFactor int
 	var _arg4 C.GAsyncReadyCallback // out
 	var _arg5 C.gpointer
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	{
 		cancellable := gcancel.GCancellableFromContext(ctx)
 		defer runtime.KeepAlive(cancellable)
@@ -230,8 +248,8 @@ func (self *Avatar) DrawToPixbufFinish(asyncResult gio.AsyncResulter) *gdkpixbuf
 	var _arg1 *C.GAsyncResult // out
 	var _cret *C.GdkPixbuf    // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
-	_arg1 = (*C.GAsyncResult)(unsafe.Pointer(asyncResult.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
+	_arg1 = (*C.GAsyncResult)(unsafe.Pointer(externglib.InternObject(asyncResult).Native()))
 
 	_cret = C.hdy_avatar_draw_to_pixbuf_finish(_arg0, _arg1)
 	runtime.KeepAlive(self)
@@ -265,7 +283,7 @@ func (self *Avatar) IconName() string {
 	var _arg0 *C.HdyAvatar // out
 	var _cret *C.gchar     // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_avatar_get_icon_name(_arg0)
 	runtime.KeepAlive(self)
@@ -289,7 +307,7 @@ func (self *Avatar) LoadableIcon() gio.LoadableIconner {
 	var _arg0 *C.HdyAvatar     // out
 	var _cret *C.GLoadableIcon // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_avatar_get_loadable_icon(_arg0)
 	runtime.KeepAlive(self)
@@ -326,7 +344,7 @@ func (self *Avatar) ShowInitials() bool {
 	var _arg0 *C.HdyAvatar // out
 	var _cret C.gboolean   // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_avatar_get_show_initials(_arg0)
 	runtime.KeepAlive(self)
@@ -350,7 +368,7 @@ func (self *Avatar) Size() int {
 	var _arg0 *C.HdyAvatar // out
 	var _cret C.gint       // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_avatar_get_size(_arg0)
 	runtime.KeepAlive(self)
@@ -373,7 +391,7 @@ func (self *Avatar) Text() string {
 	var _arg0 *C.HdyAvatar // out
 	var _cret *C.gchar     // in
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 
 	_cret = C.hdy_avatar_get_text(_arg0)
 	runtime.KeepAlive(self)
@@ -401,7 +419,7 @@ func (self *Avatar) SetIconName(iconName string) {
 	var _arg0 *C.HdyAvatar // out
 	var _arg1 *C.gchar     // out
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if iconName != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(iconName)))
 		defer C.free(unsafe.Pointer(_arg1))
@@ -427,7 +445,7 @@ func (self *Avatar) SetImageLoadFunc(loadImage AvatarImageLoadFunc) {
 	var _arg2 C.gpointer
 	var _arg3 C.GDestroyNotify
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if loadImage != nil {
 		_arg1 = (*[0]byte)(C._gotk4_handy1_AvatarImageLoadFunc)
 		_arg2 = C.gpointer(gbox.Assign(loadImage))
@@ -453,9 +471,9 @@ func (self *Avatar) SetLoadableIcon(icon gio.LoadableIconner) {
 	var _arg0 *C.HdyAvatar     // out
 	var _arg1 *C.GLoadableIcon // out
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if icon != nil {
-		_arg1 = (*C.GLoadableIcon)(unsafe.Pointer(icon.Native()))
+		_arg1 = (*C.GLoadableIcon)(unsafe.Pointer(externglib.InternObject(icon).Native()))
 	}
 
 	C.hdy_avatar_set_loadable_icon(_arg0, _arg1)
@@ -475,7 +493,7 @@ func (self *Avatar) SetShowInitials(showInitials bool) {
 	var _arg0 *C.HdyAvatar // out
 	var _arg1 C.gboolean   // out
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if showInitials {
 		_arg1 = C.TRUE
 	}
@@ -495,7 +513,7 @@ func (self *Avatar) SetSize(size int) {
 	var _arg0 *C.HdyAvatar // out
 	var _arg1 C.gint       // out
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	_arg1 = C.gint(size)
 
 	C.hdy_avatar_set_size(_arg0, _arg1)
@@ -513,7 +531,7 @@ func (self *Avatar) SetText(text string) {
 	var _arg0 *C.HdyAvatar // out
 	var _arg1 *C.gchar     // out
 
-	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(self.Native()))
+	_arg0 = (*C.HdyAvatar)(unsafe.Pointer(externglib.InternObject(self).Native()))
 	if text != "" {
 		_arg1 = (*C.gchar)(unsafe.Pointer(C.CString(text)))
 		defer C.free(unsafe.Pointer(_arg1))
