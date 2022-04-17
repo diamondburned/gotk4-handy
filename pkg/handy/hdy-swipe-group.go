@@ -105,7 +105,7 @@ func (self *SwipeGroup) AddSwipeable(swipeable Swipeabler) {
 //    - sList of swipeables. The list is owned by libhandy and should not be
 //      modified.
 //
-func (self *SwipeGroup) Swipeables() []Swipeabler {
+func (self *SwipeGroup) Swipeables() []*Swipeable {
 	var _arg0 *C.HdySwipeGroup // out
 	var _cret *C.GSList        // in
 
@@ -114,29 +114,13 @@ func (self *SwipeGroup) Swipeables() []Swipeabler {
 	_cret = C.hdy_swipe_group_get_swipeables(_arg0)
 	runtime.KeepAlive(self)
 
-	var _sList []Swipeabler // out
+	var _sList []*Swipeable // out
 
-	_sList = make([]Swipeabler, 0, gextras.SListSize(unsafe.Pointer(_cret)))
+	_sList = make([]*Swipeable, 0, gextras.SListSize(unsafe.Pointer(_cret)))
 	gextras.MoveSList(unsafe.Pointer(_cret), false, func(v unsafe.Pointer) {
 		src := (*C.HdySwipeable)(v)
-		var dst Swipeabler // out
-		{
-			objptr := unsafe.Pointer(src)
-			if objptr == nil {
-				panic("object of type handy.Swipeabler is nil")
-			}
-
-			object := externglib.Take(objptr)
-			casted := object.WalkCast(func(obj externglib.Objector) bool {
-				_, ok := obj.(Swipeabler)
-				return ok
-			})
-			rv, ok := casted.(Swipeabler)
-			if !ok {
-				panic("no marshaler for " + object.TypeFromInstance().String() + " matching handy.Swipeabler")
-			}
-			dst = rv
-		}
+		var dst *Swipeable // out
+		dst = wrapSwipeable(externglib.Take(unsafe.Pointer(src)))
 		_sList = append(_sList, dst)
 	})
 

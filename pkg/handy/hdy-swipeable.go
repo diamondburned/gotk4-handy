@@ -106,6 +106,9 @@ type SwipeableOverrider interface {
 	SwitchChild(index uint, duration int64)
 }
 
+//
+// Swipeable wraps an interface. This means the user can get the
+// underlying type by calling Cast().
 type Swipeable struct {
 	_ [0]func() // equal guard
 	gtk.Widget

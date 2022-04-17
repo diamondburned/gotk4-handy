@@ -295,7 +295,7 @@ func (self *ComboRow) BindNameModel(model gio.ListModeller, getNameFunc ComboRow
 //
 //    - listModel (optional) bound to self or NULL.
 //
-func (self *ComboRow) Model() gio.ListModeller {
+func (self *ComboRow) Model() *gio.ListModel {
 	var _arg0 *C.HdyComboRow // out
 	var _cret *C.GListModel  // in
 
@@ -304,22 +304,14 @@ func (self *ComboRow) Model() gio.ListModeller {
 	_cret = C.hdy_combo_row_get_model(_arg0)
 	runtime.KeepAlive(self)
 
-	var _listModel gio.ListModeller // out
+	var _listModel *gio.ListModel // out
 
 	if _cret != nil {
 		{
-			objptr := unsafe.Pointer(_cret)
-
-			object := externglib.Take(objptr)
-			casted := object.WalkCast(func(obj externglib.Objector) bool {
-				_, ok := obj.(gio.ListModeller)
-				return ok
-			})
-			rv, ok := casted.(gio.ListModeller)
-			if !ok {
-				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.ListModeller")
+			obj := externglib.Take(unsafe.Pointer(_cret))
+			_listModel = &gio.ListModel{
+				Object: obj,
 			}
-			_listModel = rv
 		}
 	}
 

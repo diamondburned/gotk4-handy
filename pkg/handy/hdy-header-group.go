@@ -203,7 +203,7 @@ func (self *HeaderGroup) AddHeaderGroup(headerGroup *HeaderGroup) {
 //    - sList of children. The list is owned by libhandy and should not be
 //      modified.
 //
-func (self *HeaderGroup) Children() []HeaderGroupChild {
+func (self *HeaderGroup) Children() []*HeaderGroupChild {
 	var _arg0 *C.HdyHeaderGroup // out
 	var _cret *C.GSList         // in
 
@@ -212,13 +212,13 @@ func (self *HeaderGroup) Children() []HeaderGroupChild {
 	_cret = C.hdy_header_group_get_children(_arg0)
 	runtime.KeepAlive(self)
 
-	var _sList []HeaderGroupChild // out
+	var _sList []*HeaderGroupChild // out
 
-	_sList = make([]HeaderGroupChild, 0, gextras.SListSize(unsafe.Pointer(_cret)))
+	_sList = make([]*HeaderGroupChild, 0, gextras.SListSize(unsafe.Pointer(_cret)))
 	gextras.MoveSList(unsafe.Pointer(_cret), false, func(v unsafe.Pointer) {
 		src := (*C.HdyHeaderGroupChild)(v)
-		var dst HeaderGroupChild // out
-		dst = *wrapHeaderGroupChild(externglib.Take(unsafe.Pointer(src)))
+		var dst *HeaderGroupChild // out
+		dst = wrapHeaderGroupChild(externglib.Take(unsafe.Pointer(src)))
 		_sList = append(_sList, dst)
 	})
 

@@ -303,7 +303,7 @@ func (self *Avatar) IconName() string {
 //
 //    - loadableIcon (optional): Icon.
 //
-func (self *Avatar) LoadableIcon() gio.LoadableIconner {
+func (self *Avatar) LoadableIcon() *gio.LoadableIcon {
 	var _arg0 *C.HdyAvatar     // out
 	var _cret *C.GLoadableIcon // in
 
@@ -312,22 +312,16 @@ func (self *Avatar) LoadableIcon() gio.LoadableIconner {
 	_cret = C.hdy_avatar_get_loadable_icon(_arg0)
 	runtime.KeepAlive(self)
 
-	var _loadableIcon gio.LoadableIconner // out
+	var _loadableIcon *gio.LoadableIcon // out
 
 	if _cret != nil {
 		{
-			objptr := unsafe.Pointer(_cret)
-
-			object := externglib.Take(objptr)
-			casted := object.WalkCast(func(obj externglib.Objector) bool {
-				_, ok := obj.(gio.LoadableIconner)
-				return ok
-			})
-			rv, ok := casted.(gio.LoadableIconner)
-			if !ok {
-				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.LoadableIconner")
+			obj := externglib.Take(unsafe.Pointer(_cret))
+			_loadableIcon = &gio.LoadableIcon{
+				Icon: gio.Icon{
+					Object: obj,
+				},
 			}
-			_loadableIcon = rv
 		}
 	}
 

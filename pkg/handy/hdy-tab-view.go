@@ -112,7 +112,7 @@ func (self *TabPage) Child() gtk.Widgetter {
 //
 //    - icon (optional) of self.
 //
-func (self *TabPage) Icon() gio.Iconner {
+func (self *TabPage) Icon() *gio.Icon {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
 
@@ -121,22 +121,14 @@ func (self *TabPage) Icon() gio.Iconner {
 	_cret = C.hdy_tab_page_get_icon(_arg0)
 	runtime.KeepAlive(self)
 
-	var _icon gio.Iconner // out
+	var _icon *gio.Icon // out
 
 	if _cret != nil {
 		{
-			objptr := unsafe.Pointer(_cret)
-
-			object := externglib.Take(objptr)
-			casted := object.WalkCast(func(obj externglib.Objector) bool {
-				_, ok := obj.(gio.Iconner)
-				return ok
-			})
-			rv, ok := casted.(gio.Iconner)
-			if !ok {
-				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
+			obj := externglib.Take(unsafe.Pointer(_cret))
+			_icon = &gio.Icon{
+				Object: obj,
 			}
-			_icon = rv
 		}
 	}
 
@@ -175,7 +167,7 @@ func (self *TabPage) IndicatorActivatable() bool {
 //
 //    - icon (optional): indicator icon of self.
 //
-func (self *TabPage) IndicatorIcon() gio.Iconner {
+func (self *TabPage) IndicatorIcon() *gio.Icon {
 	var _arg0 *C.HdyTabPage // out
 	var _cret *C.GIcon      // in
 
@@ -184,22 +176,14 @@ func (self *TabPage) IndicatorIcon() gio.Iconner {
 	_cret = C.hdy_tab_page_get_indicator_icon(_arg0)
 	runtime.KeepAlive(self)
 
-	var _icon gio.Iconner // out
+	var _icon *gio.Icon // out
 
 	if _cret != nil {
 		{
-			objptr := unsafe.Pointer(_cret)
-
-			object := externglib.Take(objptr)
-			casted := object.WalkCast(func(obj externglib.Objector) bool {
-				_, ok := obj.(gio.Iconner)
-				return ok
-			})
-			rv, ok := casted.(gio.Iconner)
-			if !ok {
-				panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
+			obj := externglib.Take(unsafe.Pointer(_cret))
+			_icon = &gio.Icon{
+				Object: obj,
 			}
-			_icon = rv
 		}
 	}
 
@@ -1085,7 +1069,7 @@ func (self *TabView) ClosePagesBefore(page *TabPage) {
 //
 //    - icon: default icon of self.
 //
-func (self *TabView) DefaultIcon() gio.Iconner {
+func (self *TabView) DefaultIcon() *gio.Icon {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GIcon      // in
 
@@ -1094,24 +1078,13 @@ func (self *TabView) DefaultIcon() gio.Iconner {
 	_cret = C.hdy_tab_view_get_default_icon(_arg0)
 	runtime.KeepAlive(self)
 
-	var _icon gio.Iconner // out
+	var _icon *gio.Icon // out
 
 	{
-		objptr := unsafe.Pointer(_cret)
-		if objptr == nil {
-			panic("object of type gio.Iconner is nil")
+		obj := externglib.Take(unsafe.Pointer(_cret))
+		_icon = &gio.Icon{
+			Object: obj,
 		}
-
-		object := externglib.Take(objptr)
-		casted := object.WalkCast(func(obj externglib.Objector) bool {
-			_, ok := obj.(gio.Iconner)
-			return ok
-		})
-		rv, ok := casted.(gio.Iconner)
-		if !ok {
-			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.Iconner")
-		}
-		_icon = rv
 	}
 
 	return _icon
@@ -1321,7 +1294,7 @@ func (self *TabView) PagePosition(page *TabPage) int {
 //
 //    - listModel: model containing pages of self.
 //
-func (self *TabView) Pages() gio.ListModeller {
+func (self *TabView) Pages() *gio.ListModel {
 	var _arg0 *C.HdyTabView // out
 	var _cret *C.GListModel // in
 
@@ -1330,24 +1303,13 @@ func (self *TabView) Pages() gio.ListModeller {
 	_cret = C.hdy_tab_view_get_pages(_arg0)
 	runtime.KeepAlive(self)
 
-	var _listModel gio.ListModeller // out
+	var _listModel *gio.ListModel // out
 
 	{
-		objptr := unsafe.Pointer(_cret)
-		if objptr == nil {
-			panic("object of type gio.ListModeller is nil")
+		obj := externglib.Take(unsafe.Pointer(_cret))
+		_listModel = &gio.ListModel{
+			Object: obj,
 		}
-
-		object := externglib.Take(objptr)
-		casted := object.WalkCast(func(obj externglib.Objector) bool {
-			_, ok := obj.(gio.ListModeller)
-			return ok
-		})
-		rv, ok := casted.(gio.ListModeller)
-		if !ok {
-			panic("no marshaler for " + object.TypeFromInstance().String() + " matching gio.ListModeller")
-		}
-		_listModel = rv
 	}
 
 	return _listModel
